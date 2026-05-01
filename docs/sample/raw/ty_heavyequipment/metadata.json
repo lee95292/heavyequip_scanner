@@ -1,0 +1,18 @@
+{
+  "site": "태양중기매매상사",
+  "slug": "ty_heavyequipment",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "GET",
+  "request_url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&paged=1",
+  "display_url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&paged=1",
+  "status": 200,
+  "final_url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15",
+  "content_type": "text/html; charset=UTF-8",
+  "body_length": 202013,
+  "response_body_file": "response_body.html",
+  "error": null,
+  "notes": [
+    "상세는 같은 엔드포인트에 `id` 파라미터를 붙여 접근합니다."
+  ],
+  "sensitive_values_stored": false
+}

@@ -1,0 +1,18 @@
+{
+  "site": "4396200.com 그린중기 공용매물",
+  "slug": "4396200_green_heavy",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "GET",
+  "request_url": "https://www.4396200.com/sub8_1_s.html?cate_code=100100&limit=70&page=1",
+  "display_url": "https://www.4396200.com/sub8_1_s.html?cate_code=100100&limit=70&page=1",
+  "status": 200,
+  "final_url": "https://www.4396200.com/sub8_1_s.html?cate_code=100100&limit=70&page=1",
+  "content_type": "text/html; charset=utf-8",
+  "body_length": 371459,
+  "response_body_file": "response_body.html",
+  "error": null,
+  "notes": [
+    "카테고리 `cate_code`와 페이지 `page`를 바꿔 순회합니다."
+  ],
+  "sensitive_values_stored": false
+}

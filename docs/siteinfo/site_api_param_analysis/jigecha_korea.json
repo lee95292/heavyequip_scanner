@@ -1,0 +1,1814 @@
+{
+  "site": {
+    "slug": "jigecha_korea",
+    "name": "지게차코리아 공용매물",
+    "url": "http://jigecha.kr/kwa-sell_jigecha",
+    "count_estimate": 7392,
+    "platform_hosts": [
+      "jigecha.kr",
+      "www.jigecha.kr",
+      "imcg.jigecha.kr",
+      "wpjq.jigecha.kr"
+    ]
+  },
+  "page": {
+    "requested_url": "http://jigecha.kr/kwa-sell_jigecha",
+    "final_url": "http://jigecha.kr/kwa-sell_jigecha",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "bytes": 96023,
+    "title": "중고지게차매매 > 지게차코리아"
+  },
+  "request_contract": {
+    "base_endpoint": "http://jigecha.kr/kwa-sell_jigecha",
+    "current_query_params": {},
+    "observed_param_names_ranked": [
+      "category_1",
+      "SCH_sido",
+      "PB_1483420906",
+      "flag",
+      "after_db_script",
+      "after_db_msg",
+      "Q_STRING",
+      "P_SELF",
+      "VG_live_code",
+      "page_dfg",
+      "board",
+      "http_referer",
+      "submit_OK",
+      "search_value",
+      "SCH_category_4",
+      "prev_url",
+      "design_file",
+      "proc_mode",
+      "user_id",
+      "user_passwd",
+      "save_user_id",
+      "save_user_passwd",
+      "is_cpy_article",
+      "cp_article_num",
+      "cp_article_file",
+      "writer_name",
+      "phone_2",
+      "comment_1",
+      "passwd",
+      "chk_person",
+      "insiter_agree_315",
+      "subject",
+      "is_private",
+      "category_6",
+      "T_insiter_join_agree",
+      "SCH_category_1",
+      "onectg_tmp_category_1",
+      "SCH_category_3",
+      "SCH_gugun",
+      "SCH_open_date_1_year"
+    ],
+    "response_type": "HTML 목록 + JS/Ajax 단서",
+    "likely_pagination_params": [
+      "PB_1483420906"
+    ],
+    "likely_category_params": [
+      "SCH_category_4",
+      "SCH_category_1",
+      "SCH_category_3"
+    ],
+    "likely_search_filter_params": [
+      "SCH_sido",
+      "search_value",
+      "SCH_category_4",
+      "SCH_category_1",
+      "SCH_category_3",
+      "SCH_gugun",
+      "SCH_open_date_1_year",
+      "SCH_open_date_1_month",
+      "SCH_open_date_1_DSF",
+      "SCH_open_date_2_year",
+      "SCH_open_date_2_month",
+      "SCH_open_date_2_DSF",
+      "SCH_etc_3_min",
+      "SCH_etc_3_max"
+    ],
+    "likely_detail_id_params": [
+      "path_suffix_id"
+    ]
+  },
+  "forms": [
+    {
+      "index": 1,
+      "method": "POST",
+      "action": "http://jigecha.kr/kwa-sch_total",
+      "fields": [
+        {
+          "name": "board",
+          "tag": "input",
+          "type": "hidden",
+          "value": "board",
+          "label": ""
+        },
+        {
+          "name": "flag",
+          "tag": "input",
+          "type": "hidden",
+          "value": "jigecha.kr",
+          "label": ""
+        },
+        {
+          "name": "http_referer",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "after_db_script",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "after_db_msg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "Q_STRING",
+          "tag": "input",
+          "type": "hidden",
+          "value": "design_file=sell_jigecha.php",
+          "label": ""
+        },
+        {
+          "name": "P_SELF",
+          "tag": "input",
+          "type": "hidden",
+          "value": "insiter.php",
+          "label": ""
+        },
+        {
+          "name": "VG_live_code",
+          "tag": "input",
+          "type": "hidden",
+          "value": "6512bd43d9caa6e02c990b0a82652dca",
+          "label": ""
+        },
+        {
+          "name": "page_dfg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "search_value",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        }
+      ],
+      "text_sample": "검색 폼"
+    },
+    {
+      "index": 2,
+      "method": "POST",
+      "action": "http://jigecha.kr/member/login_process.php",
+      "fields": [
+        {
+          "name": "after_db_script",
+          "tag": "input",
+          "type": "hidden",
+          "value": "%SELF%",
+          "label": ""
+        },
+        {
+          "name": "after_db_msg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "flag",
+          "tag": "input",
+          "type": "hidden",
+          "value": "jigecha.kr",
+          "label": ""
+        },
+        {
+          "name": "Q_STRING",
+          "tag": "input",
+          "type": "hidden",
+          "value": "design_file=sell_jigecha.php",
+          "label": ""
+        },
+        {
+          "name": "proc_mode",
+          "tag": "input",
+          "type": "hidden",
+          "value": "login",
+          "label": ""
+        },
+        {
+          "name": "P_SELF",
+          "tag": "input",
+          "type": "hidden",
+          "value": "insiter.php",
+          "label": ""
+        },
+        {
+          "name": "VG_live_code",
+          "tag": "input",
+          "type": "hidden",
+          "value": "a3f390d88e4c41f2747bfa2f1b5f87db",
+          "label": ""
+        },
+        {
+          "name": "page_dfg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "user_id",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "user_passwd",
+          "tag": "input",
+          "type": "password",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "submit_OK",
+          "tag": "input",
+          "type": "submit",
+          "value": "로그인",
+          "label": ""
+        },
+        {
+          "name": "save_user_id",
+          "tag": "input",
+          "type": "checkbox",
+          "value": "Y",
+          "label": ""
+        },
+        {
+          "name": "save_user_passwd",
+          "tag": "input",
+          "type": "checkbox",
+          "value": "Y",
+          "label": ""
+        }
+      ],
+      "text_sample": "MEMBER LOGIN 아이디 비밀번호 아이디 저장 비밀번호 저장 회원가입 아이디/비밀번호찾기 소셜 네트워크 를 통한 간편 로그인"
+    },
+    {
+      "index": 3,
+      "method": "POST",
+      "action": "http://jigecha.kr/board/article_write.php",
+      "fields": [
+        {
+          "name": "board",
+          "tag": "input",
+          "type": "hidden",
+          "value": "jigecha_consult",
+          "label": ""
+        },
+        {
+          "name": "flag",
+          "tag": "input",
+          "type": "hidden",
+          "value": "jigecha.kr",
+          "label": ""
+        },
+        {
+          "name": "http_referer",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "after_db_script",
+          "tag": "input",
+          "type": "hidden",
+          "value": "%HOME%",
+          "label": ""
+        },
+        {
+          "name": "after_db_msg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "접수되셨습니다. 감사합니다.",
+          "label": ""
+        },
+        {
+          "name": "is_cpy_article",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "cp_article_num",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "cp_article_file",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "Q_STRING",
+          "tag": "input",
+          "type": "hidden",
+          "value": "design_file=sell_jigecha.php",
+          "label": ""
+        },
+        {
+          "name": "P_SELF",
+          "tag": "input",
+          "type": "hidden",
+          "value": "insiter.php",
+          "label": ""
+        },
+        {
+          "name": "VG_live_code",
+          "tag": "input",
+          "type": "hidden",
+          "value": "aab3238922bcc25a6f606eb525ffdc56",
+          "label": ""
+        },
+        {
+          "name": "page_dfg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "writer_name",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "phone_2",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "category_1",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "A",
+              "text": "신차/구매상담"
+            },
+            {
+              "value": "B",
+              "text": "임대/렌탈상담"
+            },
+            {
+              "value": "C",
+              "text": "지게차타이어상담"
+            },
+            {
+              "value": "D",
+              "text": "지게차배터리상담"
+            },
+            {
+              "value": "E",
+              "text": "대리점상담"
+            }
+          ]
+        },
+        {
+          "name": "comment_1",
+          "tag": "textarea",
+          "type": "",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "passwd",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "chk_person",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "insiter_agree_315",
+          "tag": "input",
+          "type": "checkbox",
+          "value": "Y",
+          "label": ""
+        },
+        {
+          "name": "submit_OK",
+          "tag": "input",
+          "type": "submit",
+          "value": "무료상담 신청하기",
+          "label": ""
+        },
+        {
+          "name": "subject",
+          "tag": "input",
+          "type": "hidden",
+          "value": "빠른상담신청이접수되었습니다.",
+          "label": ""
+        },
+        {
+          "name": "is_private",
+          "tag": "input",
+          "type": "hidden",
+          "value": "Y",
+          "label": ""
+        },
+        {
+          "name": "category_6",
+          "tag": "input",
+          "type": "hidden",
+          "value": "A",
+          "label": ""
+        },
+        {
+          "name": "T_insiter_join_agree",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        }
+      ],
+      "text_sample": "무료상담신청 신차/구매상담 임대/렌탈상담 지게차타이어상담 지게차배터리상담 대리점상담 개인정보처리방침동의 개인정보처리방침 보기 1599-9194 월~금요일 : 09:00~ 18:00 주말,공휴일 휴무"
+    },
+    {
+      "index": 4,
+      "method": "POST",
+      "action": "http://jigecha.kr/kwa-sell_jigecha",
+      "fields": [
+        {
+          "name": "board",
+          "tag": "input",
+          "type": "hidden",
+          "value": "sell_jigecha",
+          "label": ""
+        },
+        {
+          "name": "flag",
+          "tag": "input",
+          "type": "hidden",
+          "value": "jigecha.kr",
+          "label": ""
+        },
+        {
+          "name": "http_referer",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "after_db_script",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "after_db_msg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "Q_STRING",
+          "tag": "input",
+          "type": "hidden",
+          "value": "design_file=sell_jigecha.php",
+          "label": ""
+        },
+        {
+          "name": "P_SELF",
+          "tag": "input",
+          "type": "hidden",
+          "value": "insiter.php",
+          "label": ""
+        },
+        {
+          "name": "VG_live_code",
+          "tag": "input",
+          "type": "hidden",
+          "value": "35f4a8d465e6e1edc05f3d8ab658c551",
+          "label": ""
+        },
+        {
+          "name": "page_dfg",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "SCH_category_1",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "onectg_tmp_category_1",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": ":: 제조사 ::"
+            },
+            {
+              "value": "1001",
+              "text": "타이탄"
+            },
+            {
+              "value": "1002",
+              "text": "CROWN"
+            },
+            {
+              "value": "1003",
+              "text": "KOMATSU"
+            },
+            {
+              "value": "1004",
+              "text": "Maximal"
+            },
+            {
+              "value": "1005",
+              "text": "MITSUBISHI"
+            },
+            {
+              "value": "1006",
+              "text": "NICHIYU"
+            },
+            {
+              "value": "1007",
+              "text": "NISSAN"
+            },
+            {
+              "value": "1008",
+              "text": "SHINKO"
+            },
+            {
+              "value": "1009",
+              "text": "SUMITOMO"
+            },
+            {
+              "value": "1010",
+              "text": "TCM"
+            },
+            {
+              "value": "1011",
+              "text": "TOYOTA"
+            }
+          ]
+        },
+        {
+          "name": "SCH_category_4",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": ":: 차량형식 ::"
+            },
+            {
+              "value": "A",
+              "text": "디젤식"
+            },
+            {
+              "value": "C",
+              "text": "전동좌식"
+            },
+            {
+              "value": "D",
+              "text": "전동입식"
+            },
+            {
+              "value": "Z",
+              "text": "기타"
+            }
+          ]
+        },
+        {
+          "name": "SCH_category_3",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": ":: 톤수선택 ::"
+            },
+            {
+              "value": "01",
+              "text": "0.5톤"
+            },
+            {
+              "value": "59",
+              "text": "0.7톤"
+            },
+            {
+              "value": "60",
+              "text": "0.9톤"
+            },
+            {
+              "value": "02",
+              "text": "1톤"
+            },
+            {
+              "value": "03",
+              "text": "1.25톤"
+            },
+            {
+              "value": "04",
+              "text": "1.3톤"
+            },
+            {
+              "value": "05",
+              "text": "1.4톤"
+            },
+            {
+              "value": "06",
+              "text": "1.5톤"
+            },
+            {
+              "value": "61",
+              "text": "1.6톤"
+            },
+            {
+              "value": "07",
+              "text": "1.8톤"
+            },
+            {
+              "value": "08",
+              "text": "2톤"
+            }
+          ]
+        },
+        {
+          "name": "SCH_sido",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": ":: 시도 ::"
+            },
+            {
+              "value": "강원도",
+              "text": "강원도"
+            },
+            {
+              "value": "경기도",
+              "text": "경기도"
+            },
+            {
+              "value": "경상남도",
+              "text": "경상남도"
+            },
+            {
+              "value": "경상북도",
+              "text": "경상북도"
+            },
+            {
+              "value": "광주광역시",
+              "text": "광주광역시"
+            },
+            {
+              "value": "대구광역시",
+              "text": "대구광역시"
+            },
+            {
+              "value": "대전광역시",
+              "text": "대전광역시"
+            },
+            {
+              "value": "부산광역시",
+              "text": "부산광역시"
+            },
+            {
+              "value": "서울특별시",
+              "text": "서울특별시"
+            },
+            {
+              "value": "세종특별자치시",
+              "text": "세종특별자치시"
+            },
+            {
+              "value": "울산광역시",
+              "text": "울산광역시"
+            }
+          ]
+        },
+        {
+          "name": "SCH_gugun",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": ":: 구군 ::"
+            }
+          ]
+        },
+        {
+          "name": "SCH_open_date_1_year",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "년도"
+            },
+            {
+              "value": "1985년",
+              "text": "1985년"
+            },
+            {
+              "value": "1986년",
+              "text": "1986년"
+            },
+            {
+              "value": "1987년",
+              "text": "1987년"
+            },
+            {
+              "value": "1988년",
+              "text": "1988년"
+            },
+            {
+              "value": "1989년",
+              "text": "1989년"
+            },
+            {
+              "value": "1990년",
+              "text": "1990년"
+            },
+            {
+              "value": "1991년",
+              "text": "1991년"
+            },
+            {
+              "value": "1992년",
+              "text": "1992년"
+            },
+            {
+              "value": "1993년",
+              "text": "1993년"
+            },
+            {
+              "value": "1994년",
+              "text": "1994년"
+            },
+            {
+              "value": "1995년",
+              "text": "1995년"
+            }
+          ]
+        },
+        {
+          "name": "SCH_open_date_1_month",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "월"
+            },
+            {
+              "value": "01월",
+              "text": "01월"
+            },
+            {
+              "value": "02월",
+              "text": "02월"
+            },
+            {
+              "value": "03월",
+              "text": "03월"
+            },
+            {
+              "value": "04월",
+              "text": "04월"
+            },
+            {
+              "value": "05월",
+              "text": "05월"
+            },
+            {
+              "value": "06월",
+              "text": "06월"
+            },
+            {
+              "value": "07월",
+              "text": "07월"
+            },
+            {
+              "value": "08월",
+              "text": "08월"
+            },
+            {
+              "value": "09월",
+              "text": "09월"
+            },
+            {
+              "value": "10월",
+              "text": "10월"
+            },
+            {
+              "value": "11월",
+              "text": "11월"
+            }
+          ]
+        },
+        {
+          "name": "SCH_open_date_1_DSF",
+          "tag": "input",
+          "type": "hidden",
+          "value": "T",
+          "label": ""
+        },
+        {
+          "name": "SCH_open_date_2_year",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "년도"
+            },
+            {
+              "value": "1985년",
+              "text": "1985년"
+            },
+            {
+              "value": "1986년",
+              "text": "1986년"
+            },
+            {
+              "value": "1987년",
+              "text": "1987년"
+            },
+            {
+              "value": "1988년",
+              "text": "1988년"
+            },
+            {
+              "value": "1989년",
+              "text": "1989년"
+            },
+            {
+              "value": "1990년",
+              "text": "1990년"
+            },
+            {
+              "value": "1991년",
+              "text": "1991년"
+            },
+            {
+              "value": "1992년",
+              "text": "1992년"
+            },
+            {
+              "value": "1993년",
+              "text": "1993년"
+            },
+            {
+              "value": "1994년",
+              "text": "1994년"
+            },
+            {
+              "value": "1995년",
+              "text": "1995년"
+            }
+          ]
+        },
+        {
+          "name": "SCH_open_date_2_month",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "월"
+            },
+            {
+              "value": "01월",
+              "text": "01월"
+            },
+            {
+              "value": "02월",
+              "text": "02월"
+            },
+            {
+              "value": "03월",
+              "text": "03월"
+            },
+            {
+              "value": "04월",
+              "text": "04월"
+            },
+            {
+              "value": "05월",
+              "text": "05월"
+            },
+            {
+              "value": "06월",
+              "text": "06월"
+            },
+            {
+              "value": "07월",
+              "text": "07월"
+            },
+            {
+              "value": "08월",
+              "text": "08월"
+            },
+            {
+              "value": "09월",
+              "text": "09월"
+            },
+            {
+              "value": "10월",
+              "text": "10월"
+            },
+            {
+              "value": "11월",
+              "text": "11월"
+            }
+          ]
+        },
+        {
+          "name": "SCH_open_date_2_DSF",
+          "tag": "input",
+          "type": "hidden",
+          "value": "T",
+          "label": ""
+        },
+        {
+          "name": "SCH_etc_3_min",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "SCH_etc_3_max",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "search_value",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "submit_OK",
+          "tag": "input",
+          "type": "submit",
+          "value": "검색",
+          "label": ""
+        }
+      ],
+      "text_sample": "중고지게차 가격비교 서비스 디젤식지게차 전동식지게차 제조회사 :: 제조사 :: 타이탄 CROWN KOMATSU Maximal MITSUBISHI NICHIYU NISSAN SHINKO SUMITOMO TCM TOYOTA BYD 대우 동명 삼성 수성 클라크 현대 삼익하이코 두산 캐터필러 EP NYK 한라 기타 (주)홍진기업 국제농기계 Skyjack HANGC"
+    }
+  ],
+  "links": {
+    "top_paths": [
+      {
+        "path": "/kwa-sell_jigecha",
+        "count": 49,
+        "samples": [
+          {
+            "text": "지게차코리아 즐겨찾기",
+            "url": "http://jigecha.kr/kwa-sell_jigecha#;",
+            "params": {}
+          },
+          {
+            "text": "중고지게차매매",
+            "url": "http://jigecha.kr/kwa-sell_jigecha",
+            "params": {}
+          },
+          {
+            "text": "전동중고지게차 최저가 판매",
+            "url": "http://jigecha.kr/kwa-sell_jigecha",
+            "params": {}
+          },
+          {
+            "text": "전차종 매매가 공개, 중고지게차 고가매입",
+            "url": "http://jigecha.kr/kwa-sell_jigecha",
+            "params": {}
+          },
+          {
+            "text": "중고지게차매매",
+            "url": "http://jigecha.kr/kwa-sell_jigecha",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-parts",
+        "count": 11,
+        "samples": [
+          {
+            "text": "부품",
+            "url": "http://jigecha.kr/kwa-parts",
+            "params": {}
+          },
+          {
+            "text": "TOYOTA부품",
+            "url": "http://jigecha.kr/kwa-parts?category_1=A",
+            "params": {
+              "category_1": [
+                "A"
+              ]
+            }
+          },
+          {
+            "text": "NICHIYU부품",
+            "url": "http://jigecha.kr/kwa-parts?category_1=B",
+            "params": {
+              "category_1": [
+                "B"
+              ]
+            }
+          },
+          {
+            "text": "KOMATSU부품",
+            "url": "http://jigecha.kr/kwa-parts?category_1=C",
+            "params": {
+              "category_1": [
+                "C"
+              ]
+            }
+          },
+          {
+            "text": "TCM부품",
+            "url": "http://jigecha.kr/kwa-parts?category_1=D",
+            "params": {
+              "category_1": [
+                "D"
+              ]
+            }
+          },
+          {
+            "text": "다운트렌스",
+            "url": "http://jigecha.kr/kwa-parts?category_1=E",
+            "params": {
+              "category_1": [
+                "E"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/kwa-jigecha_rental",
+        "count": 8,
+        "samples": [
+          {
+            "text": "지게차임대/렌탈",
+            "url": "http://jigecha.kr/kwa-jigecha_rental",
+            "params": {}
+          },
+          {
+            "text": "디젤식",
+            "url": "http://jigecha.kr/kwa-jigecha_rental?category_1=A",
+            "params": {
+              "category_1": [
+                "A"
+              ]
+            }
+          },
+          {
+            "text": "전동좌식",
+            "url": "http://jigecha.kr/kwa-jigecha_rental?category_1=C",
+            "params": {
+              "category_1": [
+                "C"
+              ]
+            }
+          },
+          {
+            "text": "전동입식",
+            "url": "http://jigecha.kr/kwa-jigecha_rental?category_1=D",
+            "params": {
+              "category_1": [
+                "D"
+              ]
+            }
+          },
+          {
+            "text": "기타",
+            "url": "http://jigecha.kr/kwa-jigecha_rental?category_1=E",
+            "params": {
+              "category_1": [
+                "E"
+              ]
+            }
+          },
+          {
+            "text": "지게차 임대/렌탈 서비스",
+            "url": "http://jigecha.kr/kwa-jigecha_rental",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-tire",
+        "count": 7,
+        "samples": [
+          {
+            "text": "타이어",
+            "url": "http://jigecha.kr/kwa-tire",
+            "params": {}
+          },
+          {
+            "text": "솔리드",
+            "url": "http://jigecha.kr/kwa-tire?category_1=A",
+            "params": {
+              "category_1": [
+                "A"
+              ]
+            }
+          },
+          {
+            "text": "공기타이어",
+            "url": "http://jigecha.kr/kwa-tire?category_1=B",
+            "params": {
+              "category_1": [
+                "B"
+              ]
+            }
+          },
+          {
+            "text": "우레탄",
+            "url": "http://jigecha.kr/kwa-tire?category_1=C",
+            "params": {
+              "category_1": [
+                "C"
+              ]
+            }
+          },
+          {
+            "text": "지게차타이어 파격할인~~!!",
+            "url": "http://jigecha.kr/kwa-tire",
+            "params": {}
+          },
+          {
+            "text": "지게차타이어 4짝 교환시 최대 50만원 절감 가능",
+            "url": "http://jigecha.kr/kwa-tire",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-logistics",
+        "count": 7,
+        "samples": [
+          {
+            "text": "물류장비",
+            "url": "http://jigecha.kr/kwa-logistics",
+            "params": {}
+          },
+          {
+            "text": "전동스태커",
+            "url": "http://jigecha.kr/kwa-logistics?category_1=A",
+            "params": {
+              "category_1": [
+                "A"
+              ]
+            }
+          },
+          {
+            "text": "파렛트트럭",
+            "url": "http://jigecha.kr/kwa-logistics?category_1=B",
+            "params": {
+              "category_1": [
+                "B"
+              ]
+            }
+          },
+          {
+            "text": "전동좌식",
+            "url": "http://jigecha.kr/kwa-logistics?category_1=C",
+            "params": {
+              "category_1": [
+                "C"
+              ]
+            }
+          },
+          {
+            "text": "전동입식",
+            "url": "http://jigecha.kr/kwa-logistics?category_1=D",
+            "params": {
+              "category_1": [
+                "D"
+              ]
+            }
+          },
+          {
+            "text": "오더피커",
+            "url": "http://jigecha.kr/kwa-logistics?category_1=E",
+            "params": {
+              "category_1": [
+                "E"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/kwa-sell_new",
+        "count": 5,
+        "samples": [
+          {
+            "text": "신차판매",
+            "url": "http://jigecha.kr/kwa-sell_new",
+            "params": {}
+          },
+          {
+            "text": "전동좌식 지게차",
+            "url": "http://jigecha.kr/kwa-sell_new?category_1=C",
+            "params": {
+              "category_1": [
+                "C"
+              ]
+            }
+          },
+          {
+            "text": "입식(MIMA) 지게차",
+            "url": "http://jigecha.kr/kwa-sell_new?category_1=D",
+            "params": {
+              "category_1": [
+                "D"
+              ]
+            }
+          },
+          {
+            "text": "기타",
+            "url": "http://jigecha.kr/kwa-sell_new?category_1=E",
+            "params": {
+              "category_1": [
+                "E"
+              ]
+            }
+          },
+          {
+            "text": "신차판매",
+            "url": "http://jigecha.kr/kwa-sell_new",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-jigecha_consult_w",
+        "count": 5,
+        "samples": [
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-jigecha_consult_w?category_1=A",
+            "params": {
+              "category_1": [
+                "A"
+              ]
+            }
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-jigecha_consult_w?category_1=B",
+            "params": {
+              "category_1": [
+                "B"
+              ]
+            }
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-jigecha_consult_w?category_1=C",
+            "params": {
+              "category_1": [
+                "C"
+              ]
+            }
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-jigecha_consult_w?category_1=D",
+            "params": {
+              "category_1": [
+                "D"
+              ]
+            }
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-jigecha_consult_w?category_1=E",
+            "params": {
+              "category_1": [
+                "E"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/kwa-sell_jigecha_v-8508",
+        "count": 4,
+        "samples": [
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8508",
+            "params": {}
+          },
+          {
+            "text": "도요다 전동입식..",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8508",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8508",
+            "params": {}
+          },
+          {
+            "text": "도요다 전동입식 1.5톤 중고 지게차 (2013년식)",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8508",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-sell_jigecha_v-8507",
+        "count": 4,
+        "samples": [
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8507",
+            "params": {}
+          },
+          {
+            "text": "도요다 전동입식..",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8507",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8507",
+            "params": {}
+          },
+          {
+            "text": "도요다 전동입식 1.5톤 중고 지게차 (2014년식)",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8507",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-sell_jigecha_v-8493",
+        "count": 4,
+        "samples": [
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8493",
+            "params": {}
+          },
+          {
+            "text": "현대 3.3톤 디젤..",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8493",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8493",
+            "params": {}
+          },
+          {
+            "text": "현대 3.3톤 디젤지게차 33D-9 자동발 / 2015년식 / 1650만..",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-8493",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-sell_jigecha_v-7106",
+        "count": 4,
+        "samples": [
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-7106",
+            "params": {}
+          },
+          {
+            "text": "[도요다]FBH25",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-7106",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-7106",
+            "params": {}
+          },
+          {
+            "text": "[도요다]FBH25",
+            "url": "http://jigecha.kr/kwa-sell_jigecha_v-7106",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-login",
+        "count": 3,
+        "samples": [
+          {
+            "text": "로그인",
+            "url": "http://jigecha.kr/kwa-login?prev_url=%252Fkwa-sell_jigecha",
+            "params": {
+              "prev_url": [
+                "%2Fkwa-sell_jigecha"
+              ]
+            }
+          },
+          {
+            "text": "매물등록",
+            "url": "http://jigecha.kr/kwa-login?prev_url=%252Fkwa-sell_jigecha",
+            "params": {
+              "prev_url": [
+                "%2Fkwa-sell_jigecha"
+              ]
+            }
+          },
+          {
+            "text": "매물등록",
+            "url": "http://jigecha.kr/kwa-login?prev_url=%252Fkwa-sell_jigecha",
+            "params": {
+              "prev_url": [
+                "%2Fkwa-sell_jigecha"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/kwa-battery",
+        "count": 3,
+        "samples": [
+          {
+            "text": "배터리",
+            "url": "http://jigecha.kr/kwa-battery",
+            "params": {}
+          },
+          {
+            "text": "리튬인산철배터리",
+            "url": "http://jigecha.kr/kwa-battery?category_1=B",
+            "params": {
+              "category_1": [
+                "B"
+              ]
+            }
+          },
+          {
+            "text": "배터리",
+            "url": "http://jigecha.kr/kwa-battery",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-driver",
+        "count": 3,
+        "samples": [
+          {
+            "text": "구인/구직",
+            "url": "http://jigecha.kr/kwa-driver",
+            "params": {}
+          },
+          {
+            "text": "운전기사채용",
+            "url": "http://jigecha.kr/kwa-driver",
+            "params": {}
+          },
+          {
+            "text": "구인/구직",
+            "url": "http://jigecha.kr/kwa-driver",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/kwa-equipment",
+        "count": 3,
+        "samples": [
+          {
+            "text": "기타,",
+            "url": "http://jigecha.kr/kwa-equipment",
+            "params": {}
+          },
+          {
+            "text": "주변기기판매",
+            "url": "http://jigecha.kr/kwa-equipment",
+            "params": {}
+          },
+          {
+            "text": "기타,",
+            "url": "http://jigecha.kr/kwa-equipment",
+            "params": {}
+          }
+        ]
+      }
+    ],
+    "param_frequency": {
+      "category_1": 30,
+      "SCH_sido": 16,
+      "PB_1483420906": 12,
+      "prev_url": 3,
+      "design_file": 3,
+      "SCH_category_4": 2,
+      "SI_F_open_date": 2,
+      "SI_F_category_3": 2,
+      "SI_F_category_4": 2,
+      "SI_F_subject": 2,
+      "SI_F_etc_3": 2,
+      "OTSKIN": 1,
+      "pc": 1
+    },
+    "category_link_samples": [
+      {
+        "text": "디젤식지게차",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?SCH_category_4=A",
+        "params": {
+          "SCH_category_4": [
+            "A"
+          ]
+        }
+      },
+      {
+        "text": "전동식지게차",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?SCH_category_4=C+D",
+        "params": {
+          "SCH_category_4": [
+            "C D"
+          ]
+        }
+      }
+    ],
+    "pagination_link_samples": [
+      {
+        "text": "2",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=2",
+        "params": {
+          "PB_1483420906": [
+            "2"
+          ]
+        }
+      },
+      {
+        "text": "3",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=3",
+        "params": {
+          "PB_1483420906": [
+            "3"
+          ]
+        }
+      },
+      {
+        "text": "4",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=4",
+        "params": {
+          "PB_1483420906": [
+            "4"
+          ]
+        }
+      },
+      {
+        "text": "5",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=5",
+        "params": {
+          "PB_1483420906": [
+            "5"
+          ]
+        }
+      },
+      {
+        "text": "6",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=6",
+        "params": {
+          "PB_1483420906": [
+            "6"
+          ]
+        }
+      },
+      {
+        "text": "7",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=7",
+        "params": {
+          "PB_1483420906": [
+            "7"
+          ]
+        }
+      },
+      {
+        "text": "8",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=8",
+        "params": {
+          "PB_1483420906": [
+            "8"
+          ]
+        }
+      },
+      {
+        "text": "9",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=9",
+        "params": {
+          "PB_1483420906": [
+            "9"
+          ]
+        }
+      },
+      {
+        "text": "10",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=10",
+        "params": {
+          "PB_1483420906": [
+            "10"
+          ]
+        }
+      },
+      {
+        "text": "",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=2",
+        "params": {
+          "PB_1483420906": [
+            "2"
+          ]
+        }
+      },
+      {
+        "text": "",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=11",
+        "params": {
+          "PB_1483420906": [
+            "11"
+          ]
+        }
+      },
+      {
+        "text": "",
+        "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=264",
+        "params": {
+          "PB_1483420906": [
+            "264"
+          ]
+        }
+      }
+    ],
+    "detail_path_frequency": {
+      "/kwa-sell_jigecha_v-8508": 4,
+      "/kwa-sell_jigecha_v-8507": 4,
+      "/kwa-sell_jigecha_v-8493": 4,
+      "/kwa-sell_jigecha_v-7106": 4,
+      "/kwa-sell_jigecha_v-8506": 2,
+      "/kwa-sell_jigecha_v-7108": 2,
+      "/kwa-sell_jigecha_v-6883": 2,
+      "/kwa-sell_jigecha_v-7163": 2,
+      "/kwa-sell_jigecha_v-7296": 2,
+      "/kwa-sell_jigecha_v-7273": 2,
+      "/kwa-sell_jigecha_v-7197": 2,
+      "/kwa-sell_jigecha_v-7174": 2,
+      "/kwa-sell_jigecha_v-7173": 2,
+      "/kwa-sell_jigecha_v-6892": 2,
+      "/kwa-sell_jigecha_v-6891": 2
+    }
+  },
+  "scripts": {
+    "script_srcs_sample": [
+      "http://jigecha.kr/include/jquery/jquery.js",
+      "http://jigecha.kr/include/jquery/jquery-ui.js",
+      "http://jigecha.kr/include/jquery/jquery-abuilder.js",
+      "http://jigecha.kr/include/jquery/jquery-autosize-min.js",
+      "http://jigecha.kr/template/BUILDER_core8/program/gnb.js",
+      "http://jigecha.kr/include/js/javascript.js",
+      "https://www.googletagmanager.com/gtag/js?id=AW-952216388",
+      "http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ],
+    "inline_endpoint_hints": [
+      "http://jigecha.kr/ + box_title;$.getScript(script_src);} else {var reset_obj = eval(",
+      "http://jigecha.kr/ + vars.v.chi, vars.v.frm).val(vars.v.vh + vars.obj_chg.val());/ 마지막 선택상자 아니더라도 다음이 없는 경우 값 설정}});});function TCBOARD_board_LIST_indexIheaderDoTtphp14675_submit(obj, button_type) {errfld = ",
+      "http://jigecha.kr/) {if (form.target == ",
+      "http://jigecha.kr/);return false;}}function TCBOARD_sell_jigecha_LIST_index219_submit(obj, button_type) {errfld = ",
+      "http://jigecha.kr/, 28, 0);function SYSTEM_vote_article(obj, form, board, serial_num, target, q_str, r_url, chg_values, after_script, after_msg, frm_attr, alert_msg) {if (alert_msg == ",
+      "http://jigecha.kr/, board, serial_num, target, chg_values, q_str, after_script, after_msg, frm_attr, ",
+      "http://jigecha.kr/;submit_direct_ajax(obj, ",
+      "http://jigecha.kr/]);if (form.target == ",
+      "http://jigecha.kr/get",
+      "http://jigecha.kr/kwa-sell_jigecha#loading_img",
+      "http://jigecha.kr/search_item",
+      "http://jigecha.kr/search_operator",
+      "http://jigecha.kr/search_value",
+      "http://jigecha.kr/select[-cll-id=ctg_link_TCBOARD_sell_jigecha_LIST_index219_category_1]",
+      "http://jigecha.kr/};/ 새로고침 후에도 ajax 로딩 영역을 유지하기 위한 변수var post_to_get_qs = "
+    ],
+    "inline_script_count": 1,
+    "external_script_count": 8
+  },
+  "page_samples": [
+    {
+      "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=2",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 83706,
+      "title": "중고지게차매매 > 지게차코리아"
+    },
+    {
+      "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=3",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 79752,
+      "title": "중고지게차매매 > 지게차코리아"
+    },
+    {
+      "url": "http://jigecha.kr/kwa-sell_jigecha?PB_1483420906=4",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 79745,
+      "title": "중고지게차매매 > 지게차코리아"
+    },
+    {
+      "url": "http://jigecha.kr/kwa-sell_jigecha?SCH_category_4=A",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 81057,
+      "title": "중고지게차매매 > 지게차코리아"
+    },
+    {
+      "url": "http://jigecha.kr/kwa-sell_jigecha?SCH_category_4=C+D",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 96433,
+      "title": "중고지게차매매 > 지게차코리아"
+    }
+  ]
+}

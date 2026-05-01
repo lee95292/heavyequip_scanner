@@ -1,0 +1,20 @@
+{
+  "site": "BAND www.band.us/band/69640559",
+  "slug": "band_69640559",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "GET",
+  "request_url": "https://api-kr.band.us/v2.0.0/get_posts_and_announcements?ts=1777562655507&band_no=69640559&resolution_type=4&order_by=created_at_desc",
+  "display_url": "https://api-kr.band.us/v2.0.0/get_posts_and_announcements?ts={TIMESTAMP_MS}&band_no=69640559&resolution_type=4&order_by=created_at_desc",
+  "status": 200,
+  "final_url": "https://api-kr.band.us/v2.0.0/get_posts_and_announcements?ts=1777562655507&band_no=69640559&resolution_type=4&order_by=created_at_desc",
+  "content_type": "application/json;charset=UTF-8",
+  "body_length": 71,
+  "response_body_file": "response_body.json",
+  "error": null,
+  "notes": [
+    "Open API `access_token`이 아니라 웹 세션 쿠키와 서명 헤더가 필요한 내부 API입니다.",
+    "민감한 쿠키/헤더 값은 저장하지 않고 환경변수 placeholder로만 표기합니다.",
+    "샘플 응답은 비인증 호출 결과이므로 성공 응답 스키마가 아니라 인증 실패 응답일 수 있습니다."
+  ],
+  "sensitive_values_stored": false
+}

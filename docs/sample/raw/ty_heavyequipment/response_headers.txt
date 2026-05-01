@@ -1,0 +1,12 @@
+HTTP status: 200
+Server: openresty
+Date: Thu, 30 Apr 2026 16:24:04 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: close
+Vary: Accept-Encoding
+Set-Cookie: PHPSESSID=670a56215db88ae8034485deb534eca1; path=/; secure; HttpOnly
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Link: <https://ty-heavyequipment.com/?p=273>; rel=shortlink
