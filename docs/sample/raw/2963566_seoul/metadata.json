@@ -1,0 +1,18 @@
+{
+  "site": "서울중기매매상사",
+  "slug": "2963566_seoul",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "GET",
+  "request_url": "https://www.2963566.com/bbs/board.php?bo_table=m20011&page=1",
+  "display_url": "https://www.2963566.com/bbs/board.php?bo_table=m20011&page=1",
+  "status": 200,
+  "final_url": "https://www.2963566.com/bbs/board.php?bo_table=m20011&page=1",
+  "content_type": "text/html; charset=utf-8",
+  "body_length": 328639,
+  "response_body_file": "response_body.html",
+  "error": null,
+  "notes": [
+    "그누보드 게시판 구조이며 상세는 `wr_id`로 구분됩니다."
+  ],
+  "sensitive_values_stored": false
+}

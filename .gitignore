@@ -2,3 +2,4 @@ crawl/data/parsed/green_heavy/chunks/*
 crawl/data/parsed/*
 crawl/site/__pycache__/*
 crawl/data/logs/*
+crawl/__pycache__/*

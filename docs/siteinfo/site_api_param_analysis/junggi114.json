@@ -1,0 +1,32 @@
+{
+  "site": "중기114",
+  "origin": "https://xn--114-vg9le98h.com",
+  "canonical_origin": "https://중기114.com",
+  "checked_at": "2026-05-01",
+  "count_estimate": 300,
+  "response_type": "HTML 목록",
+  "base_endpoint": "https://중기114.com/product",
+  "method": "GET",
+  "request_contract": {
+    "likely_category_params": ["mid", "category"],
+    "likely_pagination_params": ["page"],
+    "likely_search_filter_params": [
+      "is_search",
+      "extra_vars4",
+      "extra_vars4-2",
+      "extra_vars5",
+      "extra_vars6",
+      "extra_vars8",
+      "extra_vars10"
+    ],
+    "likely_detail_id_params": ["document_srl"],
+    "period_params": [],
+    "year_range_params": ["extra_vars4", "extra_vars4-2"]
+  },
+  "sample_request": "https://중기114.com/?mid=product&is_search=true&category=238&extra_vars4=20200101&extra_vars4-2=20241231&extra_vars6=얀마&page=1",
+  "parse_notes": [
+    "목록 row의 data-doc-link에서 /product/{document_srl}를 추출합니다.",
+    "고정/추천 매물이 여러 페이지에 반복되므로 document_srl 기준 중복 제거가 필요합니다.",
+    "RSS/Atom은 최신 일부만 제공하므로 전체 수집에는 product 목록 페이지 순회가 필요합니다."
+  ]
+}

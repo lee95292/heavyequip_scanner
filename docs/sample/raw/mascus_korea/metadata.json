@@ -1,0 +1,18 @@
+{
+  "site": "Mascus Korea",
+  "slug": "mascus_korea",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "POST",
+  "request_url": "https://qhqraq9hm7.execute-api.eu-central-1.amazonaws.com/Search/SearchAssets",
+  "display_url": "https://qhqraq9hm7.execute-api.eu-central-1.amazonaws.com/Search/SearchAssets",
+  "status": 200,
+  "final_url": "https://qhqraq9hm7.execute-api.eu-central-1.amazonaws.com/Search/SearchAssets",
+  "content_type": "application/json; charset=utf-8",
+  "body_length": 10738,
+  "response_body_file": "response_body.json",
+  "error": null,
+  "notes": [
+    "샘플 응답 크기를 줄이기 위해 `pagesize=2`로 요청합니다."
+  ],
+  "sensitive_values_stored": false
+}

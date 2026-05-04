@@ -1,0 +1,1705 @@
+{
+  "site": {
+    "slug": "ty_heavyequipment",
+    "name": "태양중기매매상사",
+    "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18",
+    "count_estimate": 1522,
+    "platform_hosts": [
+      "ty-heavyequipment.com"
+    ]
+  },
+  "page": {
+    "requested_url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18",
+    "final_url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18",
+    "status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "bytes": 202598,
+    "title": "전체매물 보기 – 중장비매매 태양중기매매상사"
+  },
+  "request_contract": {
+    "base_endpoint": "https://ty-heavyequipment.com/taeyang_product_list/",
+    "current_query_params": {
+      "cat1": [
+        "18"
+      ]
+    },
+    "observed_param_names_ranked": [
+      "cat1",
+      "cat2",
+      "id",
+      "taeyang_custom",
+      "smaker",
+      "syear",
+      "eyear",
+      "stx",
+      "paged",
+      "proc",
+      "goods_pid",
+      "gubun",
+      "point",
+      "period",
+      "pay_point",
+      "redir",
+      "sel_period",
+      "log",
+      "pwd",
+      "rememberme",
+      "user_id",
+      "action"
+    ],
+    "response_type": "HTML 목록 + JS/Ajax 단서",
+    "likely_pagination_params": [
+      "paged"
+    ],
+    "likely_category_params": [
+      "cat1",
+      "cat2"
+    ],
+    "likely_search_filter_params": [
+      "smaker",
+      "syear",
+      "eyear",
+      "stx"
+    ],
+    "likely_detail_id_params": [
+      "id"
+    ]
+  },
+  "forms": [
+    {
+      "index": 1,
+      "method": "GET",
+      "action": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18",
+      "fields": [
+        {
+          "name": "taeyang_custom",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "15",
+              "text": "15개씩 보기"
+            },
+            {
+              "value": "30",
+              "text": "30개씩 보기"
+            },
+            {
+              "value": "50",
+              "text": "50개씩 보기"
+            },
+            {
+              "value": "100",
+              "text": "100개씩 보기"
+            }
+          ]
+        }
+      ],
+      "text_sample": "15개씩 보기 30개씩 보기 50개씩 보기 100개씩 보기"
+    },
+    {
+      "index": 2,
+      "method": "GET",
+      "action": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18",
+      "fields": [
+        {
+          "name": "cat1",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "1차분류"
+            },
+            {
+              "value": "17",
+              "text": "펌프카/믹서트럭"
+            },
+            {
+              "value": "18",
+              "text": "굴착기/어태치부속"
+            },
+            {
+              "value": "19",
+              "text": "덤프트럭/셀프로다"
+            },
+            {
+              "value": "20",
+              "text": "지게차/하이랜더"
+            },
+            {
+              "value": "67",
+              "text": "압롤/진게/물차"
+            },
+            {
+              "value": "74",
+              "text": "카고/냉동/탑차"
+            },
+            {
+              "value": "22",
+              "text": "크레인/카고크레인"
+            },
+            {
+              "value": "21",
+              "text": "로더/도저/페이로더"
+            },
+            {
+              "value": "81",
+              "text": "피니셔/롤러"
+            },
+            {
+              "value": "84",
+              "text": "콤푸/드릴/항타기"
+            },
+            {
+              "value": "96",
+              "text": "크락샤/배차플랜트"
+            }
+          ]
+        },
+        {
+          "name": "cat2",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "2차분류"
+            },
+            {
+              "value": "27",
+              "text": "굴착기 1.3 ㎥ 이상"
+            },
+            {
+              "value": "28",
+              "text": "굴착기 1.0 ㎥ 이상"
+            },
+            {
+              "value": "29",
+              "text": "굴착기 0.4 ㎥ 이상"
+            },
+            {
+              "value": "30",
+              "text": "굴착기 0.3 ㎥ 이하"
+            },
+            {
+              "value": "31",
+              "text": "미니굴착기"
+            },
+            {
+              "value": "32",
+              "text": "굴착기타이어식"
+            },
+            {
+              "value": "33",
+              "text": "어태치먼트"
+            },
+            {
+              "value": "34",
+              "text": "기타차량"
+            },
+            {
+              "value": "35",
+              "text": "부속품"
+            }
+          ]
+        },
+        {
+          "name": "smaker",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "제조사"
+            }
+          ]
+        },
+        {
+          "name": "syear",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "최소년도"
+            },
+            {
+              "value": "2026",
+              "text": "2026년"
+            },
+            {
+              "value": "2025",
+              "text": "2025년"
+            },
+            {
+              "value": "2024",
+              "text": "2024년"
+            },
+            {
+              "value": "2023",
+              "text": "2023년"
+            },
+            {
+              "value": "2022",
+              "text": "2022년"
+            },
+            {
+              "value": "2021",
+              "text": "2021년"
+            },
+            {
+              "value": "2020",
+              "text": "2020년"
+            },
+            {
+              "value": "2019",
+              "text": "2019년"
+            },
+            {
+              "value": "2018",
+              "text": "2018년"
+            },
+            {
+              "value": "2017",
+              "text": "2017년"
+            },
+            {
+              "value": "2016",
+              "text": "2016년"
+            }
+          ]
+        },
+        {
+          "name": "eyear",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "최고년도"
+            },
+            {
+              "value": "2026",
+              "text": "2026년"
+            },
+            {
+              "value": "2025",
+              "text": "2025년"
+            },
+            {
+              "value": "2024",
+              "text": "2024년"
+            },
+            {
+              "value": "2023",
+              "text": "2023년"
+            },
+            {
+              "value": "2022",
+              "text": "2022년"
+            },
+            {
+              "value": "2021",
+              "text": "2021년"
+            },
+            {
+              "value": "2020",
+              "text": "2020년"
+            },
+            {
+              "value": "2019",
+              "text": "2019년"
+            },
+            {
+              "value": "2018",
+              "text": "2018년"
+            },
+            {
+              "value": "2017",
+              "text": "2017년"
+            },
+            {
+              "value": "2016",
+              "text": "2016년"
+            }
+          ]
+        },
+        {
+          "name": "stx",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        }
+      ],
+      "text_sample": "1차분류 펌프카/믹서트럭 굴착기/어태치부속 덤프트럭/셀프로다 지게차/하이랜더 압롤/진게/물차 카고/냉동/탑차 크레인/카고크레인 로더/도저/페이로더 피니셔/롤러 콤푸/드릴/항타기 크락샤/배차플랜트 기타건설기계 트렉터/농기계 2차분류 굴착기 1.3 ㎥ 이상 굴착기 1.0 ㎥ 이상 굴착기 0.4 ㎥ 이상 굴착기 0.3 ㎥ 이하 미니굴착기 굴착기타이어식 어태치먼트"
+    },
+    {
+      "index": 3,
+      "method": "POST",
+      "action": "https://ty-heavyequipment.com/taeyang_product_list/banner_pop2.html",
+      "fields": [
+        {
+          "name": "proc",
+          "tag": "input",
+          "type": "hidden",
+          "value": "1",
+          "label": ""
+        },
+        {
+          "name": "goods_pid",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "gubun",
+          "tag": "input",
+          "type": "hidden",
+          "value": "2",
+          "label": ""
+        },
+        {
+          "name": "point",
+          "tag": "input",
+          "type": "hidden",
+          "value": "0",
+          "label": ""
+        },
+        {
+          "name": "period",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "pay_point",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "redir",
+          "tag": "input",
+          "type": "hidden",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "sel_period",
+          "tag": "select",
+          "type": "",
+          "value": "",
+          "label": "",
+          "options_sample": [
+            {
+              "value": "",
+              "text": "선택해주세요"
+            },
+            {
+              "value": "1",
+              "text": "1일 (1,000p)"
+            },
+            {
+              "value": "2",
+              "text": "2일 (2,000p)"
+            },
+            {
+              "value": "3",
+              "text": "3일 (3,000p)"
+            },
+            {
+              "value": "4",
+              "text": "4일 (4,000p)"
+            },
+            {
+              "value": "5",
+              "text": "5일 (5,000p)"
+            },
+            {
+              "value": "6",
+              "text": "6일 (6,000p)"
+            },
+            {
+              "value": "7",
+              "text": "7일 (7,000p)"
+            },
+            {
+              "value": "8",
+              "text": "8일 (8,000p)"
+            },
+            {
+              "value": "9",
+              "text": "9일 (9,000p)"
+            },
+            {
+              "value": "10",
+              "text": "10일 (10,000p)"
+            },
+            {
+              "value": "11",
+              "text": "11일 (11,000p)"
+            }
+          ]
+        }
+      ],
+      "text_sample": "프라임 - 포인트 결제 보유포인트 0 p 기간 선택해주세요 1일 (1,000p) 2일 (2,000p) 3일 (3,000p) 4일 (4,000p) 5일 (5,000p) 6일 (6,000p) 7일 (7,000p) 8일 (8,000p) 9일 (9,000p) 10일 (10,000p) 11일 (11,000p) 12일 (12,000p) 13일 (13,000p) 14일"
+    },
+    {
+      "index": 4,
+      "method": "POST",
+      "action": "https://ty-heavyequipment.com/wp-login.php",
+      "fields": [
+        {
+          "name": "log",
+          "tag": "input",
+          "type": "text",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "pwd",
+          "tag": "input",
+          "type": "password",
+          "value": "",
+          "label": ""
+        },
+        {
+          "name": "rememberme",
+          "tag": "input",
+          "type": "checkbox",
+          "value": "forever",
+          "label": ""
+        }
+      ],
+      "text_sample": "아이디 비밀번호 아이디저장 로그인 카카오로 로그인 회원가입 | ID/비밀번호 찾기"
+    }
+  ],
+  "links": {
+    "top_paths": [
+      {
+        "path": "/taeyang_product_list/",
+        "count": 212,
+        "samples": [
+          {
+            "text": "콘텐츠로 건너뛰기",
+            "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18#content",
+            "params": {
+              "cat1": [
+                "18"
+              ]
+            }
+          },
+          {
+            "text": "전체매물보기",
+            "url": "https://ty-heavyequipment.com/taeyang_product_list/",
+            "params": {}
+          },
+          {
+            "text": "전체매물보기",
+            "url": "https://ty-heavyequipment.com/taeyang_product_list/",
+            "params": {}
+          },
+          {
+            "text": "펌프카/믹서트럭",
+            "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17",
+            "params": {
+              "cat1": [
+                "17"
+              ]
+            }
+          },
+          {
+            "text": "믹서트럭",
+            "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=23",
+            "params": {
+              "cat1": [
+                "17"
+              ],
+              "cat2": [
+                "23"
+              ]
+            }
+          },
+          {
+            "text": "펌프카",
+            "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=24",
+            "params": {
+              "cat1": [
+                "17"
+              ],
+              "cat2": [
+                "24"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/registration/",
+        "count": 3,
+        "samples": [
+          {
+            "text": "회원가입",
+            "url": "https://ty-heavyequipment.com/registration/",
+            "params": {}
+          },
+          {
+            "text": "회원가입",
+            "url": "https://ty-heavyequipment.com/registration/",
+            "params": {}
+          },
+          {
+            "text": "회원가입",
+            "url": "https://ty-heavyequipment.com/registration/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/login/",
+        "count": 3,
+        "samples": [
+          {
+            "text": "로그인",
+            "url": "https://ty-heavyequipment.com/login/",
+            "params": {}
+          },
+          {
+            "text": "로그인",
+            "url": "https://ty-heavyequipment.com/login/",
+            "params": {}
+          },
+          {
+            "text": "로그인",
+            "url": "https://ty-heavyequipment.com/login/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/mypage-advertisement-guide/",
+        "count": 3,
+        "samples": [
+          {
+            "text": "광고안내/문의",
+            "url": "https://ty-heavyequipment.com/mypage-advertisement-guide/",
+            "params": {}
+          },
+          {
+            "text": "광고안내/문의",
+            "url": "https://ty-heavyequipment.com/mypage-advertisement-guide/",
+            "params": {}
+          },
+          {
+            "text": "광고안내/문의",
+            "url": "https://ty-heavyequipment.com/mypage-advertisement-guide/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "",
+            "url": "https://ty-heavyequipment.com/",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "https://ty-heavyequipment.com/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/%ea%b5%ac%ec%9d%b8%ea%b5%ac%ec%a7%81/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "구인구직",
+            "url": "https://ty-heavyequipment.com/%ea%b5%ac%ec%9d%b8%ea%b5%ac%ec%a7%81/",
+            "params": {}
+          },
+          {
+            "text": "구인구직",
+            "url": "https://ty-heavyequipment.com/%ea%b5%ac%ec%9d%b8%ea%b5%ac%ec%a7%81/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/%ec%a3%bc%ec%9a%94%ec%84%9c%eb%a5%98/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "주요서류",
+            "url": "https://ty-heavyequipment.com/%ec%a3%bc%ec%9a%94%ec%84%9c%eb%a5%98/",
+            "params": {}
+          },
+          {
+            "text": "주요서류",
+            "url": "https://ty-heavyequipment.com/%ec%a3%bc%ec%9a%94%ec%84%9c%eb%a5%98/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/%ec%82%ac%ec%9d%b4%ed%8a%b8qna/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "사이트Q&A",
+            "url": "https://ty-heavyequipment.com/%ec%82%ac%ec%9d%b4%ed%8a%b8qna/",
+            "params": {}
+          },
+          {
+            "text": "사이트Q&A",
+            "url": "https://ty-heavyequipment.com/%ec%82%ac%ec%9d%b4%ed%8a%b8qna/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "공지사항",
+            "url": "https://ty-heavyequipment.com/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/",
+            "params": {}
+          },
+          {
+            "text": "공지사항",
+            "url": "https://ty-heavyequipment.com/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/%ed%9a%8c%ec%82%ac%ec%86%8c%ea%b0%9c/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "회사소개",
+            "url": "https://ty-heavyequipment.com/%ed%9a%8c%ec%82%ac%ec%86%8c%ea%b0%9c/",
+            "params": {}
+          },
+          {
+            "text": "회사소개",
+            "url": "https://ty-heavyequipment.com/%ed%9a%8c%ec%82%ac%ec%86%8c%ea%b0%9c/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/공지사항/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "공지사항",
+            "url": "https://ty-heavyequipment.com/공지사항/",
+            "params": {}
+          },
+          {
+            "text": "공지사항",
+            "url": "https://ty-heavyequipment.com/공지사항/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/사이트qna/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "사이트이용 Q&A",
+            "url": "https://ty-heavyequipment.com/사이트qna/",
+            "params": {}
+          },
+          {
+            "text": "사이트이용 Q&A",
+            "url": "https://ty-heavyequipment.com/사이트qna/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/prime-store/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "TY파트너스 스토어",
+            "url": "https://ty-heavyequipment.com/prime-store/",
+            "params": {}
+          },
+          {
+            "text": "TY파트너스 스토어",
+            "url": "https://ty-heavyequipment.com/prime-store/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/mypage-listing-status/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "마이페이지",
+            "url": "https://ty-heavyequipment.com/mypage-listing-status/",
+            "params": {}
+          },
+          {
+            "text": "등록매물 현황",
+            "url": "https://ty-heavyequipment.com/mypage-listing-status/",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/mypage-charge/",
+        "count": 2,
+        "samples": [
+          {
+            "text": "유료충전",
+            "url": "https://ty-heavyequipment.com/mypage-charge/",
+            "params": {}
+          },
+          {
+            "text": "충전하기",
+            "url": "https://ty-heavyequipment.com/mypage-charge/",
+            "params": {}
+          }
+        ]
+      }
+    ],
+    "param_frequency": {
+      "cat1": 176,
+      "cat2": 148,
+      "id": 33,
+      "taeyang_custom": 12,
+      "smaker": 12,
+      "syear": 12,
+      "eyear": 12,
+      "stx": 12,
+      "paged": 12,
+      "user_id": 2,
+      "action": 1
+    },
+    "category_link_samples": [
+      {
+        "text": "콘텐츠로 건너뛰기",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18#content",
+        "params": {
+          "cat1": [
+            "18"
+          ]
+        }
+      },
+      {
+        "text": "펌프카/믹서트럭",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17",
+        "params": {
+          "cat1": [
+            "17"
+          ]
+        }
+      },
+      {
+        "text": "믹서트럭",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=23",
+        "params": {
+          "cat1": [
+            "17"
+          ],
+          "cat2": [
+            "23"
+          ]
+        }
+      },
+      {
+        "text": "펌프카",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=24",
+        "params": {
+          "cat1": [
+            "17"
+          ],
+          "cat2": [
+            "24"
+          ]
+        }
+      },
+      {
+        "text": "기타차량",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=25",
+        "params": {
+          "cat1": [
+            "17"
+          ],
+          "cat2": [
+            "25"
+          ]
+        }
+      },
+      {
+        "text": "부속품",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=26",
+        "params": {
+          "cat1": [
+            "17"
+          ],
+          "cat2": [
+            "26"
+          ]
+        }
+      },
+      {
+        "text": "굴착기/어태치부속",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18",
+        "params": {
+          "cat1": [
+            "18"
+          ]
+        }
+      },
+      {
+        "text": "굴착기 1.3 ㎥ 이상",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=27",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "27"
+          ]
+        }
+      },
+      {
+        "text": "굴착기 1.0 ㎥ 이상",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=28",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "28"
+          ]
+        }
+      },
+      {
+        "text": "굴착기 0.4 ㎥ 이상",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=29",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "29"
+          ]
+        }
+      },
+      {
+        "text": "굴착기 0.3 ㎥ 이하",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=30",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "30"
+          ]
+        }
+      },
+      {
+        "text": "미니굴착기",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=31",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "31"
+          ]
+        }
+      },
+      {
+        "text": "굴착기타이어식",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=32",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "32"
+          ]
+        }
+      },
+      {
+        "text": "어태치먼트",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=33",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "33"
+          ]
+        }
+      },
+      {
+        "text": "기타차량",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=34",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "34"
+          ]
+        }
+      },
+      {
+        "text": "부속품",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&cat2=35",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "cat2": [
+            "35"
+          ]
+        }
+      },
+      {
+        "text": "덤프트럭/셀프로다",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19",
+        "params": {
+          "cat1": [
+            "19"
+          ]
+        }
+      },
+      {
+        "text": "덤프트럭 19톤 이상",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=36",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "36"
+          ]
+        }
+      },
+      {
+        "text": "덤프트럭 16톤 이하",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=37",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "37"
+          ]
+        }
+      },
+      {
+        "text": "덤프트럭 10톤 이하",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=38",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "38"
+          ]
+        }
+      },
+      {
+        "text": "트레일러",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=39",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "39"
+          ]
+        }
+      },
+      {
+        "text": "추레라",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=40",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "40"
+          ]
+        }
+      },
+      {
+        "text": "셀프로다",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=41",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "41"
+          ]
+        }
+      },
+      {
+        "text": "기타차량",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=42",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "42"
+          ]
+        }
+      },
+      {
+        "text": "부속품",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=19&cat2=43",
+        "params": {
+          "cat1": [
+            "19"
+          ],
+          "cat2": [
+            "43"
+          ]
+        }
+      },
+      {
+        "text": "지게차/하이랜더",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=20",
+        "params": {
+          "cat1": [
+            "20"
+          ]
+        }
+      },
+      {
+        "text": "지게차10톤 이상",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=20&cat2=44",
+        "params": {
+          "cat1": [
+            "20"
+          ],
+          "cat2": [
+            "44"
+          ]
+        }
+      },
+      {
+        "text": "지게차 6톤 이상",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=20&cat2=45",
+        "params": {
+          "cat1": [
+            "20"
+          ],
+          "cat2": [
+            "45"
+          ]
+        }
+      },
+      {
+        "text": "지게차 5톤 이하",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=20&cat2=46",
+        "params": {
+          "cat1": [
+            "20"
+          ],
+          "cat2": [
+            "46"
+          ]
+        }
+      },
+      {
+        "text": "하이랜더",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=20&cat2=104",
+        "params": {
+          "cat1": [
+            "20"
+          ],
+          "cat2": [
+            "104"
+          ]
+        }
+      }
+    ],
+    "pagination_link_samples": [
+      {
+        "text": "2",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=2",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "2"
+          ]
+        }
+      },
+      {
+        "text": "3",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=3",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "3"
+          ]
+        }
+      },
+      {
+        "text": "4",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=4",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "4"
+          ]
+        }
+      },
+      {
+        "text": "5",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=5",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "5"
+          ]
+        }
+      },
+      {
+        "text": "6",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=6",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "6"
+          ]
+        }
+      },
+      {
+        "text": "7",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=7",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "7"
+          ]
+        }
+      },
+      {
+        "text": "8",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=8",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "8"
+          ]
+        }
+      },
+      {
+        "text": "9",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=9",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "9"
+          ]
+        }
+      },
+      {
+        "text": "10",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=10",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "10"
+          ]
+        }
+      },
+      {
+        "text": "»",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=11",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "11"
+          ]
+        }
+      },
+      {
+        "text": "다음",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=2",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "2"
+          ]
+        }
+      },
+      {
+        "text": "끝",
+        "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=102",
+        "params": {
+          "cat1": [
+            "18"
+          ],
+          "taeyang_custom": [
+            "15"
+          ],
+          "cat2": [
+            ""
+          ],
+          "smaker": [
+            ""
+          ],
+          "syear": [
+            ""
+          ],
+          "eyear": [
+            ""
+          ],
+          "stx": [
+            ""
+          ],
+          "paged": [
+            "102"
+          ]
+        }
+      }
+    ],
+    "detail_path_frequency": {
+      "/taeyang_product_list/": 33
+    }
+  },
+  "scripts": {
+    "script_srcs_sample": [
+      "https://ty-heavyequipment.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1",
+      "https://ty-heavyequipment.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.9.2.5",
+      "https://ty-heavyequipment.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=9.2.5",
+      "https://ty-heavyequipment.com/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.9.2.5",
+      "https://ty-heavyequipment.com/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=9.2.5",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/um-gdpr.min.js?ver=2.9.1",
+      "https://wcs.pstatic.net/wcslog.js",
+      "https://ty-heavyequipment.com/wp-content/plugins/autoptimize/classes/external/js/lazysizes.min.js?ao_version=3.1.12",
+      "https://ty-heavyequipment.com/wp-content/plugins/koko-analytics/assets/dist/js/script.js?ver=1.5.3",
+      "https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js",
+      "https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js",
+      "https://ty-heavyequipment.com/wp-content/plugins/tradePlugin/js/pt_interest_menu_shortcode.js?ver=1.0.0",
+      "https://ty-heavyequipment.com/wp-content/themes/platia-extension/assets/js/main.js?ver=1.0.1",
+      "https://ty-heavyequipment.com/wp-content/themes/hello-elementor/assets/js/hello-frontend.min.js?ver=3.1.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/elementor-pro/assets/lib/smartmenus/jquery.smartmenus.min.js?ver=1.2.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/elementor-pro/assets/lib/sticky/jquery.sticky.min.js?ver=3.25.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=9.2.5",
+      "https://ty-heavyequipment.com/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=9.2.5",
+      "https://ty-heavyequipment.com/wp-includes/js/underscore.min.js?ver=1.13.7",
+      "https://ty-heavyequipment.com/wp-includes/js/wp-util.min.js?ver=6.9.4",
+      "https://ty-heavyequipment.com/wp-includes/js/dist/hooks.min.js?ver=dd5603f07f9220ed27f1",
+      "https://ty-heavyequipment.com/wp-includes/js/dist/i18n.min.js?ver=c26c3dc7bed366793375",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/tipsy/tipsy.min.js?ver=1.0.0a",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/um-confirm/um-confirm.min.js?ver=1.0",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/pickadate/picker.min.js?ver=3.6.2",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/pickadate/picker.date.min.js?ver=3.6.2",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/pickadate/picker.time.min.js?ver=3.6.2",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/pickadate/translations/ko_KR.min.js?ver=3.6.2",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/common.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/cropper/cropper.min.js?ver=1.6.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/common-frontend.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/um-modal.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/jquery-form/jquery-form.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/fileupload/fileupload.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/um-functions.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/um-responsive.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/js/um-conditional.min.js?ver=2.9.1",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/select2/select2.full.min.js?ver=4.0.13",
+      "https://ty-heavyequipment.com/wp-content/plugins/ultimate-member/assets/libs/select2/i18n/ko.js?ver=4.0.13"
+    ],
+    "inline_endpoint_hints": [
+      "https://ty-heavyequipment.com/?wc-ajax=%%endpoint%%",
+      "https://ty-heavyequipment.com/taeyang_product_list/  };  / Initialize Firebase  const app = initializeApp(firebaseConfig);  const analytics = getAnalytics(app);{",
+      "https://ty-heavyequipment.com/taeyang_product_list/ );}lazyloadBackgroundObserver.unobserve( entry.target );}});}, { rootMargin: ",
+      "https://ty-heavyequipment.com/taeyang_product_list/ } );lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {lazyloadBackgroundObserver.observe( lazyloadBackground );} );};const events = [",
+      "https://ty-heavyequipment.com/taeyang_product_list/)) {                skipSpinner = true;            }        });        / 페이지 이동 시 스피너 표시        window.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/).slick(sliderSettings);    }    / DOMContentLoaded 후 초기화    $(document).ready(function() {        initializeSlickSlider();    });    / 강제 리사이즈 처리    $(window).on(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            / 탭 콘텐츠 표시            tabContents.forEach(function(content) {              content.classList.remove(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            / 탭 활성화 클래스 토글            tabs.forEach(function(t) {              t.classList.remove(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            if (!el) return;            var href = el.getAttribute(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            if (subMenu) {              e.preventDefault(); / 링크 이동 방지              subMenu.classList.toggle(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            }        });        / 페이지 로드(또는 bfcache 복원) 시 스피너 제거        window.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            });            document.getElementById(tabId).classList.add(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);            });            this.classList.add(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);        gnbDp1Links.forEach(function(link) {          link.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);        menuToggle.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);        tabs.forEach(function(tab) {          tab.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);        var menu = document.getElementById(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);        var skipSpinner = false;        / tel:, mailto: 등 클릭 시 스피너 무시        document.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/);    }, 500);});jQuery(document).ready(function($) {        var soldoutListingId = null;        / 판매완료 버튼 클릭 → 모달 열기        $(document).on(",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function() {            if (!soldoutListingId) return;            $.ajax({                url: ajax_actions_object.ajax_url,                type: ",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function() {            if (spinner && !skipSpinner) {                spinner.classList.add(",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function() {            var tabId = this.getAttribute(",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function() {          menu.classList.toggle(",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function() {        var menuToggle = document.getElementById(",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function(e) {            var el = e.target.closest(",
+      "https://ty-heavyequipment.com/taeyang_product_list/, function(event) {            if (spinner) {                spinner.classList.remove(",
+      "https://ty-heavyequipment.com/taeyang_product_list/.taeyang-soldout-listing-button",
+      "https://ty-heavyequipment.com/taeyang_product_list/;  import { getAnalytics } from ",
+      "https://ty-heavyequipment.com/taeyang_product_list/;if(window.wcs) {  wcs_do();}document.addEventListener(",
+      "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18#taeyang-soldoutListingModal",
+      "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18#taeyang-soldoutListingModal .taeyang-close-modal, #taeyang-soldoutListingModal .taeyang-modal-overlay",
+      "https://ty-heavyequipment.com/taeyang_product_list/?id=%id%",
+      "https://ty-heavyequipment.com/taeyang_product_list/BreadcrumbList",
+      "https://ty-heavyequipment.com/taeyang_product_list/Download expiry",
+      "https://ty-heavyequipment.com/taeyang_product_list/List price",
+      "https://ty-heavyequipment.com/taeyang_product_list/ListItem",
+      "https://ty-heavyequipment.com/taeyang_product_list/Postcode",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/#listItem",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/taeyang_product_list\\/",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/taeyang_product_list\\/#breadcrumblist",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/taeyang_product_list\\/#listItem",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/taeyang_product_list\\/#organizationLogo",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/taeyang_product_list\\/#webpage",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/wp-admin\\/admin-ajax.php",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/wp-admin\\/admin-ajax.php?action=koko_analytics_collect",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/wp-content\\/plugins\\/elementor-pro\\/modules\\/lottie\\/assets\\/animations\\/default.json",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/wp-content\\/uploads",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/wp-content\\/uploads\\/2024\\/12\\/\\ub300\\uc9c0-5-\\uc0ac\\ubcf8-2@3x-8-1.png",
+      "https://ty-heavyequipment.com/taeyang_product_list/\\/\\/ty-heavyequipment.com\\/wp-json\\/",
+      "https://ty-heavyequipment.com/taeyang_product_list/ajax",
+      "https://ty-heavyequipment.com/taeyang_product_list/ajax_security",
+      "https://ty-heavyequipment.com/taeyang_product_list/ajax_url",
+      "https://ty-heavyequipment.com/taeyang_product_list/ajaxurl",
+      "https://ty-heavyequipment.com/taeyang_product_list/download",
+      "https://ty-heavyequipment.com/taeyang_product_list/downloadImage",
+      "https://ty-heavyequipment.com/taeyang_product_list/download_expiry",
+      "https://ty-heavyequipment.com/taeyang_product_list/e_optimized_control_loading",
+      "https://ty-heavyequipment.com/taeyang_product_list/elementor/lazyload/observe",
+      "https://ty-heavyequipment.com/taeyang_product_list/itemListElement",
+      "https://ty-heavyequipment.com/taeyang_product_list/lazy_load_background_images",
+      "https://ty-heavyequipment.com/taeyang_product_list/list_price",
+      "https://ty-heavyequipment.com/taeyang_product_list/load",
+      "https://ty-heavyequipment.com/taeyang_product_list/max_upload_size",
+      "https://ty-heavyequipment.com/taeyang_product_list/post",
+      "https://ty-heavyequipment.com/taeyang_product_list/post_id",
+      "https://ty-heavyequipment.com/taeyang_product_list/post_url",
+      "https://ty-heavyequipment.com/taeyang_product_list/postcode",
+      "https://ty-heavyequipment.com/taeyang_product_list/s Firebase configuration  / For Firebase JS SDK v7.20.0 and later, measurementId is optional  const firebaseConfig = {    apiKey: ",
+      "https://ty-heavyequipment.com/taeyang_product_list/taeyang_board_soldout_listing",
+      "https://ty-heavyequipment.com/taeyang_product_list/uploadUrl",
+      "https://ty-heavyequipment.com/taeyang_product_list/wc_ajax_url",
+      "https://ty-heavyequipment.com/taeyang_product_list/};/# sourceURL=gt_widget_script_33441367-js-beforevar ajax_object = {",
+      "https://ty-heavyequipment.com/taeyang_product_list/};/# sourceURL=gt_widget_script_41685222-js-beforewindow.gtranslateSettings = /* document.write */ window.gtranslateSettings || {};window.gtranslateSettings[",
+      "https://ty-heavyequipment.com/taeyang_product_list/};var ajax_actions_object = {",
+      "https://ty-heavyequipment.com/taeyang_product_list/}]}(function() {        var spinner = document.getElementById(",
+      "https://ty-heavyequipment.com/ty_product_upload/",
+      "https://ty-heavyequipment.com/wp-admin/admin-ajax.php",
+      "https://ty-heavyequipment.com/wp-admin/admin-post.php",
+      "https://ty-heavyequipment.com/wp-content/uploads/*"
+    ],
+    "inline_script_count": 35,
+    "external_script_count": 65
+  },
+  "page_samples": [
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=2",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 207508,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사 – Page 2"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=3",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 205298,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사 – Page 3"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18&taeyang_custom=15&cat2&smaker&syear&eyear&stx&paged=4",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 202415,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사 – Page 4"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=18#content",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 202598,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 283955,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=23",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 161027,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=24",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 279420,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사"
+    },
+    {
+      "url": "https://ty-heavyequipment.com/taeyang_product_list/?cat1=17&cat2=25",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 149786,
+      "title": "전체매물 보기 – 중장비매매 태양중기매매상사"
+    }
+  ]
+}

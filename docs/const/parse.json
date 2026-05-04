@@ -1,0 +1,110 @@
+{
+  "version": "2026-05-01",
+  "record_type": "heavy_equipment_listing",
+  "description": "중장비 매물 크롤러가 사이트별 파싱 차이를 줄이기 위해 공통으로 생성해야 하는 결과 JSON 스키마입니다.",
+  "required_fields": {
+    "origin": {
+      "type": "string",
+      "description": "크롤링 대상 origin 또는 플랫폼 예외 source key"
+    },
+    "source_site": {
+      "type": "string",
+      "description": "사이트/크롤러 식별자"
+    },
+    "crawl_url": {
+      "type": "string",
+      "description": "목록 또는 상세를 실제 크롤링한 URL"
+    },
+    "detail_url": {
+      "type": ["string", "null"],
+      "description": "매물 상세 URL"
+    },
+    "posted_date": {
+      "type": ["string", "null"],
+      "format": "YYYY-MM-DD",
+      "description": "사이트에 표시된 등록일자"
+    },
+    "listing_name": {
+      "type": "string",
+      "description": "매물명"
+    },
+    "model_name": {
+      "type": ["string", "null"],
+      "description": "모델명"
+    },
+    "model_norm": {
+      "type": ["string", "null"],
+      "description": "docs/const/model.csv에 포함된 모델명으로 매칭된 경우 저장하는 정규화 모델명"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "상세 설명/본문"
+    },
+    "price": {
+      "type": ["string", "null"],
+      "description": "사이트 표시 가격 문자열"
+    },
+    "price_krw": {
+      "type": ["integer", "null"],
+      "description": "정렬 가능한 원화 가격. 예: 8,500만원 -> 85000000"
+    },
+    "contact": {
+      "type": ["string", "null"],
+      "description": "연락처"
+    },
+    "posted_at": {
+      "type": ["string", "null"],
+      "format": "ISO-8601 datetime",
+      "description": "사이트에 표시된 등록일시"
+    },
+    "crawled_at": {
+      "type": "string",
+      "format": "ISO-8601 datetime",
+      "description": "크롤링 일시"
+    },
+    "content_hash": {
+      "type": "string",
+      "description": "중복 방지용 hash값"
+    }
+  },
+  "hash": {
+    "algorithm": "sha256",
+    "source_fields": [
+      "origin",
+      "detail_url",
+      "posted_at",
+      "posted_date",
+      "listing_name",
+      "model_name",
+      "price",
+      "contact"
+    ],
+    "excluded_fields": [
+      "crawled_at",
+      "description"
+    ],
+    "note": "중복 방지가 목적이므로 크롤링 시각과 길게 변할 수 있는 설명은 hash 입력에서 제외합니다."
+  },
+  "optional_common_fields": {
+    "category_code": "사이트 카테고리 코드",
+    "category_name": "사이트 카테고리명",
+    "manufacturer": "제작사/브랜드",
+    "manufactured_ym": "제작년월",
+    "location": "위치",
+    "seller": "작성자/상호",
+    "status": "상태",
+    "view_count": "조회수",
+    "raw": "사이트별 원본 파싱값"
+  },
+  "mysql": {
+    "database": "heavyequip_scanner",
+    "table": "listings",
+    "sortable_columns": {
+      "price_krw": "BIGINT NULL",
+      "posted_date": "DATE NULL",
+      "posted_at": "DATETIME NULL",
+      "crawled_at": "DATETIME NULL"
+    },
+    "nullable_policy": "크롤링 데이터 컬럼은 모두 NULL 허용입니다. id 같은 시스템 primary key만 예외입니다."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "site": "imcg.jigecha.kr 지게차코리아 서브도메인",
+  "slug": "imcg_jigecha",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "GET",
+  "request_url": "http://imcg.jigecha.kr/kwa-sell_jigecha?PB_1483420906=1",
+  "display_url": "http://imcg.jigecha.kr/kwa-sell_jigecha?PB_1483420906=1",
+  "status": 200,
+  "final_url": "http://imcg.jigecha.kr/kwa-sell_jigecha?PB_1483420906=1",
+  "content_type": "text/html; charset=utf-8",
+  "body_length": 96792,
+  "response_body_file": "response_body.html",
+  "error": null,
+  "notes": [
+    "같은 요청 계약을 쓰되 origin/source는 `imcg.jigecha.kr`로 분리합니다."
+  ],
+  "sensitive_values_stored": false
+}

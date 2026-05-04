@@ -1,0 +1,884 @@
+{
+  "site": {
+    "slug": "perfect82",
+    "name": "퍼펙트82중장비",
+    "url": "https://www.perfect82.com/fnew100",
+    "count_estimate": 100,
+    "platform_hosts": [
+      "perfect82.com",
+      "www.perfect82.com"
+    ]
+  },
+  "page": {
+    "requested_url": "https://www.perfect82.com/fnew100",
+    "final_url": "https://www.perfect82.com/fnew100",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "bytes": 647727,
+    "title": "중고지게차 최신 매물 순위 100위"
+  },
+  "request_contract": {
+    "base_endpoint": "https://www.perfect82.com/fnew100",
+    "current_query_params": {},
+    "observed_param_names_ranked": [
+      "idx",
+      "bmode",
+      "keyword",
+      "mode",
+      "back_url"
+    ],
+    "response_type": "HTML 목록 + JS/Ajax 단서",
+    "likely_pagination_params": [],
+    "likely_category_params": [],
+    "likely_search_filter_params": [
+      "keyword"
+    ],
+    "likely_detail_id_params": [
+      "idx"
+    ]
+  },
+  "forms": [
+    {
+      "index": 1,
+      "method": "GET",
+      "action": "https://www.perfect82.com/search",
+      "fields": [
+        {
+          "name": "keyword",
+          "tag": "input",
+          "type": "",
+          "value": "",
+          "label": ""
+        }
+      ],
+      "text_sample": "검색 검색"
+    },
+    {
+      "index": 2,
+      "method": "GET",
+      "action": "https://www.perfect82.com/search",
+      "fields": [
+        {
+          "name": "keyword",
+          "tag": "input",
+          "type": "",
+          "value": "",
+          "label": ""
+        }
+      ],
+      "text_sample": "site search"
+    }
+  ],
+  "links": {
+    "top_paths": [
+      {
+        "path": "/205ton/",
+        "count": 32,
+        "samples": [
+          {
+            "text": "두산/2.5톤/14년/경남/1450만원 N 0 0 퍼펙트82 11시간전 조회 7",
+            "url": "https://www.perfect82.com/205ton/?idx=171061071&bmode=view",
+            "params": {
+              "idx": [
+                "171061071"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/2.5톤/말소//1100만원/1364번 N 0 0 쿼카둥 12시간전 조회 7",
+            "url": "https://www.perfect82.com/205ton/?idx=171059543&bmode=view",
+            "params": {
+              "idx": [
+                "171059543"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/2.5톤/03년/경기/1100만원/287번 N 0 0 대빵어뭉 1일전 조회 7",
+            "url": "https://www.perfect82.com/205ton/?idx=171049944&bmode=view",
+            "params": {
+              "idx": [
+                "171049944"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/2.5톤/13년/경기/1500만원/269번 N 0 0 대빵어뭉 1일전 조회 7",
+            "url": "https://www.perfect82.com/205ton/?idx=171049765&bmode=view",
+            "params": {
+              "idx": [
+                "171049765"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/2.5톤/09년/경기/1500만원/228번 N 0 0 대빵어뭉 1일전 조회 7",
+            "url": "https://www.perfect82.com/205ton/?idx=171049527&bmode=view",
+            "params": {
+              "idx": [
+                "171049527"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/2.5톤/16년/경기(안성)/1930만원 N 0 0 안성성심 1일전 조회 10",
+            "url": "https://www.perfect82.com/205ton/?idx=171049110&bmode=view",
+            "params": {
+              "idx": [
+                "171049110"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/3ton/",
+        "count": 20,
+        "samples": [
+          {
+            "text": "클라크/3톤/06년/경기/1100만원/289번 N 0 0 대빵어뭉 5시간전 조회 5",
+            "url": "https://www.perfect82.com/3ton/?idx=171066472&bmode=view",
+            "params": {
+              "idx": [
+                "171066472"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/3톤/02년/경기/1100만원/229번 N 0 0 대빵어뭉 1일전 조회 12",
+            "url": "https://www.perfect82.com/3ton/?idx=171049602&bmode=view",
+            "params": {
+              "idx": [
+                "171049602"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/3톤/15년/경북/1750만원 N 0 0 퍼펙트82 1일전 조회 15",
+            "url": "https://www.perfect82.com/3ton/?idx=171047390&bmode=view",
+            "params": {
+              "idx": [
+                "171047390"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/3톤/03년//1100만원/1327번 N 0 0 쿼카둥 1일전 조회 12",
+            "url": "https://www.perfect82.com/3ton/?idx=171042285&bmode=view",
+            "params": {
+              "idx": [
+                "171042285"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/3톤/12년/경기/1300만원/272번 N 0 0 대빵어뭉 2일전 조회 16",
+            "url": "https://www.perfect82.com/3ton/?idx=171025450&bmode=view",
+            "params": {
+              "idx": [
+                "171025450"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/3톤/03년//1100만원/1327번 N 0 0 쿼카둥 2일전 조회 16",
+            "url": "https://www.perfect82.com/3ton/?idx=171022444&bmode=view",
+            "params": {
+              "idx": [
+                "171022444"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/305ton/",
+        "count": 18,
+        "samples": [
+          {
+            "text": "현대/3.3톤/20년/2400만원 N 0 0 두산세기중기 4시간전 조회 7",
+            "url": "https://www.perfect82.com/305ton/?idx=171068302&bmode=view",
+            "params": {
+              "idx": [
+                "171068302"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/3.3톤/21년/경기/2150만원/288번 N 0 0 대빵어뭉 5시간전 조회 6",
+            "url": "https://www.perfect82.com/305ton/?idx=171066436&bmode=view",
+            "params": {
+              "idx": [
+                "171066436"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/3.5톤/99년/경기/1100만원/277번 N 0 0 대빵어뭉 1일전 조회 10",
+            "url": "https://www.perfect82.com/305ton/?idx=171049853&bmode=view",
+            "params": {
+              "idx": [
+                "171049853"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/3.5톤/00년//1050만원/1167번 N 0 0 쿼카둥 1일전 조회 10",
+            "url": "https://www.perfect82.com/305ton/?idx=171042241&bmode=view",
+            "params": {
+              "idx": [
+                "171042241"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/3.3톤/10년//1450만원/1337번 N 0 0 쿼카둥 2026-04-26 조회 15",
+            "url": "https://www.perfect82.com/305ton/?idx=171012453&bmode=view",
+            "params": {
+              "idx": [
+                "171012453"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/3.5톤/10년//1450만원/1337번 N 0 0 쿼카둥 2026-04-24 조회 17",
+            "url": "https://www.perfect82.com/305ton/?idx=170994236&bmode=view",
+            "params": {
+              "idx": [
+                "170994236"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/under2ton/",
+        "count": 11,
+        "samples": [
+          {
+            "text": "클라크/2톤/말소//750만원/1324번 N 0 0 쿼카둥 1일전 조회 14",
+            "url": "https://www.perfect82.com/under2ton/?idx=171042216&bmode=view",
+            "params": {
+              "idx": [
+                "171042216"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/2톤/18년/경기/1650만원/283번 N 0 0 대빵어뭉 2일전 조회 15",
+            "url": "https://www.perfect82.com/under2ton/?idx=171025481&bmode=view",
+            "params": {
+              "idx": [
+                "171025481"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/2톤/10년//1350만원/1355번 N 0 0 쿼카둥 2일전 조회 18",
+            "url": "https://www.perfect82.com/under2ton/?idx=171022379&bmode=view",
+            "params": {
+              "idx": [
+                "171022379"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "클라크/2톤/12년//1350만원/1358번 N 0 0 쿼카둥 2026-04-26 조회 12",
+            "url": "https://www.perfect82.com/under2ton/?idx=171012510&bmode=view",
+            "params": {
+              "idx": [
+                "171012510"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/2톤/10년//1350만원/1355번 0 0 쿼카둥 2026-04-23 조회 14",
+            "url": "https://www.perfect82.com/under2ton/?idx=170978319&bmode=view",
+            "params": {
+              "idx": [
+                "170978319"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "클라크/2톤/12년//1350만원/1358번 0 0 쿼카둥 2026-04-23 조회 18",
+            "url": "https://www.perfect82.com/under2ton/?idx=170978251&bmode=view",
+            "params": {
+              "idx": [
+                "170978251"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/405ton/",
+        "count": 9,
+        "samples": [
+          {
+            "text": "현대/4.5톤/97년/경기/850만원/238번 N 0 0 대빵어뭉 2일전 조회 18",
+            "url": "https://www.perfect82.com/405ton/?idx=171025385&bmode=view",
+            "params": {
+              "idx": [
+                "171025385"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/4.5톤/16년//2900만원/1356번 N 0 0 쿼카둥 2일전 조회 17",
+            "url": "https://www.perfect82.com/405ton/?idx=171022405&bmode=view",
+            "params": {
+              "idx": [
+                "171022405"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/4.5톤/17년//3000만원/1362번 N 0 0 쿼카둥 2026-04-25 조회 19",
+            "url": "https://www.perfect82.com/405ton/?idx=171003973&bmode=view",
+            "params": {
+              "idx": [
+                "171003973"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/4.5톤/15년/인천/2630만원 N 0 0 안성성심 2026-04-24 조회 18",
+            "url": "https://www.perfect82.com/405ton/?idx=170994804&bmode=view",
+            "params": {
+              "idx": [
+                "170994804"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/4.0톤/2019년식/1,550만/4포크자동발 0 0 건영 2026-04-23 조회 20",
+            "url": "https://www.perfect82.com/405ton/?idx=170984736&bmode=view",
+            "params": {
+              "idx": [
+                "170984736"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "현대/4.5톤/16년//2900만원/1356번 0 0 쿼카둥 2026-04-23 조회 18",
+            "url": "https://www.perfect82.com/405ton/?idx=170978291&bmode=view",
+            "params": {
+              "idx": [
+                "170978291"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/7ton/",
+        "count": 7,
+        "samples": [
+          {
+            "text": "두산/7톤/03년//1550만원/1359번 N 0 0 쿼카둥 12시간전 조회 9",
+            "url": "https://www.perfect82.com/7ton/?idx=171059559&bmode=view",
+            "params": {
+              "idx": [
+                "171059559"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/7톤/03년//1550만원/1359번 N 0 0 쿼카둥 2026-04-26 조회 12",
+            "url": "https://www.perfect82.com/7ton/?idx=171015529&bmode=view",
+            "params": {
+              "idx": [
+                "171015529"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/7톤/03년//1550만원/1359번 N 0 0 쿼카둥 2026-04-26 조회 11",
+            "url": "https://www.perfect82.com/7ton/?idx=171012528&bmode=view",
+            "params": {
+              "idx": [
+                "171012528"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/7톤/09년/경기/2100만원/284번 0 0 대빵어뭉 2026-04-23 조회 19",
+            "url": "https://www.perfect82.com/7ton/?idx=170982023&bmode=view",
+            "params": {
+              "idx": [
+                "170982023"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/7톤/03년//1550만원/1359번 0 0 쿼카둥 2026-04-23 조회 18",
+            "url": "https://www.perfect82.com/7ton/?idx=170978215&bmode=view",
+            "params": {
+              "idx": [
+                "170978215"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          },
+          {
+            "text": "두산/7톤/03년//1550만원/1359번 0 0 쿼카둥 2026-04-22 조회 19",
+            "url": "https://www.perfect82.com/7ton/?idx=170961144&bmode=view",
+            "params": {
+              "idx": [
+                "170961144"
+              ],
+              "bmode": [
+                "view"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/fnew100",
+        "count": 5,
+        "samples": [
+          {
+            "text": "중고지게차 최신100위",
+            "url": "https://www.perfect82.com/fnew100",
+            "params": {}
+          },
+          {
+            "text": "검색 검색",
+            "url": "https://www.perfect82.com/fnew100",
+            "params": {}
+          },
+          {
+            "text": "중고지게차 최신100위",
+            "url": "https://www.perfect82.com/fnew100",
+            "params": {}
+          },
+          {
+            "text": "이미지 맵",
+            "url": "https://www.perfect82.com/fnew100",
+            "params": {}
+          },
+          {
+            "text": "site search",
+            "url": "https://www.perfect82.com/fnew100",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/home",
+        "count": 4,
+        "samples": [
+          {
+            "text": "퍼펙트82홈",
+            "url": "https://www.perfect82.com/home",
+            "params": {}
+          },
+          {
+            "text": "퍼펙트82홈",
+            "url": "https://www.perfect82.com/home",
+            "params": {}
+          },
+          {
+            "text": "",
+            "url": "https://www.perfect82.com/home",
+            "params": {}
+          },
+          {
+            "text": "퍼펙트82홈",
+            "url": "https://www.perfect82.com/home",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/coose",
+        "count": 3,
+        "samples": [
+          {
+            "text": "장비관련업체",
+            "url": "https://www.perfect82.com/coose",
+            "params": {}
+          },
+          {
+            "text": "장비관련업체",
+            "url": "https://www.perfect82.com/coose",
+            "params": {}
+          },
+          {
+            "text": "장비관련업체",
+            "url": "https://www.perfect82.com/coose",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/main",
+        "count": 3,
+        "samples": [
+          {
+            "text": "지게차",
+            "url": "https://www.perfect82.com/main",
+            "params": {}
+          },
+          {
+            "text": "지게차",
+            "url": "https://www.perfect82.com/main",
+            "params": {}
+          },
+          {
+            "text": "지게차",
+            "url": "https://www.perfect82.com/main",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/felecch",
+        "count": 3,
+        "samples": [
+          {
+            "text": "전동지게차",
+            "url": "https://www.perfect82.com/felecch",
+            "params": {}
+          },
+          {
+            "text": "전동지게차",
+            "url": "https://www.perfect82.com/felecch",
+            "params": {}
+          },
+          {
+            "text": "이미지 맵",
+            "url": "https://www.perfect82.com/felecch",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/under2ton",
+        "count": 3,
+        "samples": [
+          {
+            "text": "2톤이하",
+            "url": "https://www.perfect82.com/under2ton",
+            "params": {}
+          },
+          {
+            "text": "2톤이하",
+            "url": "https://www.perfect82.com/under2ton",
+            "params": {}
+          },
+          {
+            "text": "이미지 맵",
+            "url": "https://www.perfect82.com/under2ton",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/205ton",
+        "count": 3,
+        "samples": [
+          {
+            "text": "2.5톤",
+            "url": "https://www.perfect82.com/205ton",
+            "params": {}
+          },
+          {
+            "text": "2.5톤",
+            "url": "https://www.perfect82.com/205ton",
+            "params": {}
+          },
+          {
+            "text": "이미지 맵",
+            "url": "https://www.perfect82.com/205ton",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/3ton",
+        "count": 3,
+        "samples": [
+          {
+            "text": "3톤",
+            "url": "https://www.perfect82.com/3ton",
+            "params": {}
+          },
+          {
+            "text": "3톤",
+            "url": "https://www.perfect82.com/3ton",
+            "params": {}
+          },
+          {
+            "text": "이미지 맵",
+            "url": "https://www.perfect82.com/3ton",
+            "params": {}
+          }
+        ]
+      },
+      {
+        "path": "/305ton",
+        "count": 3,
+        "samples": [
+          {
+            "text": "3.3~3.5톤",
+            "url": "https://www.perfect82.com/305ton",
+            "params": {}
+          },
+          {
+            "text": "3.3~3.5톤",
+            "url": "https://www.perfect82.com/305ton",
+            "params": {}
+          },
+          {
+            "text": "이미지 맵",
+            "url": "https://www.perfect82.com/305ton",
+            "params": {}
+          }
+        ]
+      }
+    ],
+    "param_frequency": {
+      "idx": 100,
+      "bmode": 100,
+      "mode": 2,
+      "back_url": 1
+    },
+    "category_link_samples": [],
+    "pagination_link_samples": [],
+    "detail_path_frequency": {
+      "/205ton/": 32,
+      "/3ton/": 20,
+      "/305ton/": 18,
+      "/under2ton/": 11,
+      "/405ton/": 9,
+      "/7ton/": 7,
+      "/5ton/": 1,
+      "/8ton/": 1,
+      "/under25ton/": 1
+    }
+  },
+  "scripts": {
+    "script_srcs_sample": [
+      "https://vendor-cdn.imweb.me/js/jquery.js?1627517460",
+      "https://www.perfect82.com/js/init_datadog_rum.js?1774877180",
+      "https://www.perfect82.com/js/imweb_external_sdk.js?1762221174",
+      "https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js",
+      "https://www.googletagmanager.com/gtag/js?id=G-VTZGM2T783",
+      "https://www.googletagmanager.com/gtag/js?id=AW-11292352177",
+      "https://vendor-cdn.imweb.me/js/jquery-ui.design.js?1627517437",
+      "https://vendor-cdn.imweb.me/js/lodash.min.js?1771820111",
+      "https://vendor-cdn.imweb.me/js/axios.min.js?1689048978",
+      "https://vendor-cdn.imweb.me/js/bootstrap.min.js?1630317768",
+      "https://vendor-cdn.imweb.me/js/jquery.fileupload.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/jquery.lazyload.min.js?1577682292",
+      "https://www.perfect82.com/js/localize/KR_KRW_currency.js?1776838552",
+      "https://www.perfect82.com/js/brandscope.js?1775614530",
+      "https://vendor-cdn.imweb.me/js/common.js?1770112101",
+      "https://vendor-cdn.imweb.me/js/im_component.js?1719268490",
+      "https://vendor-cdn.imweb.me/js/site_common.js?1672019750",
+      "https://vendor-cdn.imweb.me/js/imagesloaded.pkgd.min.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/jquery.smooth-scroll.min.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/gambit-smoothscroll-min.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/ThreeCanvas.js?1700717292",
+      "https://vendor-cdn.imweb.me/js/snow.js?1700717292",
+      "https://vendor-cdn.imweb.me/js/masonry.pkgd.min.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/lightgallery-all.min.js?1596595980",
+      "https://vendor-cdn.imweb.me/js/bootstrap.slide-menu.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/bootstrap.slide-menu-alarm.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/bootstrap-hover-dropdown.min.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/jquery-scrolltofixed.js?1669067096",
+      "https://vendor-cdn.imweb.me/js/jquery.trackpad-scroll-emulator.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/modernizr.custom.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/classie.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/jquery.exif.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/jquery.canvasResize.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/autosize.js?1577682292",
+      "https://vendor-cdn.imweb.me/js/owl.carousel2.js?1638150602",
+      "https://vendor-cdn.imweb.me/js/slick.min.js?1577682292",
+      "https://www.perfect82.com/js/preview_mode.js?1773280384",
+      "https://www.perfect82.com/js/site.js?1774248787",
+      "https://www.perfect82.com/js/site_member.js?1775033512",
+      "https://www.perfect82.com/js/mobile_menu.js?1724648860"
+    ],
+    "inline_endpoint_hints": [
+      "https://www.perfect82.com/                    });}else{$listing_obj.css(",
+      "https://www.perfect82.com/) === -1 ) {visited_menu_code_list.push(",
+      "https://www.perfect82.com/) > -1)) || (window.opera && window.print)) {/ Firefox version >= 23 and Opera Hotlistvar $this = $(this);$this.attr(",
+      "https://www.perfect82.com/) > 0;    if (document.fullscreenElement && is_youtube) {      / 전체화면일 때      body.classList.add(",
+      "https://www.perfect82.com/) var post_like_reaction = new ARTICLE_REACTION();function newestClickLike(post_code, like_token_key, like_token){NEWEST_POST.setParameterByName(",
+      "https://www.perfect82.com/) {SECURITY_PRIVACY.openChangePasswordNotice(res.time);}}});if(LOCAL_STORAGE.getLocalStorage(",
+      "https://www.perfect82.com/));    $menuLinks.forEach($menuLink => {      if (!$menuLink.hash) return;      $menuLink.addEventListener(",
+      "https://www.perfect82.com/));if(typeof post_like_reaction == ",
+      "https://www.perfect82.com/));var search_option_data_w202308047c8f738f7e825 = {",
+      "https://www.perfect82.com/))window_width = 370;if(window_width <= 991)type_data.grid_gutter = type_data.grid_gutter/2;$listing_obj.css({",
+      "https://www.perfect82.com/),false);more_menu_w2023071073983b7333971.setWidgetCode(",
+      "https://www.perfect82.com/).eq(0).width() / (type_data.img_ratio / 100));}$listing_obj.find(",
+      "https://www.perfect82.com/).eq(0).width() / (type_data.img_ratio / 100));}else{var height = Math.ceil($listing_obj.find(",
+      "https://www.perfect82.com/).height(height);$listing_obj.css(",
+      "https://www.perfect82.com/).imagesLoaded().always(function(ins) {$(",
+      "https://www.perfect82.com/).lazyload({                                ",
+      "https://www.perfect82.com/).remove();var recentScrollUrl = IMWEB_SESSIONSTORAGE.get(",
+      "https://www.perfect82.com/);                            $listing_obj.find(",
+      "https://www.perfect82.com/);    if (!hash) return;    window.addEventListener(",
+      "https://www.perfect82.com/);    sectionList.forEach(section => {      const sectionId = section.getAttribute(",
+      "https://www.perfect82.com/);    }  }  / event fullpage  document.addEventListener(",
+      "https://www.perfect82.com/);    } else {      / 전체화면이 아닐 때      body.classList.remove(",
+      "https://www.perfect82.com/);$(function(){/첫방문 flagvar first_visit_menu = false;/로컬 스토리지에서 방문한 메뉴 코드를 가져오기var visited_menu_codes = localStorage.getItem(",
+      "https://www.perfect82.com/);/방문한 메뉴 코드가 없다면 빈 배열로 초기화var visited_menu_code_list = JSON.parse(visited_menu_codes) || [];/현재 메뉴 코드를 처음 방문이미 로컬스토리지에 저장if ( visited_menu_code_list.indexOf(",
+      "https://www.perfect82.com/);NEWEST_POST.newestClickLike(post_code, like_token_key, like_token);}$(function () {var $listing_obj = $(",
+      "https://www.perfect82.com/);if(LOCAL_STORAGE.getLocalStorage(",
+      "https://www.perfect82.com/);var _sm=document.getElementsByTagName(",
+      "https://www.perfect82.com/);var masonry_item_count = $masonry_item.length;$listing_obj.find(",
+      "https://www.perfect82.com/);}else{var $item = $listing_obj.find(",
+      "https://www.perfect82.com/);}};var runMasonry = function(count){if(count > 0){                    let is_masonry_timeout;                    $listing_obj.off(",
+      "https://www.perfect82.com/){                            $listing_obj.css(",
+      "https://www.perfect82.com/){$listing_obj.find(",
+      "https://www.perfect82.com/){inner_width = $listing_obj.parent().width();}else{inner_width = $listing_obj.width();}if(type_data.grid_extend_fix != ",
+      "https://www.perfect82.com/){var $item = $listing_obj.find(",
+      "https://www.perfect82.com/){var $masonry_item = $listing_obj.find(",
+      "https://www.perfect82.com/){var height = Math.ceil($listing_obj.find(",
+      "https://www.perfect82.com/+(new Date().getTime());_sm.parentNode.insertBefore(_sc,_sm);return _sc.src;}})();    if (document.cookie.indexOf(",
+      "https://www.perfect82.com/, $menuLink.hash, 1));    });    const hash = getCookie(",
+      "https://www.perfect82.com/, JSON.stringify(visited_menu_code_list));/최초 접속 flag 변경first_visit_menu = true;}SITE_VISIT_LOG.addVisitLog(document.referrer,",
+      "https://www.perfect82.com/, arguments); };LOCALIZE.설명_SEARCH = function(){ return LOCALIZE.convArguments(",
+      "https://www.perfect82.com/, function() {                        if($listing_obj.css(",
+      "https://www.perfect82.com/,function(){$listing_obj.imagesLoaded().always(function(ins) {listResize();});});$(window).off(",
+      "https://www.perfect82.com/._image_widget_lightbox",
+      "https://www.perfect82.com/._post_item_wrap",
+      "https://www.perfect82.com/._post_row",
+      "https://www.perfect82.com/: (window.innerHeight * 2)                            });                        }                    });                    $listing_obj.masonry({                        itemSelector: ",
+      "https://www.perfect82.com/: 550});});});var search_option_data_w20240604fde2544126ac5 = {",
+      "https://www.perfect82.com/:new Date().getTime(),event:",
+      "https://www.perfect82.com/;let img_gallery_light_box = false;    const sectionList = document.querySelectorAll(",
+      "https://www.perfect82.com/;var change_timer = setTimeout(function(){},1);$listing_obj.imagesLoaded().always(function(ins) {listResize();});$(",
+      "https://www.perfect82.com/PostalAddress",
+      "https://www.perfect82.com/];customTooltipAllowList.th = [];customTooltipAllowList.caption = [];customTooltipAllowList[",
+      "https://www.perfect82.com/_post_row post_row",
+      "https://www.perfect82.com/dummy_col item_post _item _dummy_item list-style-card",
+      "https://www.perfect82.com/json",
+      "https://www.perfect82.com/list_gutter",
+      "https://www.perfect82.com/list_notice_fix",
+      "https://www.perfect82.com/list_text_body",
+      "https://www.perfect82.com/list_text_etc",
+      "https://www.perfect82.com/list_text_title",
+      "https://www.perfect82.com/load",
+      "https://www.perfect82.com/postalCode",
+      "https://www.perfect82.com/shop/load_change_password.cm",
+      "https://www.perfect82.com/});$listing_obj.css({",
+      "https://www.perfect82.com/});var cnt = parseInt(type_data.grid_col_count);var inner_width = $listing_obj.width();if(window_width <= 991){if(typeof type_data.grid_mobile_col_count == ",
+      "https://www.perfect82.com/});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!=",
+      "https://www.perfect82.com/});}else{$listing_obj.find(",
+      "https://www.perfect82.com/})SITE.initTermsModeElements();});/ TODO: mfe에서 처리 필요$.ajax({type: "
+    ],
+    "inline_script_count": 16,
+    "external_script_count": 93
+  },
+  "page_samples": []
+}

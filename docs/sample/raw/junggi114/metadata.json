@@ -1,0 +1,18 @@
+{
+  "site": "중기114",
+  "slug": "junggi114",
+  "generated_at": "2026-05-01 01:23:57 UTC+09:00",
+  "method": "GET",
+  "request_url": "https://xn--114-vg9le98h.com/product?page=1",
+  "display_url": "https://중기114.com/product?page=1",
+  "status": 200,
+  "final_url": "https://xn--114-vg9le98h.com/product?page=1",
+  "content_type": "text/html; charset=UTF-8",
+  "body_length": 130069,
+  "response_body_file": "response_body.html",
+  "error": null,
+  "notes": [
+    "실제 요청은 IDNA punycode host로 보내고 문서에는 한글 도메인을 함께 남깁니다."
+  ],
+  "sensitive_values_stored": false
+}

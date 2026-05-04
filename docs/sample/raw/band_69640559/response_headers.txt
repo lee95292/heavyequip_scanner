@@ -1,0 +1,21 @@
+HTTP status: 200
+date: Thu, 30 Apr 2026 16:24:15 GMT
+vary: N-Client-IP,Accept-Encoding,User-Agent
+access-control-allow-origin: https://www.band.us
+access-control-allow-credentials: true
+access-control-allow-methods: GET,POST,PUT,DELETE,OPTIONS,HEAD
+access-control-allow-headers: md,DEVICE-TIME-ZONE-MS-OFFSET,DEVICE-TIME-ZONE-ID,language,akey,Content-Type
+pragma: no-cache
+cache-control: no-cache, no-store, max-age=0
+expires: Thu, 01 Jan 1970 00:00:00 GMT
+x-band-status: 200
+content-language: ko
+content-length: 71
+content-type: application/json;charset=UTF-8
+referrer-policy: unsafe-url
+server: nfront
+strict-transport-security: max-age=31536000; includeSubDomains
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+connection: close
