@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
@@ -8,14 +9,23 @@ const app = express();
 const port = Number(process.env.PORT || 5050);
 const repoRoot = path.resolve(__dirname, "..", "..");
 const configPath = process.env.CRAWL_CONFIG_PATH || path.join(repoRoot, "crawl", "config.json");
+const defaultDashboardPassword = "heavyequip";
 
 app.use(cors());
+app.use(express.json());
 
 let pool;
 let activeDbConfig;
 
+function readRawConfig() {
+  if (!fs.existsSync(configPath)) {
+    return {};
+  }
+  return JSON.parse(fs.readFileSync(configPath, "utf8"));
+}
+
 function readMysqlConfig() {
-  const raw = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  const raw = readRawConfig();
   const source = raw.mysql || raw;
   const connectTimeoutSeconds = Number(source.connect_timeout || 10);
   return {
@@ -31,6 +41,38 @@ function readMysqlConfig() {
     dateStrings: true,
     connectTimeout: Math.max(1, connectTimeoutSeconds) * 1000
   };
+}
+
+function readDashboardPassword() {
+  const raw = readRawConfig();
+  return String(
+    process.env.DASHBOARD_PASSWORD ||
+      raw.dashboard?.password ||
+      raw.dashboard_password ||
+      defaultDashboardPassword
+  );
+}
+
+function safePasswordEqual(input, expected) {
+  const inputBuffer = Buffer.from(String(input || ""));
+  const expectedBuffer = Buffer.from(String(expected || ""));
+  if (!inputBuffer.length || inputBuffer.length !== expectedBuffer.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(inputBuffer, expectedBuffer);
+}
+
+function isDashboardPasswordValid(password) {
+  return safePasswordEqual(password, readDashboardPassword());
+}
+
+function requireDashboardAuth(req, res, next) {
+  const password = req.get("x-dashboard-password") || "";
+  if (!isDashboardPasswordValid(password)) {
+    res.status(401).json({ error: "인증이 필요합니다." });
+    return;
+  }
+  next();
 }
 
 function publicDbInfo(config) {
@@ -202,6 +244,53 @@ function normalizeRecord(record) {
   };
 }
 
+function normalizePhone(value) {
+  let digits = String(value || "").replace(/\D/g, "");
+  if (digits.startsWith("82") && digits.length >= 11) {
+    digits = `0${digits.slice(2)}`;
+  }
+  return digits;
+}
+
+function formatPhone(value) {
+  const digits = normalizePhone(value);
+  if (/^01\d{8,9}$/.test(digits)) {
+    return digits.length === 11
+      ? `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+      : `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  if (/^0\d{8,10}$/.test(digits)) {
+    return digits.length === 10
+      ? `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6)}`
+      : `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  }
+  return digits || "-";
+}
+
+function extractPhoneNumbers(value) {
+  const text = String(value || "");
+  if (!text) {
+    return [];
+  }
+  const matches = text.match(/(?:\+?82[-.\s]*)?0?\d{1,2}[-.\s]*\d{3,4}[-.\s]*\d{4}/g) || [];
+  const phones = matches
+    .map(normalizePhone)
+    .filter((phone) => /^0\d{8,10}$/.test(phone))
+    .filter((phone) => !/^0{9,11}$/.test(phone));
+  return [...new Set(phones)];
+}
+
+function listingSelectSql() {
+  return `
+    SELECT
+      id, content_hash, origin, source_site, crawl_url, detail_url, pid,
+      category_code, category_name, listing_name, model_name, model_norm,
+      description, price, price_krw, contact, posted_date, posted_at, crawled_at,
+      manufacturer, manufactured_ym, location, seller, status, view_count, raw_json
+    FROM listings
+  `;
+}
+
 function normalizeTask(record) {
   const lastCrawledAt = record.success_at || record.updated_at || record.created_at || "";
   return {
@@ -365,12 +454,7 @@ async function queryListings(filters) {
   );
   const [rows] = await db.execute(
     `
-      SELECT
-        id, content_hash, origin, source_site, crawl_url, detail_url, pid,
-        category_code, category_name, listing_name, model_name, model_norm,
-        description, price, price_krw, contact, posted_date, posted_at, crawled_at,
-        manufacturer, manufactured_ym, location, seller, status, view_count, raw_json
-      FROM listings
+      ${listingSelectSql()}
       ${whereSql}
       ORDER BY ${sort}
       LIMIT ${baseFetchLimit}
@@ -392,6 +476,140 @@ async function queryListings(filters) {
     pricedTotal: Number(stats.pricedTotal || 0),
     latestPostedDate: stats.latestPostedDate || "",
     items: filteredItems.slice(0, limit)
+  };
+}
+
+async function fetchOwnerSourceRows() {
+  const db = getPool();
+  const [rows] = await db.execute(
+    `
+      ${listingSelectSql()}
+      WHERE contact IS NOT NULL AND TRIM(contact) <> ''
+      ORDER BY posted_at DESC, posted_date DESC, crawled_at DESC, id DESC
+      LIMIT 50000
+    `
+  );
+  return rows;
+}
+
+function addOwnerListing(owner, row) {
+  if (owner.listingIds.has(row.id)) {
+    return;
+  }
+  owner.listingIds.add(row.id);
+  owner.listingCount += 1;
+  if (row.seller) {
+    owner.sellers.add(row.seller);
+  }
+  if (row.source_site) {
+    owner.sites.add(siteShortName(row));
+  }
+  const posted = row.posted_at || row.posted_date || "";
+  const crawled = row.crawled_at || "";
+  if (posted && (!owner.latestPostedAt || String(posted) > String(owner.latestPostedAt))) {
+    owner.latestPostedAt = posted;
+  }
+  if (crawled && (!owner.latestCrawledAt || String(crawled) > String(owner.latestCrawledAt))) {
+    owner.latestCrawledAt = crawled;
+  }
+}
+
+async function queryOwners(filters) {
+  const search = String(filters.q || "").trim().toLowerCase();
+  const limit = Math.min(Math.max(Number(filters.limit || 1000), 1), 5000);
+  const owners = new Map();
+  const rows = await fetchOwnerSourceRows();
+  let listingWithPhoneCount = 0;
+
+  for (const row of rows) {
+    const phones = extractPhoneNumbers(row.contact);
+    if (!phones.length) {
+      continue;
+    }
+    listingWithPhoneCount += 1;
+    for (const phone of phones) {
+      if (!owners.has(phone)) {
+        owners.set(phone, {
+          phone,
+          displayPhone: formatPhone(phone),
+          listingCount: 0,
+          listingIds: new Set(),
+          sellers: new Set(),
+          sites: new Set(),
+          latestPostedAt: "",
+          latestCrawledAt: ""
+        });
+      }
+      addOwnerListing(owners.get(phone), row);
+    }
+  }
+
+  let items = [...owners.values()].map((owner) => ({
+    phone: owner.phone,
+    displayPhone: owner.displayPhone,
+    listingCount: owner.listingCount,
+    sellerNames: [...owner.sellers].slice(0, 3),
+    sourceSites: [...owner.sites].slice(0, 4),
+    latestPostedAt: owner.latestPostedAt,
+    latestCrawledAt: owner.latestCrawledAt
+  }));
+
+  if (search) {
+    items = items.filter((owner) => {
+      const target = [
+        owner.phone,
+        owner.displayPhone,
+        ...owner.sellerNames,
+        ...owner.sourceSites
+      ].join(" ").toLowerCase();
+      return target.includes(search);
+    });
+  }
+
+  items.sort((a, b) => b.listingCount - a.listingCount || String(b.latestPostedAt).localeCompare(a.latestPostedAt));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    db: publicDbInfo(activeDbConfig),
+    total: items.length,
+    listingWithPhoneCount,
+    maxListingCount: items[0]?.listingCount || 0,
+    items: items.slice(0, limit)
+  };
+}
+
+async function queryOwnerListings(phoneParam) {
+  const phone = normalizePhone(phoneParam);
+  if (!/^0\d{8,10}$/.test(phone)) {
+    return {
+      generatedAt: new Date().toISOString(),
+      db: publicDbInfo(activeDbConfig),
+      phone,
+      displayPhone: formatPhone(phone),
+      total: 0,
+      items: []
+    };
+  }
+
+  const rows = await fetchOwnerSourceRows();
+  const matched = [];
+  const seen = new Set();
+  for (const row of rows) {
+    if (!extractPhoneNumbers(row.contact).includes(phone) || seen.has(row.id)) {
+      continue;
+    }
+    seen.add(row.id);
+    matched.push(row);
+  }
+  const items = sortListings(matched.map(normalizeRecord), "posted_desc");
+
+  return {
+    generatedAt: new Date().toISOString(),
+    db: publicDbInfo(activeDbConfig),
+    phone,
+    displayPhone: formatPhone(phone),
+    total: items.length,
+    items
   };
 }
 
@@ -516,12 +734,41 @@ async function queryCrawlTasks(filters) {
   };
 }
 
+app.post("/api/auth/verify", (req, res) => {
+  const password = req.body?.password || "";
+  if (!isDashboardPasswordValid(password)) {
+    res.status(401).json({ ok: false, error: "비밀번호가 올바르지 않습니다." });
+    return;
+  }
+  res.json({ ok: true, expiresInSeconds: 24 * 60 * 60 });
+});
+
+app.use("/api", requireDashboardAuth);
+
 app.get("/api/listings", async (req, res) => {
   try {
     res.json(await queryListings(req.query));
   } catch (error) {
     console.error(`[dashboard] listings query failed: ${error.message}`);
     res.status(500).json({ error: "DB 조회에 실패했습니다.", detail: error.message });
+  }
+});
+
+app.get("/api/owners", async (req, res) => {
+  try {
+    res.json(await queryOwners(req.query));
+  } catch (error) {
+    console.error(`[dashboard] owner query failed: ${error.message}`);
+    res.status(500).json({ error: "차주 목록 조회에 실패했습니다.", detail: error.message });
+  }
+});
+
+app.get("/api/owners/:phone/listings", async (req, res) => {
+  try {
+    res.json(await queryOwnerListings(req.params.phone));
+  } catch (error) {
+    console.error(`[dashboard] owner listing query failed: ${error.message}`);
+    res.status(500).json({ error: "차주 매물 조회에 실패했습니다.", detail: error.message });
   }
 });
 

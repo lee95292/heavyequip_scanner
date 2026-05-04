@@ -14,6 +14,53 @@ const TASK_STATUS_OPTIONS = [
   { value: "done", label: "완료" }
 ];
 
+const AUTH_STORAGE_KEY = "heavyequip_dashboard_auth";
+const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
+
+function ownerPhoneFromLocation() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+  return new URLSearchParams(window.location.search).get("owner_phone") || "";
+}
+
+function readStoredAuth() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(AUTH_STORAGE_KEY) || "null");
+    if (!parsed?.password || !parsed?.expiresAt || Number(parsed.expiresAt) <= Date.now()) {
+      window.localStorage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    return null;
+  }
+}
+
+function writeStoredAuth(password) {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.localStorage.setItem(
+    AUTH_STORAGE_KEY,
+    JSON.stringify({
+      password,
+      expiresAt: Date.now() + AUTH_TTL_MS
+    })
+  );
+}
+
+function clearStoredAuth() {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.localStorage.removeItem(AUTH_STORAGE_KEY);
+}
+
 function formatPrice(item) {
   if (item.priceValue) {
     return item.priceValue.toLocaleString("ko-KR") + "원";
@@ -52,10 +99,24 @@ function formatDateTime(value) {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState("listings");
+  const initialOwnerPhone = ownerPhoneFromLocation();
+  const [activeTab, setActiveTab] = useState(initialOwnerPhone ? "ownerDetail" : "listings");
+  const [authStatus, setAuthStatus] = useState("checking");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authInput, setAuthInput] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
   const [payload, setPayload] = useState({ items: [], total: 0, databaseTotal: 0, pricedTotal: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [ownerPayload, setOwnerPayload] = useState({ items: [], total: 0, listingWithPhoneCount: 0 });
+  const [ownerLoading, setOwnerLoading] = useState(false);
+  const [ownerError, setOwnerError] = useState("");
+  const [ownerQuery, setOwnerQuery] = useState("");
+  const [ownerPhone, setOwnerPhone] = useState(initialOwnerPhone);
+  const [ownerDetailPayload, setOwnerDetailPayload] = useState({ items: [], total: 0, displayPhone: "" });
+  const [ownerDetailLoading, setOwnerDetailLoading] = useState(false);
+  const [ownerDetailError, setOwnerDetailError] = useState("");
   const [taskPayload, setTaskPayload] = useState({ items: [], total: 0, statusCounts: [], siteCounts: [] });
   const [taskLoading, setTaskLoading] = useState(false);
   const [taskError, setTaskError] = useState("");
@@ -72,8 +133,77 @@ function App() {
   const [hoursMax, setHoursMax] = useState("");
   const [sort, setSort] = useState("posted_desc");
 
+  const verifyPassword = (password) => {
+    return fetch("/api/auth/verify", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ password })
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("비밀번호가 올바르지 않습니다.");
+      }
+      return response.json();
+    });
+  };
+
   useEffect(() => {
-    if (activeTab !== "listings") {
+    const stored = readStoredAuth();
+    if (!stored) {
+      setAuthStatus("anonymous");
+      return;
+    }
+    verifyPassword(stored.password)
+      .then(() => {
+        setAuthPassword(stored.password);
+        setAuthStatus("authenticated");
+      })
+      .catch(() => {
+        clearStoredAuth();
+        setAuthPassword("");
+        setAuthStatus("anonymous");
+      });
+  }, []);
+
+  const authFetchOptions = useMemo(() => {
+    return {
+      headers: {
+        "x-dashboard-password": authPassword
+      }
+    };
+  }, [authPassword]);
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const password = authInput.trim();
+    if (!password) {
+      setAuthError("비밀번호를 입력해주세요.");
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError("");
+    verifyPassword(password)
+      .then(() => {
+        writeStoredAuth(password);
+        setAuthPassword(password);
+        setAuthInput("");
+        setAuthStatus("authenticated");
+        setAuthLoading(false);
+      })
+      .catch((loginError) => {
+        clearStoredAuth();
+        setAuthError(loginError.message);
+        setAuthLoading(false);
+      });
+  };
+
+  const handleLogout = () => {
+    clearStoredAuth();
+    setAuthPassword("");
+    setAuthStatus("anonymous");
+  };
+
+  useEffect(() => {
+    if (authStatus !== "authenticated" || activeTab !== "listings") {
       return undefined;
     }
     const controller = new AbortController();
@@ -110,7 +240,7 @@ function App() {
 
       setLoading(true);
       setError("");
-      fetch(`/api/listings?${params.toString()}`, { signal: controller.signal })
+      fetch(`/api/listings?${params.toString()}`, { ...authFetchOptions, signal: controller.signal })
         .then((response) => {
           if (!response.ok) {
             throw new Error(`API ${response.status}`);
@@ -136,6 +266,8 @@ function App() {
     };
   }, [
     activeTab,
+    authFetchOptions,
+    authStatus,
     query,
     postedFrom,
     postedTo,
@@ -149,7 +281,76 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (activeTab !== "tasks") {
+    if (authStatus !== "authenticated" || activeTab !== "owners") {
+      return undefined;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      const params = new URLSearchParams();
+      if (ownerQuery.trim()) {
+        params.set("q", ownerQuery.trim());
+      }
+      params.set("limit", "1000");
+
+      setOwnerLoading(true);
+      setOwnerError("");
+      fetch(`/api/owners?${params.toString()}`, { ...authFetchOptions, signal: controller.signal })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`API ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setOwnerPayload(data);
+          setOwnerLoading(false);
+        })
+        .catch((fetchError) => {
+          if (fetchError.name === "AbortError") {
+            return;
+          }
+          setOwnerError(fetchError.message);
+          setOwnerLoading(false);
+        });
+    }, 200);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [activeTab, authFetchOptions, authStatus, ownerQuery]);
+
+  useEffect(() => {
+    if (authStatus !== "authenticated" || activeTab !== "ownerDetail" || !ownerPhone) {
+      return undefined;
+    }
+    const controller = new AbortController();
+    setOwnerDetailLoading(true);
+    setOwnerDetailError("");
+    fetch(`/api/owners/${encodeURIComponent(ownerPhone)}/listings`, { ...authFetchOptions, signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`API ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setOwnerDetailPayload(data);
+        setOwnerDetailLoading(false);
+      })
+      .catch((fetchError) => {
+        if (fetchError.name === "AbortError") {
+          return;
+        }
+        setOwnerDetailError(fetchError.message);
+        setOwnerDetailLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [activeTab, authFetchOptions, authStatus, ownerPhone]);
+
+  useEffect(() => {
+    if (authStatus !== "authenticated" || activeTab !== "tasks") {
       return undefined;
     }
     const controller = new AbortController();
@@ -165,7 +366,7 @@ function App() {
 
       setTaskLoading(true);
       setTaskError("");
-      fetch(`/api/crawl-tasks?${params.toString()}`, { signal: controller.signal })
+      fetch(`/api/crawl-tasks?${params.toString()}`, { ...authFetchOptions, signal: controller.signal })
         .then((response) => {
           if (!response.ok) {
             throw new Error(`API ${response.status}`);
@@ -192,7 +393,7 @@ function App() {
       window.clearInterval(interval);
       controller.abort();
     };
-  }, [activeTab, taskQuery, taskStatus]);
+  }, [activeTab, authFetchOptions, authStatus, taskQuery, taskStatus]);
 
   const metrics = useMemo(() => {
     return {
@@ -220,6 +421,27 @@ function App() {
     setHoursMax("");
   };
 
+  const ownerMetrics = useMemo(() => {
+    return {
+      total: ownerPayload.total || 0,
+      listingWithPhoneCount: ownerPayload.listingWithPhoneCount || 0,
+      maxListingCount: ownerPayload.maxListingCount || 0,
+      visible: ownerPayload.items?.length || 0
+    };
+  }, [ownerPayload]);
+
+  const openOwnerWindow = (phone) => {
+    window.open(`/?owner_phone=${encodeURIComponent(phone)}`, "_blank", "noopener,noreferrer");
+  };
+
+  const closeOwnerDetail = () => {
+    setOwnerPhone("");
+    setActiveTab("owners");
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  };
+
   const taskMetrics = useMemo(() => {
     const byStatus = Object.fromEntries((taskPayload.statusCounts || []).map((item) => [item.status, item.count]));
     return {
@@ -231,6 +453,43 @@ function App() {
     };
   }, [taskPayload]);
 
+  if (authStatus === "checking") {
+    return (
+      <main className="auth-shell">
+        <section className="auth-panel">
+          <p className="eyebrow">Heavy equipment scanner</p>
+          <h1>대시보드 확인 중</h1>
+          <div className="state">저장된 로그인 정보를 확인하고 있습니다.</div>
+        </section>
+      </main>
+    );
+  }
+
+  if (authStatus !== "authenticated") {
+    return (
+      <main className="auth-shell">
+        <form className="auth-panel" onSubmit={handleLogin}>
+          <p className="eyebrow">Heavy equipment scanner</p>
+          <h1>대시보드 로그인</h1>
+          <label className="search-box">
+            <span>비밀번호</span>
+            <input
+              autoFocus
+              type="password"
+              value={authInput}
+              onChange={(event) => setAuthInput(event.target.value)}
+              placeholder="비밀번호 입력"
+            />
+          </label>
+          {authError && <div className="auth-error">{authError}</div>}
+          <button className="auth-button" type="submit" disabled={authLoading}>
+            {authLoading ? "확인 중" : "로그인"}
+          </button>
+        </form>
+      </main>
+    );
+  }
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -241,6 +500,9 @@ function App() {
         <div className="meta">
           <span>DB {payload.db?.database || "heavyequip_scanner"}</span>
           <span>{payload.db ? `${payload.db.host}:${payload.db.port}` : "MySQL"}</span>
+          <button type="button" onClick={handleLogout}>
+            로그아웃
+          </button>
         </div>
       </header>
 
@@ -251,6 +513,13 @@ function App() {
           onClick={() => setActiveTab("listings")}
         >
           매물 목록
+        </button>
+        <button
+          className={activeTab === "owners" || activeTab === "ownerDetail" ? "active" : ""}
+          type="button"
+          onClick={() => setActiveTab("owners")}
+        >
+          차주별 매물
         </button>
         <button
           className={activeTab === "tasks" ? "active" : ""}
@@ -422,6 +691,156 @@ function App() {
                 </tbody>
               </table>
               {!payload.items.length && <div className="state">조건에 맞는 매물이 없습니다.</div>}
+            </section>
+          )}
+        </>
+      )}
+
+      {activeTab === "owners" && (
+        <>
+          <section className="summary-grid" aria-label="차주별 매물 현황">
+            <div className="metric">
+              <span>전화번호 수</span>
+              <strong>{ownerMetrics.total.toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>전화번호 매칭 매물</span>
+              <strong>{ownerMetrics.listingWithPhoneCount.toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>최대 보유 매물</span>
+              <strong>{ownerMetrics.maxListingCount.toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>표시 중</span>
+              <strong>{ownerMetrics.visible.toLocaleString("ko-KR")}</strong>
+            </div>
+          </section>
+
+          <section className="toolbar owner-toolbar" aria-label="차주 검색">
+            <label className="search-box">
+              <span>차주 검색</span>
+              <input
+                value={ownerQuery}
+                onChange={(event) => setOwnerQuery(event.target.value)}
+                placeholder="전화번호, 상호, 사이트"
+              />
+            </label>
+          </section>
+
+          {ownerLoading && <div className="state">차주별 매물 수를 불러오는 중입니다.</div>}
+          {ownerError && <div className="state error">API 오류: {ownerError}</div>}
+
+          {!ownerLoading && !ownerError && (
+            <section className="table-wrap" aria-label="차주별 매물 목록">
+              <table className="owner-table">
+                <thead>
+                  <tr>
+                    <th>전화번호</th>
+                    <th>보유 매물 수</th>
+                    <th>차주/상호</th>
+                    <th>수집사이트</th>
+                    <th>최근 등록</th>
+                    <th>매물 목록</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ownerPayload.items.map((owner) => (
+                    <tr key={owner.phone}>
+                      <td data-label="전화번호">
+                        <button className="link-button" type="button" onClick={() => openOwnerWindow(owner.phone)}>
+                          {owner.displayPhone}
+                        </button>
+                      </td>
+                      <td data-label="보유 매물 수" className="price-cell">
+                        {owner.listingCount.toLocaleString("ko-KR")}
+                      </td>
+                      <td data-label="차주/상호">
+                        <div className="primary-text">{owner.sellerNames?.join(", ") || "-"}</div>
+                      </td>
+                      <td data-label="수집사이트">{owner.sourceSites?.join(", ") || "-"}</td>
+                      <td data-label="최근 등록">{formatDateTime(owner.latestPostedAt)}</td>
+                      <td data-label="매물 목록">
+                        <button className="open-button" type="button" onClick={() => openOwnerWindow(owner.phone)}>
+                          보기
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!ownerPayload.items.length && <div className="state">표시할 차주 매물이 없습니다.</div>}
+            </section>
+          )}
+        </>
+      )}
+
+      {activeTab === "ownerDetail" && (
+        <>
+          <section className="detail-heading" aria-label="차주 매물 상세">
+            <div>
+              <p className="eyebrow">Owner listings</p>
+              <h2>{ownerDetailPayload.displayPhone || ownerPhone}</h2>
+            </div>
+            <div className="detail-actions">
+              <span>{(ownerDetailPayload.total || 0).toLocaleString("ko-KR")}건</span>
+              <button type="button" onClick={closeOwnerDetail}>
+                차주 목록
+              </button>
+            </div>
+          </section>
+
+          {ownerDetailLoading && <div className="state">차주 매물 목록을 불러오는 중입니다.</div>}
+          {ownerDetailError && <div className="state error">API 오류: {ownerDetailError}</div>}
+
+          {!ownerDetailLoading && !ownerDetailError && (
+            <section className="table-wrap" aria-label="차주 업로드 매물 목록">
+              <table>
+                <thead>
+                  <tr>
+                    <th>가격</th>
+                    <th>표시명</th>
+                    <th>모델명</th>
+                    <th>연식</th>
+                    <th>사이트</th>
+                    <th>등록일자</th>
+                    <th>연락처</th>
+                    <th>수집 링크</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ownerDetailPayload.items.map((item) => (
+                    <tr key={item.id}>
+                      <td data-label="가격" className="price-cell">
+                        {formatPrice(item)}
+                      </td>
+                      <td data-label="표시명">
+                        <div className="primary-text">{item.displayName}</div>
+                        <div className="sub-text">{[item.categoryName, item.location].filter(Boolean).join(" · ")}</div>
+                      </td>
+                      <td data-label="모델명">{item.modelName || "-"}</td>
+                      <td data-label="연식">{item.manufacturedYm || "-"}</td>
+                      <td data-label="사이트">
+                        <span className="site-badge" title={item.sourceSite}>
+                          {item.siteShort}
+                        </span>
+                      </td>
+                      <td data-label="등록일자">{item.postedDate || "-"}</td>
+                      <td data-label="연락처">{item.contact || "-"}</td>
+                      <td data-label="수집 링크">
+                        {item.link ? (
+                          <a href={item.link} target="_blank" rel="noreferrer">
+                            열기
+                          </a>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!ownerDetailPayload.items.length && <div className="state">해당 전화번호의 매물이 없습니다.</div>}
             </section>
           )}
         </>

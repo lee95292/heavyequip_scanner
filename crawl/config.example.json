@@ -7,5 +7,8 @@
     "database": "heavyequip_scanner",
     "charset": "utf8mb4",
     "connect_timeout": 10
+  },
+  "dashboard": {
+    "password": "heavyequip"
   }
 }
