@@ -1,2 +1,0 @@
-"""Heavy equipment crawler package."""
-

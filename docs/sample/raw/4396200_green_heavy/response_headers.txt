@@ -1,9 +1,0 @@
-HTTP status: 200
-Server: nginx
-Date: Thu, 30 Apr 2026 16:24:00 GMT
-Content-Type: text/html; charset=utf-8
-Transfer-Encoding: chunked
-Connection: close
-Vary: Accept-Encoding
-P3P: CP='NOI CURa ADMa DEVa TAIa OUR DELa BUS IND PHY ONL UNI COM NAV INT DEM PRE'
-Set-Cookie: PHPSESSID=kfna68vcd150b026ilskce0tv1; path=/; secure

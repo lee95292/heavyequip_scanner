@@ -1,6 +1,0 @@
-curl -L \
-  'http://wpjq.jigecha.kr/kwa-sell_jigecha?PB_1483420906=1' \
-  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,application/json;q=0.8,*/*;q=0.7' \
-  -H 'Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7' \
-  -H 'Accept-Encoding: identity' \
-  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'

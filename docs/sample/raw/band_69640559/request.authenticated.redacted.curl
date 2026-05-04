@@ -1,9 +1,0 @@
-curl -L \
-  'https://api-kr.band.us/v2.0.0/get_posts_and_announcements?ts={TIMESTAMP_MS}&band_no=69640559&resolution_type=4&order_by=created_at_desc' \
-  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
-  -H 'Origin: https://www.band.us' \
-  -H 'Referer: https://www.band.us/band/69640559/post' \
-  -H 'language: ko' \
-  -H 'akey: ${BAND_AKEY}' \
-  -H 'md: ${BAND_MD}' \
-  -b 'BBC=${BAND_BBC}; di=${BAND_DI}; band_session=${BAND_SESSION}; as=${BAND_AS}; ai=${BAND_AI}; language=ko'

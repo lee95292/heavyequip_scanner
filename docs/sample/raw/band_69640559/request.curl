@@ -1,9 +1,0 @@
-curl -L \
-  'https://api-kr.band.us/v2.0.0/get_posts_and_announcements?ts=1777562655507&band_no=69640559&resolution_type=4&order_by=created_at_desc' \
-  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
-  -H 'Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7' \
-  -H 'Accept-Encoding: identity' \
-  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36' \
-  -H 'Origin: https://www.band.us' \
-  -H 'Referer: https://www.band.us/band/69640559/post' \
-  -H 'language: ko'
