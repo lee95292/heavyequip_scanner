@@ -10,6 +10,24 @@ const port = Number(process.env.PORT || 5050);
 const repoRoot = path.resolve(__dirname, "..", "..");
 const configPath = process.env.CRAWL_CONFIG_PATH || path.join(repoRoot, "crawl", "config.json");
 const defaultDashboardPassword = "heavyequip";
+const listingLinkCheckConcurrency = 6;
+const listingLinkCheckTimeoutMs = 8000;
+const listingLinkCheckSnippetBytes = 128 * 1024;
+const deletedPagePatterns = [
+  /삭제된\s*(게시물|게시글|페이지|상품|매물)/i,
+  /삭제되었(?:습니다)?/i,
+  /존재하지\s*(?:않는|않습니다)/i,
+  /찾을\s*수\s*없(?:습니다|는)/i,
+  /페이지를\s*찾을\s*수/i,
+  /없는\s*(게시물|게시글|상품|매물)/i,
+  /게시글이\s*존재하지/i,
+  /상품이\s*존재하지/i,
+  /매물이\s*존재하지/i,
+  /404\s*not\s*found/i,
+  /page\s*not\s*found/i,
+  /\bnot\s*found\b/i,
+  /\bgone\b/i
+];
 
 app.use(cors());
 app.use(express.json());
@@ -89,6 +107,150 @@ function getPool() {
     pool = mysql.createPool(activeDbConfig);
   }
   return pool;
+}
+
+function normalizeHttpUrl(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return "";
+    }
+    return url.toString();
+  } catch {
+    return "";
+  }
+}
+
+function csvCell(value) {
+  const text = String(value ?? "");
+  if (/[",\r\n]/.test(text)) {
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+  return text;
+}
+
+function listingLinksCsv(links) {
+  const rows = ["매물 링크", ...links].map(csvCell);
+  return `\uFEFF${rows.join("\r\n")}\r\n`;
+}
+
+function csvDownloadFilename(phone) {
+  const normalizedPhone = normalizePhone(phone) || "unknown";
+  const date = new Date().toISOString().slice(0, 10);
+  return `owner-listing-links-${normalizedPhone}-${date}.csv`;
+}
+
+function attachmentDisposition(filename) {
+  const fallback = filename.replace(/[^A-Za-z0-9._-]/g, "_");
+  return `attachment; filename="${fallback}"; filename*=UTF-8''${encodeURIComponent(filename)}`;
+}
+
+function pageLooksDeleted(snippet) {
+  const html = String(snippet || "").slice(0, listingLinkCheckSnippetBytes);
+  const visibleText = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&");
+  const alertText = [...html.matchAll(/alert\s*\(\s*["'`]([^"'`]{0,180})["'`]\s*\)/gi)]
+    .map((match) => match[1])
+    .join(" ");
+  const text = `${visibleText} ${alertText}`.replace(/\s+/g, " ");
+  return deletedPagePatterns.some((pattern) => pattern.test(text));
+}
+
+async function readResponseSnippet(response, maxBytes) {
+  if (!response.body || typeof response.body.getReader !== "function") {
+    return (await response.text()).slice(0, maxBytes);
+  }
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+
+  try {
+    while (total < maxBytes) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      const chunk = Buffer.from(value);
+      chunks.push(chunk);
+      total += chunk.length;
+    }
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+
+  return Buffer.concat(chunks, total).slice(0, maxBytes).toString("utf8");
+}
+
+async function fetchListingPageSnippet(link) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), listingLinkCheckTimeoutMs);
+  try {
+    const response = await fetch(link, {
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36",
+        accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+      },
+      redirect: "follow",
+      signal: controller.signal
+    });
+    const snippet = await readResponseSnippet(response, listingLinkCheckSnippetBytes);
+    return {
+      status: response.status,
+      finalUrl: response.url,
+      snippet
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function checkListingLink(link) {
+  const normalizedLink = normalizeHttpUrl(link);
+  if (!normalizedLink) {
+    return { link, deleted: true, checkFailed: false, reason: "invalid_url" };
+  }
+
+  try {
+    const result = await fetchListingPageSnippet(normalizedLink);
+    if ([404, 410, 451].includes(result.status)) {
+      return { link: normalizedLink, deleted: true, checkFailed: false, reason: `http_${result.status}` };
+    }
+    if (pageLooksDeleted(result.snippet)) {
+      return { link: normalizedLink, deleted: true, checkFailed: false, reason: "deleted_text" };
+    }
+    return { link: normalizedLink, deleted: false, checkFailed: false, reason: `http_${result.status}` };
+  } catch (error) {
+    return {
+      link: normalizedLink,
+      deleted: false,
+      checkFailed: true,
+      reason: error.name === "AbortError" ? "timeout" : "check_failed"
+    };
+  }
+}
+
+async function mapWithConcurrency(items, concurrency, mapper) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+  const workerCount = Math.min(Math.max(concurrency, 1), items.length);
+
+  async function worker() {
+    while (nextIndex < items.length) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+      results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+    }
+  }
+
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  return results;
 }
 
 function siteShortName(record) {
@@ -613,6 +775,33 @@ async function queryOwnerListings(phoneParam) {
   };
 }
 
+async function queryOwnerListingLinkExport(phoneParam) {
+  const ownerListings = await queryOwnerListings(phoneParam);
+  const links = [];
+  const seen = new Set();
+
+  for (const item of ownerListings.items) {
+    const link = normalizeHttpUrl(item.link);
+    if (!link || seen.has(link)) {
+      continue;
+    }
+    seen.add(link);
+    links.push(link);
+  }
+
+  const checks = await mapWithConcurrency(links, listingLinkCheckConcurrency, checkListingLink);
+  const availableLinks = checks.filter((check) => !check.deleted).map((check) => check.link);
+
+  return {
+    ...ownerListings,
+    originalLinkCount: links.length,
+    checkedLinkCount: checks.length,
+    skippedDeletedCount: checks.filter((check) => check.deleted).length,
+    failedCheckCount: checks.filter((check) => check.checkFailed).length,
+    links: availableLinks
+  };
+}
+
 async function tableExists(tableName) {
   const db = getPool();
   const [rows] = await db.execute(
@@ -772,6 +961,24 @@ app.get("/api/owners/:phone/listings", async (req, res) => {
   }
 });
 
+app.get("/api/owners/:phone/listing-links.csv", async (req, res) => {
+  try {
+    const exported = await queryOwnerListingLinkExport(req.params.phone);
+    const filename = csvDownloadFilename(exported.phone || req.params.phone);
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", attachmentDisposition(filename));
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("X-Listing-Link-Count", String(exported.links.length));
+    res.setHeader("X-Original-Link-Count", String(exported.originalLinkCount));
+    res.setHeader("X-Skipped-Deleted-Count", String(exported.skippedDeletedCount));
+    res.setHeader("X-Failed-Check-Count", String(exported.failedCheckCount));
+    res.send(listingLinksCsv(exported.links));
+  } catch (error) {
+    console.error(`[dashboard] owner listing link export failed: ${error.message}`);
+    res.status(500).json({ error: "차주 매물 링크 CSV 생성에 실패했습니다.", detail: error.message });
+  }
+});
+
 app.get("/api/crawl-tasks", async (req, res) => {
   try {
     res.json(await queryCrawlTasks(req.query));
@@ -779,6 +986,10 @@ app.get("/api/crawl-tasks", async (req, res) => {
     console.error(`[dashboard] crawl task query failed: ${error.message}`);
     res.status(500).json({ error: "크롤링 작업 조회에 실패했습니다.", detail: error.message });
   }
+});
+
+app.use("/api", (req, res) => {
+  res.status(404).json({ error: "API 경로를 찾을 수 없습니다.", path: req.originalUrl });
 });
 
 if (process.env.NODE_ENV === "production") {

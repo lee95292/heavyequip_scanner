@@ -98,6 +98,39 @@ function formatDateTime(value) {
   return String(value).replace("T", " ").slice(0, 19);
 }
 
+function filenameFromDisposition(disposition, fallback) {
+  const header = String(disposition || "");
+  const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf8Match) {
+    try {
+      return decodeURIComponent(utf8Match[1].trim().replace(/^"|"$/g, ""));
+    } catch {
+      return fallback;
+    }
+  }
+  const quotedMatch = header.match(/filename="([^"]+)"/i);
+  return quotedMatch?.[1] || fallback;
+}
+
+function downloadBlob(blob, filename) {
+  const url = window.URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function isCsvResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("text/html")) {
+    return false;
+  }
+  return contentType.includes("text/csv") || response.headers.has("x-listing-link-count");
+}
+
 function App() {
   const initialOwnerPhone = ownerPhoneFromLocation();
   const [activeTab, setActiveTab] = useState(initialOwnerPhone ? "ownerDetail" : "listings");
@@ -117,6 +150,9 @@ function App() {
   const [ownerDetailPayload, setOwnerDetailPayload] = useState({ items: [], total: 0, displayPhone: "" });
   const [ownerDetailLoading, setOwnerDetailLoading] = useState(false);
   const [ownerDetailError, setOwnerDetailError] = useState("");
+  const [ownerCsvLoading, setOwnerCsvLoading] = useState(false);
+  const [ownerCsvError, setOwnerCsvError] = useState("");
+  const [ownerCsvMessage, setOwnerCsvMessage] = useState("");
   const [taskPayload, setTaskPayload] = useState({ items: [], total: 0, statusCounts: [], siteCounts: [] });
   const [taskLoading, setTaskLoading] = useState(false);
   const [taskError, setTaskError] = useState("");
@@ -327,6 +363,8 @@ function App() {
     const controller = new AbortController();
     setOwnerDetailLoading(true);
     setOwnerDetailError("");
+    setOwnerCsvError("");
+    setOwnerCsvMessage("");
     fetch(`/api/owners/${encodeURIComponent(ownerPhone)}/listings`, { ...authFetchOptions, signal: controller.signal })
       .then((response) => {
         if (!response.ok) {
@@ -440,6 +478,59 @@ function App() {
     if (typeof window !== "undefined") {
       window.history.replaceState(null, "", window.location.pathname);
     }
+  };
+
+  const handleDownloadOwnerLinksCsv = () => {
+    if (!ownerPhone || ownerCsvLoading) {
+      return;
+    }
+    setOwnerCsvLoading(true);
+    setOwnerCsvError("");
+    setOwnerCsvMessage("");
+    fetch(`/api/owners/${encodeURIComponent(ownerPhone)}/listing-links.csv`, authFetchOptions)
+      .then(async (response) => {
+        if (!response.ok) {
+          let message = `API ${response.status}`;
+          try {
+            const data = await response.json();
+            message = data.detail || data.error || message;
+          } catch {
+            // Keep the status-only message when the response is not JSON.
+          }
+          throw new Error(message);
+        }
+
+        if (!isCsvResponse(response)) {
+          const text = await response.text();
+          const preview = text.replace(/\s+/g, " ").slice(0, 80);
+          throw new Error(`CSV 응답이 아닙니다. 서버가 HTML/다른 응답을 반환했습니다: ${preview}`);
+        }
+
+        const blob = await response.blob();
+        const filename = filenameFromDisposition(
+          response.headers.get("content-disposition"),
+          `owner-listing-links-${ownerPhone}.csv`
+        );
+        const exportedCount = Number(response.headers.get("x-listing-link-count") || 0);
+        const skippedDeleted = Number(response.headers.get("x-skipped-deleted-count") || 0);
+        const failedChecks = Number(response.headers.get("x-failed-check-count") || 0);
+        const summary = [`${exportedCount.toLocaleString("ko-KR")}건`];
+        if (skippedDeleted) {
+          summary.push(`삭제 의심 ${skippedDeleted.toLocaleString("ko-KR")}건 제외`);
+        }
+        if (failedChecks) {
+          summary.push(`확인 실패 ${failedChecks.toLocaleString("ko-KR")}건은 포함`);
+        }
+
+        downloadBlob(blob, filename);
+        setOwnerCsvMessage(`CSV 다운로드 완료 (${summary.join(", ")})`);
+      })
+      .catch((downloadError) => {
+        setOwnerCsvError(downloadError.message);
+      })
+      .finally(() => {
+        setOwnerCsvLoading(false);
+      });
   };
 
   const taskMetrics = useMemo(() => {
@@ -784,11 +875,22 @@ function App() {
             </div>
             <div className="detail-actions">
               <span>{(ownerDetailPayload.total || 0).toLocaleString("ko-KR")}건</span>
+              <button
+                className="download-button"
+                type="button"
+                onClick={handleDownloadOwnerLinksCsv}
+                disabled={ownerCsvLoading || ownerDetailLoading || !ownerDetailPayload.items.length}
+              >
+                {ownerCsvLoading ? "CSV 생성 중" : "링크 CSV 다운로드"}
+              </button>
               <button type="button" onClick={closeOwnerDetail}>
                 차주 목록
               </button>
             </div>
           </section>
+
+          {ownerCsvMessage && <div className="export-feedback">{ownerCsvMessage}</div>}
+          {ownerCsvError && <div className="export-feedback error">CSV 오류: {ownerCsvError}</div>}
 
           {ownerDetailLoading && <div className="state">차주 매물 목록을 불러오는 중입니다.</div>}
           {ownerDetailError && <div className="state error">API 오류: {ownerDetailError}</div>}
