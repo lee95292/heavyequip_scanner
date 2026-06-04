@@ -159,6 +159,7 @@ function App() {
   const [taskQuery, setTaskQuery] = useState("");
   const [taskStatus, setTaskStatus] = useState("");
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+  const [taskStartQueuedIds, setTaskStartQueuedIds] = useState([]);
   const [taskStartLoading, setTaskStartLoading] = useState(false);
   const [taskStartError, setTaskStartError] = useState("");
   const [taskStartMessage, setTaskStartMessage] = useState("");
@@ -549,30 +550,46 @@ function App() {
     };
   }, [taskPayload]);
 
-  const visiblePendingTaskIds = useMemo(() => {
-    return (taskPayload.items || []).filter((task) => task.status === "pending").map((task) => task.id);
-  }, [taskPayload]);
-
+  const taskStartQueuedIdSet = useMemo(() => new Set(taskStartQueuedIds), [taskStartQueuedIds]);
   const selectedTaskIdSet = useMemo(() => new Set(selectedTaskIds), [selectedTaskIds]);
+  const isTaskStartQueued = (task) => {
+    return task.status === "pending" && (task.manualStartRequestedAt || taskStartQueuedIdSet.has(task.id));
+  };
+  const visibleStartableTaskIds = useMemo(() => {
+    return (taskPayload.items || [])
+      .filter((task) => task.status === "pending" && !task.manualStartRequestedAt && !taskStartQueuedIdSet.has(task.id))
+      .map((task) => task.id);
+  }, [taskPayload, taskStartQueuedIdSet]);
   const allVisiblePendingSelected =
-    visiblePendingTaskIds.length > 0 && visiblePendingTaskIds.every((id) => selectedTaskIdSet.has(id));
+    visibleStartableTaskIds.length > 0 && visibleStartableTaskIds.every((id) => selectedTaskIdSet.has(id));
 
   useEffect(() => {
-    const pendingIds = new Set(visiblePendingTaskIds);
+    const startableIds = new Set(visibleStartableTaskIds);
     setSelectedTaskIds((current) => {
-      const next = current.filter((id) => pendingIds.has(id));
+      const next = current.filter((id) => startableIds.has(id));
       return next.length === current.length ? current : next;
     });
-  }, [visiblePendingTaskIds]);
+  }, [visibleStartableTaskIds]);
+
+  useEffect(() => {
+    const visibleTasks = new Map((taskPayload.items || []).map((task) => [task.id, task]));
+    setTaskStartQueuedIds((current) => {
+      const next = current.filter((id) => {
+        const task = visibleTasks.get(id);
+        return !task || task.status === "pending";
+      });
+      return next.length === current.length ? current : next;
+    });
+  }, [taskPayload]);
 
   const toggleVisiblePendingTasks = (checked) => {
     setTaskStartError("");
     setTaskStartMessage("");
     if (checked) {
-      setSelectedTaskIds((current) => [...new Set([...current, ...visiblePendingTaskIds])]);
+      setSelectedTaskIds((current) => [...new Set([...current, ...visibleStartableTaskIds])]);
       return;
     }
-    const visibleIds = new Set(visiblePendingTaskIds);
+    const visibleIds = new Set(visibleStartableTaskIds);
     setSelectedTaskIds((current) => current.filter((id) => !visibleIds.has(id)));
   };
 
@@ -611,10 +628,22 @@ function App() {
       })
       .then((data) => {
         const startedCount = Number(data.startedTaskCount || 0);
+        const alreadyRequestedCount = Number(data.alreadyRequestedTaskCount || 0);
+        const startedTaskIds = (data.startedTaskIds || []).map(Number).filter((id) => Number.isSafeInteger(id) && id > 0);
         const sites = (data.runs || []).map((run) => run.siteSlug).filter(Boolean).join(", ");
-        const message = startedCount
-          ? `${startedCount.toLocaleString("ko-KR")}개 작업을 시작했습니다${sites ? ` (${sites})` : ""}.`
+        const messageParts = [];
+        if (startedCount) {
+          messageParts.push(`${startedCount.toLocaleString("ko-KR")}개 작업을 시작 대기로 등록했습니다`);
+        }
+        if (alreadyRequestedCount) {
+          messageParts.push(`${alreadyRequestedCount.toLocaleString("ko-KR")}개는 이미 시작 대기 중입니다`);
+        }
+        const message = messageParts.length
+          ? `${messageParts.join(", ")}${sites ? ` (${sites})` : ""}.`
           : "시작 가능한 대기 작업이 없습니다.";
+        if (startedTaskIds.length) {
+          setTaskStartQueuedIds((current) => [...new Set([...current, ...startedTaskIds])]);
+        }
         setSelectedTaskIds([]);
         setTaskStartMessage(message);
         setTaskRefreshKey((value) => value + 1);
@@ -1126,51 +1155,56 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {taskPayload.items.map((task) => (
-                    <tr key={task.id}>
-                      <td data-label="선택" className="task-select-cell">
-                        <input
-                          type="checkbox"
-                          aria-label={`작업 ${task.id} 선택`}
-                          checked={selectedTaskIdSet.has(task.id)}
-                          disabled={task.status !== "pending"}
-                          onChange={(event) => toggleTaskSelection(task.id, event.target.checked)}
-                        />
-                      </td>
-                      <td data-label="상태">
-                        <span className={`status-pill ${task.status}`}>{statusLabel(task.status)}</span>
-                      </td>
-                      <td data-label="사이트">
-                        <div className="primary-text">{task.siteName}</div>
-                        <div className="sub-text">{task.origin || task.siteSlug}</div>
-                      </td>
-                      <td data-label="작업">
-                        <div className="primary-text">{task.taskType}</div>
-                        <div className="sub-text">ID {task.id}</div>
-                      </td>
-                      <td data-label="카테고리">
-                        <div className="primary-text">{task.categoryName || "-"}</div>
-                        <div className="sub-text">
-                          {[task.categoryCode, task.page && `page ${task.page}`].filter(Boolean).join(" · ")}
-                        </div>
-                      </td>
-                      <td data-label="마지막 크롤링">{formatDateTime(task.lastCrawledAt)}</td>
-                      <td data-label="다음 실행">{formatDateTime(task.nextRunAt)}</td>
-                      <td data-label="시도">
-                        <div className="primary-text">{task.attempts}</div>
-                        <div className="sub-text">{task.lastStatusCode ? `HTTP ${task.lastStatusCode}` : ""}</div>
-                      </td>
-                      <td data-label="대상 링크">
-                        {task.link ? (
-                          <a href={task.link} target="_blank" rel="noreferrer" title={task.link}>
-                            열기
-                          </a>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {taskPayload.items.map((task) => {
+                    const startQueued = isTaskStartQueued(task);
+                    return (
+                      <tr key={task.id}>
+                        <td data-label="선택" className="task-select-cell">
+                          <input
+                            type="checkbox"
+                            aria-label={`작업 ${task.id} 선택`}
+                            checked={!startQueued && selectedTaskIdSet.has(task.id)}
+                            disabled={task.status !== "pending" || startQueued}
+                            onChange={(event) => toggleTaskSelection(task.id, event.target.checked)}
+                          />
+                        </td>
+                        <td data-label="상태">
+                          <span className={`status-pill ${startQueued ? "queued" : task.status}`}>
+                            {startQueued ? "시작 대기" : statusLabel(task.status)}
+                          </span>
+                        </td>
+                        <td data-label="사이트">
+                          <div className="primary-text">{task.siteName}</div>
+                          <div className="sub-text">{task.origin || task.siteSlug}</div>
+                        </td>
+                        <td data-label="작업">
+                          <div className="primary-text">{task.taskType}</div>
+                          <div className="sub-text">ID {task.id}{startQueued ? " · 예약됨" : ""}</div>
+                        </td>
+                        <td data-label="카테고리">
+                          <div className="primary-text">{task.categoryName || "-"}</div>
+                          <div className="sub-text">
+                            {[task.categoryCode, task.page && `page ${task.page}`].filter(Boolean).join(" · ")}
+                          </div>
+                        </td>
+                        <td data-label="마지막 크롤링">{formatDateTime(task.lastCrawledAt)}</td>
+                        <td data-label="다음 실행">{formatDateTime(task.nextRunAt)}</td>
+                        <td data-label="시도">
+                          <div className="primary-text">{task.attempts}</div>
+                          <div className="sub-text">{task.lastStatusCode ? `HTTP ${task.lastStatusCode}` : ""}</div>
+                        </td>
+                        <td data-label="대상 링크">
+                          {task.link ? (
+                            <a href={task.link} target="_blank" rel="noreferrer" title={task.link}>
+                              열기
+                            </a>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               {!taskPayload.items.length && <div className="state">표시할 크롤링 작업이 없습니다.</div>}

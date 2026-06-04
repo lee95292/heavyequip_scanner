@@ -604,6 +604,12 @@ tr:last-child td {
   color: #8a5b00;
 }
 
+.status-pill.queued {
+  border-color: #b7d4f2;
+  background: #edf6ff;
+  color: #075985;
+}
+
 .status-pill.done {
   border-color: #cfe1d3;
   background: #eef8f0;

@@ -16,6 +16,7 @@ const listingLinkCheckTimeoutMs = 8000;
 const listingLinkCheckSnippetBytes = 128 * 1024;
 const supportedCrawlSites = new Set(["green_heavy"]);
 const maxManualCrawlTasks = Math.max(1, Number(process.env.DASHBOARD_MAX_MANUAL_CRAWL_TASKS || 500) || 500);
+const manualStartRequests = new Map();
 const deletedPagePatterns = [
   /삭제된\s*(게시물|게시글|페이지|상품|매물)/i,
   /삭제되었(?:습니다)?/i,
@@ -852,6 +853,27 @@ function manualCrawlerSleepSeconds() {
   return Number.isFinite(value) && value >= 0 ? String(value) : "1.5";
 }
 
+function markManualStartRequests(taskIds) {
+  const requestedAt = new Date().toISOString();
+  for (const taskId of taskIds) {
+    manualStartRequests.set(Number(taskId), requestedAt);
+  }
+}
+
+function normalizeTaskWithManualStart(record) {
+  const task = normalizeTask(record);
+  const taskId = Number(record.id);
+  if (record.status !== "pending") {
+    manualStartRequests.delete(taskId);
+    return task;
+  }
+  const requestedAt = manualStartRequests.get(taskId);
+  if (requestedAt) {
+    task.manualStartRequestedAt = requestedAt;
+  }
+  return task;
+}
+
 function spawnCrawler(siteSlug, taskIds) {
   const pythonBin = process.env.CRAWL_PYTHON_BIN || "python3";
   const mode = process.env.DASHBOARD_MANUAL_CRAWL_MODE || "all";
@@ -890,6 +912,9 @@ function spawnCrawler(siteSlug, taskIds) {
     }
   });
   child.on("error", (error) => {
+    for (const taskId of taskIds) {
+      manualStartRequests.delete(Number(taskId));
+    }
     console.error(`${prefix} spawn failed: ${error.message}`);
   });
   child.on("exit", (code, signal) => {
@@ -927,7 +952,9 @@ async function startCrawlTasks(taskIds) {
   const pendingRows = rows.filter((row) => row.status === "pending");
   const supportedRows = pendingRows.filter((row) => supportedCrawlSites.has(row.site_slug));
   const unsupportedTaskCount = pendingRows.length - supportedRows.length;
-  const supportedTaskIds = supportedRows.map((row) => Number(row.id));
+  const alreadyRequestedRows = supportedRows.filter((row) => manualStartRequests.has(Number(row.id)));
+  const startableRows = supportedRows.filter((row) => !manualStartRequests.has(Number(row.id)));
+  const supportedTaskIds = startableRows.map((row) => Number(row.id));
 
   if (!supportedTaskIds.length) {
     return {
@@ -936,6 +963,8 @@ async function startCrawlTasks(taskIds) {
       pendingTaskCount: pendingRows.length,
       startedTaskCount: 0,
       unsupportedTaskCount,
+      alreadyRequestedTaskCount: alreadyRequestedRows.length,
+      startedTaskIds: [],
       runs: []
     };
   }
@@ -953,7 +982,8 @@ async function startCrawlTasks(taskIds) {
     supportedTaskIds
   );
 
-  const runs = [...groupTaskIdsBySite(supportedRows).entries()].map(([siteSlug, siteTaskIds]) =>
+  markManualStartRequests(supportedTaskIds);
+  const runs = [...groupTaskIdsBySite(startableRows).entries()].map(([siteSlug, siteTaskIds]) =>
     spawnCrawler(siteSlug, siteTaskIds)
   );
 
@@ -963,6 +993,8 @@ async function startCrawlTasks(taskIds) {
     pendingTaskCount: pendingRows.length,
     startedTaskCount: supportedTaskIds.length,
     unsupportedTaskCount,
+    alreadyRequestedTaskCount: alreadyRequestedRows.length,
+    startedTaskIds: supportedTaskIds,
     runs
   };
 }
@@ -1070,7 +1102,7 @@ async function queryCrawlTasks(filters) {
       count: Number(row.count || 0),
       latestTaskAt: row.latestTaskAt || ""
     })),
-    items: rows.map(normalizeTask)
+    items: rows.map(normalizeTaskWithManualStart)
   };
 }
 
