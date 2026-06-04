@@ -1140,7 +1140,7 @@ function App() {
                         type="checkbox"
                         aria-label="대기 작업 전체 선택"
                         checked={allVisiblePendingSelected}
-                        disabled={!visiblePendingTaskIds.length}
+                        disabled={!visibleStartableTaskIds.length}
                         onChange={(event) => toggleVisiblePendingTasks(event.target.checked)}
                       />
                     </th>
