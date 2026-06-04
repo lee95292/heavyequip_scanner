@@ -205,7 +205,7 @@ h1 {
 }
 
 .task-toolbar {
-  grid-template-columns: minmax(320px, 1fr) 180px;
+  grid-template-columns: minmax(320px, 1fr) 180px 170px;
 }
 
 .owner-toolbar {
@@ -234,6 +234,18 @@ select {
   background: #ffffff;
   color: #1b2633;
   padding: 0 11px;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #123c69;
+  cursor: pointer;
+  padding: 0;
+}
+
+input[type="checkbox"]:disabled {
+  cursor: not-allowed;
 }
 
 input:focus,
@@ -372,6 +384,33 @@ button:focus-visible {
 .open-button {
   background: #f8fafc;
   color: #39485a;
+}
+
+.task-actions {
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+}
+
+.start-button {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #123c69;
+  border-radius: 6px;
+  background: #123c69;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0 12px;
+  font-weight: 900;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #0f3155;
+}
+
+.start-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
 }
 
 .table-wrap {
@@ -571,13 +610,23 @@ tr:last-child td {
   color: #245a35;
 }
 
-.task-table th:nth-child(4),
-.task-table td:nth-child(4) {
+.task-select-cell {
+  width: 44px;
+  text-align: center;
+}
+
+.task-select-cell input {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.task-table th:nth-child(5),
+.task-table td:nth-child(5) {
   min-width: 160px;
 }
 
-.task-table th:nth-child(8),
-.task-table td:nth-child(8) {
+.task-table th:nth-child(9),
+.task-table td:nth-child(9) {
   min-width: 86px;
 }
 

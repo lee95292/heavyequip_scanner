@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -44,6 +45,22 @@ def resolve_sites(args: argparse.Namespace) -> list[str]:
     return sorted(sites)
 
 
+def selected_task_ids(args: argparse.Namespace) -> tuple[int, ...]:
+    raw_values = list(args.task_id or [])
+    raw_values.extend(os.environ.get("CRAWL_TASK_IDS", "").replace(" ", "").split(","))
+    ids: list[int] = []
+    for value in raw_values:
+        if value in ("", None):
+            continue
+        try:
+            task_id = int(value)
+        except (TypeError, ValueError):
+            continue
+        if task_id > 0 and task_id not in ids:
+            ids.append(task_id)
+    return tuple(ids)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="중장비 매물 크롤러 실행 인터페이스")
     parser.add_argument("--mode", default="1d", help="실행 모드: 전체/all, 최근1일/1d, 최근5일/5d, 1달/1m")
@@ -54,6 +71,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-pages", type=int, help="테스트용 카테고리당 최대 페이지 수")
     parser.add_argument("--max-categories", type=int, help="테스트용 최대 카테고리 수")
     parser.add_argument("--max-items", type=int, help="테스트용 최대 저장 매물 수")
+    parser.add_argument("--task-id", action="append", type=int, help="선택한 crawl_tasks.id만 처리")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR, help="파싱 JSON 출력 디렉터리")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="DB 연결 설정 JSON 경로")
     parser.add_argument("--no-db", action="store_true", help="DB 적재 없이 JSON 파일만 생성")
@@ -72,6 +90,7 @@ def run(args: argparse.Namespace) -> dict:
         max_pages=args.max_pages,
         max_categories=args.max_categories,
         max_items=args.max_items,
+        selected_task_ids=selected_task_ids(args),
         write_db=not args.no_db,
     )
     summary = {"mode": mode, "sites": []}

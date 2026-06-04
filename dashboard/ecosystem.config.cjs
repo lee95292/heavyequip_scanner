@@ -11,7 +11,8 @@ module.exports = {
       max_memory_restart: "300M",
       env: {
         NODE_ENV: "production",
-        PORT: "5050"
+        PORT: "5050",
+        DASHBOARD_MANUAL_CRAWL_SLEEP: "1.5"
       }
     }
   ]

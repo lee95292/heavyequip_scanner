@@ -514,24 +514,30 @@ class GreenHeavyCrawler:
     def crawl(self) -> list[dict]:
         cutoff = self.config.cutoff_datetime()
         crawled_at = datetime_string(now_kst())
+        selected_task_run = bool(self.config.selected_task_ids)
+        selected_task_ids = set(self.config.selected_task_ids)
         ensure_crawl_queue(self.config.mysql)
-        reset_count = reset_running_crawl_tasks(self.config.mysql, SITE_SLUG)
-        if reset_count:
-            print(f"[green_heavy] reset running tasks={reset_count}")
-        categories = (
-            retry_once(
-                "green_heavy discover_categories",
-                self.discover_categories,
-                sleep_seconds=self.config.sleep_seconds,
+        if selected_task_run:
+            categories = []
+            print(f"[green_heavy] selected task run ids={sorted(selected_task_ids)}")
+        else:
+            reset_count = reset_running_crawl_tasks(self.config.mysql, SITE_SLUG)
+            if reset_count:
+                print(f"[green_heavy] reset running tasks={reset_count}")
+            categories = (
+                retry_once(
+                    "green_heavy discover_categories",
+                    self.discover_categories,
+                    sleep_seconds=self.config.sleep_seconds,
+                )
+                or []
             )
-            or []
-        )
-        if self.config.max_categories:
-            categories = categories[: self.config.max_categories]
-        print(f"[green_heavy] categories={len(categories)} mode={self.config.normalized_mode()}")
-        for category in categories:
-            self.queue_list_task(category, 1, 0)
-        print(f"[green_heavy] queue={crawl_task_counts(self.config.mysql, SITE_SLUG)}")
+            if self.config.max_categories:
+                categories = categories[: self.config.max_categories]
+            print(f"[green_heavy] categories={len(categories)} mode={self.config.normalized_mode()}")
+            for category in categories:
+                self.queue_list_task(category, 1, 0)
+            print(f"[green_heavy] queue={crawl_task_counts(self.config.mysql, SITE_SLUG)}")
 
         records: list[dict] = []
         batch_records: list[dict] = []
@@ -542,14 +548,24 @@ class GreenHeavyCrawler:
         while True:
             if self.config.max_items and len(records) >= self.config.max_items:
                 break
-            tasks = fetch_pending_crawl_tasks(self.config.mysql, SITE_SLUG, QUEUE_BATCH_SIZE, ensure=False)
+            if selected_task_run and not selected_task_ids:
+                break
+            tasks = fetch_pending_crawl_tasks(
+                self.config.mysql,
+                SITE_SLUG,
+                QUEUE_BATCH_SIZE,
+                task_ids=selected_task_ids if selected_task_run else None,
+                ensure=False,
+            )
             if not tasks:
                 break
             for task in tasks:
                 if self.config.max_items and len(records) >= self.config.max_items:
                     break
                 mark_crawl_task_started(self.config.mysql, int(task["id"]))
-                time.sleep(self.config.sleep_seconds)
+                sleep_delay = self.config.sleep_delay_seconds()
+                if sleep_delay > 0:
+                    time.sleep(sleep_delay)
                 if task["task_type"] == "list":
                     new_records, should_pause = self.process_list_task(task, cutoff)
                 elif task["task_type"] == "detail":
@@ -569,6 +585,8 @@ class GreenHeavyCrawler:
                 if should_pause:
                     paused = True
                     break
+                if selected_task_run:
+                    selected_task_ids.discard(int(task["id"]))
             if paused:
                 break
         if batch_records:

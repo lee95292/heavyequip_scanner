@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { spawn } = require("child_process");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
@@ -13,6 +14,8 @@ const defaultDashboardPassword = "heavyequip";
 const listingLinkCheckConcurrency = 6;
 const listingLinkCheckTimeoutMs = 8000;
 const listingLinkCheckSnippetBytes = 128 * 1024;
+const supportedCrawlSites = new Set(["green_heavy"]);
+const maxManualCrawlTasks = Math.max(1, Number(process.env.DASHBOARD_MAX_MANUAL_CRAWL_TASKS || 500) || 500);
 const deletedPagePatterns = [
   /삭제된\s*(게시물|게시글|페이지|상품|매물)/i,
   /삭제되었(?:습니다)?/i,
@@ -816,6 +819,154 @@ async function tableExists(tableName) {
   return Number(rows?.[0]?.cnt || 0) > 0;
 }
 
+function parseTaskIds(value) {
+  const source = Array.isArray(value) ? value : [];
+  const ids = [];
+  for (const item of source) {
+    const id = Number(item);
+    if (Number.isSafeInteger(id) && id > 0 && !ids.includes(id)) {
+      ids.push(id);
+    }
+  }
+  return ids;
+}
+
+function sqlPlaceholders(values) {
+  return values.map(() => "?").join(",");
+}
+
+function groupTaskIdsBySite(rows) {
+  const groups = new Map();
+  for (const row of rows) {
+    const siteSlug = row.site_slug || "";
+    if (!groups.has(siteSlug)) {
+      groups.set(siteSlug, []);
+    }
+    groups.get(siteSlug).push(Number(row.id));
+  }
+  return groups;
+}
+
+function manualCrawlerSleepSeconds() {
+  const value = Number(process.env.DASHBOARD_MANUAL_CRAWL_SLEEP || 1.5);
+  return Number.isFinite(value) && value >= 0 ? String(value) : "1.5";
+}
+
+function spawnCrawler(siteSlug, taskIds) {
+  const pythonBin = process.env.CRAWL_PYTHON_BIN || "python3";
+  const mode = process.env.DASHBOARD_MANUAL_CRAWL_MODE || "all";
+  const args = [
+    path.join(repoRoot, "crawl", "interface.py"),
+    "--site",
+    siteSlug,
+    "--mode",
+    mode,
+    "--sleep",
+    manualCrawlerSleepSeconds(),
+    "--config",
+    configPath
+  ];
+  const child = spawn(pythonBin, args, {
+    cwd: repoRoot,
+    env: {
+      ...process.env,
+      CRAWL_TASK_IDS: taskIds.join(","),
+      PYTHONUNBUFFERED: "1"
+    },
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+
+  const prefix = `[crawler:${siteSlug}:${child.pid || "pending"}]`;
+  child.stdout?.on("data", (chunk) => {
+    const text = chunk.toString().trimEnd();
+    if (text) {
+      console.log(`${prefix} ${text}`);
+    }
+  });
+  child.stderr?.on("data", (chunk) => {
+    const text = chunk.toString().trimEnd();
+    if (text) {
+      console.error(`${prefix} ${text}`);
+    }
+  });
+  child.on("error", (error) => {
+    console.error(`${prefix} spawn failed: ${error.message}`);
+  });
+  child.on("exit", (code, signal) => {
+    console.log(`${prefix} exited code=${code} signal=${signal || "-"}`);
+  });
+
+  return {
+    siteSlug,
+    pid: child.pid || null,
+    taskCount: taskIds.length
+  };
+}
+
+async function startCrawlTasks(taskIds) {
+  const db = getPool();
+  if (!(await tableExists("crawl_tasks"))) {
+    return {
+      generatedAt: new Date().toISOString(),
+      selectedTaskCount: taskIds.length,
+      pendingTaskCount: 0,
+      startedTaskCount: 0,
+      unsupportedTaskCount: 0,
+      runs: []
+    };
+  }
+
+  const [rows] = await db.execute(
+    `
+      SELECT id, site_slug, status
+      FROM crawl_tasks
+      WHERE id IN (${sqlPlaceholders(taskIds)})
+    `,
+    taskIds
+  );
+  const pendingRows = rows.filter((row) => row.status === "pending");
+  const supportedRows = pendingRows.filter((row) => supportedCrawlSites.has(row.site_slug));
+  const unsupportedTaskCount = pendingRows.length - supportedRows.length;
+  const supportedTaskIds = supportedRows.map((row) => Number(row.id));
+
+  if (!supportedTaskIds.length) {
+    return {
+      generatedAt: new Date().toISOString(),
+      selectedTaskCount: taskIds.length,
+      pendingTaskCount: pendingRows.length,
+      startedTaskCount: 0,
+      unsupportedTaskCount,
+      runs: []
+    };
+  }
+
+  await db.execute(
+    `
+      UPDATE crawl_tasks
+      SET next_run_at=NULL,
+          last_status_code=NULL,
+          last_error=NULL,
+          updated_at=CURRENT_TIMESTAMP
+      WHERE id IN (${sqlPlaceholders(supportedTaskIds)})
+        AND status = 'pending'
+    `,
+    supportedTaskIds
+  );
+
+  const runs = [...groupTaskIdsBySite(supportedRows).entries()].map(([siteSlug, siteTaskIds]) =>
+    spawnCrawler(siteSlug, siteTaskIds)
+  );
+
+  return {
+    generatedAt: new Date().toISOString(),
+    selectedTaskCount: taskIds.length,
+    pendingTaskCount: pendingRows.length,
+    startedTaskCount: supportedTaskIds.length,
+    unsupportedTaskCount,
+    runs
+  };
+}
+
 async function queryCrawlTasks(filters) {
   const db = getPool();
   const limit = Math.min(Math.max(Number(filters.limit || 500), 1), 2000);
@@ -985,6 +1136,28 @@ app.get("/api/crawl-tasks", async (req, res) => {
   } catch (error) {
     console.error(`[dashboard] crawl task query failed: ${error.message}`);
     res.status(500).json({ error: "크롤링 작업 조회에 실패했습니다.", detail: error.message });
+  }
+});
+
+app.post("/api/crawl-tasks/start", async (req, res) => {
+  const rawTaskIds = req.body?.taskIds || req.body?.ids || [];
+  const taskIds = parseTaskIds(rawTaskIds);
+  if (!taskIds.length) {
+    res.status(400).json({ error: "시작할 대기 작업을 선택해주세요." });
+    return;
+  }
+  if (taskIds.length > maxManualCrawlTasks) {
+    res.status(400).json({
+      error: `한 번에 시작할 수 있는 작업은 최대 ${maxManualCrawlTasks.toLocaleString("ko-KR")}개입니다.`
+    });
+    return;
+  }
+
+  try {
+    res.json(await startCrawlTasks(taskIds));
+  } catch (error) {
+    console.error(`[dashboard] crawl task start failed: ${error.message}`);
+    res.status(500).json({ error: "크롤링 작업 시작에 실패했습니다.", detail: error.message });
   }
 });
 

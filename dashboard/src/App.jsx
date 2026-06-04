@@ -158,6 +158,11 @@ function App() {
   const [taskError, setTaskError] = useState("");
   const [taskQuery, setTaskQuery] = useState("");
   const [taskStatus, setTaskStatus] = useState("");
+  const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+  const [taskStartLoading, setTaskStartLoading] = useState(false);
+  const [taskStartError, setTaskStartError] = useState("");
+  const [taskStartMessage, setTaskStartMessage] = useState("");
+  const [taskRefreshKey, setTaskRefreshKey] = useState(0);
   const [query, setQuery] = useState("");
   const [postedFrom, setPostedFrom] = useState("");
   const [postedTo, setPostedTo] = useState("");
@@ -431,7 +436,7 @@ function App() {
       window.clearInterval(interval);
       controller.abort();
     };
-  }, [activeTab, authFetchOptions, authStatus, taskQuery, taskStatus]);
+  }, [activeTab, authFetchOptions, authStatus, taskQuery, taskRefreshKey, taskStatus]);
 
   const metrics = useMemo(() => {
     return {
@@ -544,6 +549,84 @@ function App() {
     };
   }, [taskPayload]);
 
+  const visiblePendingTaskIds = useMemo(() => {
+    return (taskPayload.items || []).filter((task) => task.status === "pending").map((task) => task.id);
+  }, [taskPayload]);
+
+  const selectedTaskIdSet = useMemo(() => new Set(selectedTaskIds), [selectedTaskIds]);
+  const allVisiblePendingSelected =
+    visiblePendingTaskIds.length > 0 && visiblePendingTaskIds.every((id) => selectedTaskIdSet.has(id));
+
+  useEffect(() => {
+    const pendingIds = new Set(visiblePendingTaskIds);
+    setSelectedTaskIds((current) => {
+      const next = current.filter((id) => pendingIds.has(id));
+      return next.length === current.length ? current : next;
+    });
+  }, [visiblePendingTaskIds]);
+
+  const toggleVisiblePendingTasks = (checked) => {
+    setTaskStartError("");
+    setTaskStartMessage("");
+    if (checked) {
+      setSelectedTaskIds((current) => [...new Set([...current, ...visiblePendingTaskIds])]);
+      return;
+    }
+    const visibleIds = new Set(visiblePendingTaskIds);
+    setSelectedTaskIds((current) => current.filter((id) => !visibleIds.has(id)));
+  };
+
+  const toggleTaskSelection = (taskId, checked) => {
+    setTaskStartError("");
+    setTaskStartMessage("");
+    setSelectedTaskIds((current) => {
+      if (checked) {
+        return current.includes(taskId) ? current : [...current, taskId];
+      }
+      return current.filter((id) => id !== taskId);
+    });
+  };
+
+  const handleStartSelectedTasks = () => {
+    if (!selectedTaskIds.length || taskStartLoading) {
+      return;
+    }
+    setTaskStartLoading(true);
+    setTaskStartError("");
+    setTaskStartMessage("");
+    fetch("/api/crawl-tasks/start", {
+      method: "POST",
+      headers: {
+        ...authFetchOptions.headers,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ taskIds: selectedTaskIds })
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.detail || data.error || `API ${response.status}`);
+        }
+        return data;
+      })
+      .then((data) => {
+        const startedCount = Number(data.startedTaskCount || 0);
+        const sites = (data.runs || []).map((run) => run.siteSlug).filter(Boolean).join(", ");
+        const message = startedCount
+          ? `${startedCount.toLocaleString("ko-KR")}개 작업을 시작했습니다${sites ? ` (${sites})` : ""}.`
+          : "시작 가능한 대기 작업이 없습니다.";
+        setSelectedTaskIds([]);
+        setTaskStartMessage(message);
+        setTaskRefreshKey((value) => value + 1);
+      })
+      .catch((startError) => {
+        setTaskStartError(startError.message);
+      })
+      .finally(() => {
+        setTaskStartLoading(false);
+      });
+  };
+
   if (authStatus === "checking") {
     return (
       <main className="auth-shell">
@@ -648,7 +731,7 @@ function App() {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="예: 볼보 EC480, 두산, 010-"
+                placeholder="표시명, 모델명, 제조사, 카테고리, 사이트, 판매자, 지역, 연락처"
               />
             </label>
             <label className="select-box">
@@ -988,7 +1071,20 @@ function App() {
                 ))}
               </select>
             </label>
+            <div className="task-actions">
+              <button
+                className="start-button"
+                type="button"
+                onClick={handleStartSelectedTasks}
+                disabled={!selectedTaskIds.length || taskStartLoading}
+              >
+                {taskStartLoading ? "시작 중" : `선택 시작 (${selectedTaskIds.length})`}
+              </button>
+            </div>
           </section>
+
+          {taskStartMessage && <div className="export-feedback">{taskStartMessage}</div>}
+          {taskStartError && <div className="export-feedback error">시작 오류: {taskStartError}</div>}
 
           {!!taskPayload.siteCounts?.length && (
             <section className="site-strip" aria-label="사이트별 작업">
@@ -1010,6 +1106,15 @@ function App() {
               <table className="task-table">
                 <thead>
                   <tr>
+                    <th className="task-select-cell">
+                      <input
+                        type="checkbox"
+                        aria-label="대기 작업 전체 선택"
+                        checked={allVisiblePendingSelected}
+                        disabled={!visiblePendingTaskIds.length}
+                        onChange={(event) => toggleVisiblePendingTasks(event.target.checked)}
+                      />
+                    </th>
                     <th>상태</th>
                     <th>사이트</th>
                     <th>작업</th>
@@ -1023,6 +1128,15 @@ function App() {
                 <tbody>
                   {taskPayload.items.map((task) => (
                     <tr key={task.id}>
+                      <td data-label="선택" className="task-select-cell">
+                        <input
+                          type="checkbox"
+                          aria-label={`작업 ${task.id} 선택`}
+                          checked={selectedTaskIdSet.has(task.id)}
+                          disabled={task.status !== "pending"}
+                          onChange={(event) => toggleTaskSelection(task.id, event.target.checked)}
+                        />
+                      </td>
                       <td data-label="상태">
                         <span className={`status-pill ${task.status}`}>{statusLabel(task.status)}</span>
                       </td>

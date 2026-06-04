@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import random
 import re
 import time
 import traceback
@@ -72,6 +73,7 @@ class CrawlConfig:
     max_pages: Optional[int] = None
     max_categories: Optional[int] = None
     max_items: Optional[int] = None
+    selected_task_ids: tuple[int, ...] = ()
     write_db: bool = True
 
     def normalized_mode(self) -> str:
@@ -88,6 +90,9 @@ class CrawlConfig:
             return now - dt.timedelta(days=30)
         return None
 
+    def sleep_delay_seconds(self) -> float:
+        return jittered_sleep_seconds(self.sleep_seconds)
+
 
 def now_kst() -> dt.datetime:
     return dt.datetime.now(KST).replace(microsecond=0)
@@ -96,6 +101,14 @@ def now_kst() -> dt.datetime:
 def normalize_mode(mode: str) -> str:
     key = str(mode or "all").strip().lower()
     return MODE_ALIASES.get(key, key)
+
+
+def jittered_sleep_seconds(base_seconds: float, jitter_ratio: float = 0.5) -> float:
+    base = max(0.0, float(base_seconds or 0))
+    if base <= 0:
+        return 0.0
+    jitter = max(0.0, float(jitter_ratio or 0))
+    return random.uniform(base * (1 - jitter), base * (1 + jitter))
 
 
 def clean_text(value: Any) -> str:
@@ -439,23 +452,39 @@ def fetch_pending_crawl_tasks(
     config: MySQLConfig,
     site_slug: str,
     limit: int = 20,
+    task_ids: Optional[Iterable[int]] = None,
     ensure: bool = True,
 ) -> list[dict[str, Any]]:
     if ensure:
         ensure_crawl_queue(config)
+    selected_ids: list[int] = []
+    for value in task_ids or ():
+        try:
+            task_id = int(value)
+        except (TypeError, ValueError):
+            continue
+        if task_id > 0 and task_id not in selected_ids:
+            selected_ids.append(task_id)
+    task_filter_sql = ""
+    params: list[Any] = [site_slug]
+    if selected_ids:
+        task_filter_sql = f" AND id IN ({','.join(['%s'] * len(selected_ids))})"
+        params.extend(selected_ids)
+    params.append(limit)
     with mysql_connect(config, config.database) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                """
+                f"""
                 SELECT *
                 FROM crawl_tasks
                 WHERE site_slug = %s
                   AND status = 'pending'
                   AND (next_run_at IS NULL OR next_run_at <= CURRENT_TIMESTAMP)
+                  {task_filter_sql}
                 ORDER BY priority ASC, id ASC
                 LIMIT %s
                 """,
-                (site_slug, limit),
+                params,
             )
             return list(cursor.fetchall())
 
@@ -728,7 +757,7 @@ def retry_once(label: str, func, sleep_seconds: float = 0.3):
             last_error = error
             print(f"[retry] {label} failed attempt={attempt}: {type(error).__name__}: {error}")
             if attempt < attempts and sleep_seconds > 0:
-                time.sleep(sleep_seconds)
+                time.sleep(jittered_sleep_seconds(sleep_seconds))
     log_path = write_skip_log(label, last_error, attempts) if last_error else None
     log_suffix = f" log={log_path}" if log_path else ""
     print(f"[skip] {label}: {type(last_error).__name__}: {last_error}{log_suffix}")
