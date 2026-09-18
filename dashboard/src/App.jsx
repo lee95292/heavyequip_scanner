@@ -11,6 +11,7 @@ const TASK_STATUS_OPTIONS = [
   { value: "", label: "전체 상태" },
   { value: "running", label: "실행중" },
   { value: "pending", label: "대기" },
+  { value: "failed", label: "실패" },
   { value: "done", label: "완료" }
 ];
 
@@ -82,10 +83,31 @@ function formatHours(value) {
   return Number(value).toLocaleString("ko-KR") + "시간";
 }
 
+function formatKrw(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) {
+    return "-";
+  }
+  return new Intl.NumberFormat("ko-KR", {
+    style: "currency",
+    currency: "KRW",
+    maximumFractionDigits: 0
+  }).format(Math.round(amount));
+}
+
+async function readApiResponse(response) {
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || data.detail || `API ${response.status}`);
+  }
+  return data;
+}
+
 function statusLabel(status) {
   const labels = {
     running: "실행중",
     pending: "대기",
+    failed: "실패",
     done: "완료"
   };
   return labels[status] || status || "-";
@@ -96,6 +118,15 @@ function formatDateTime(value) {
     return "-";
   }
   return String(value).replace("T", " ").slice(0, 19);
+}
+
+function readinessLabel(value) {
+  const labels = {
+    response_capture_required: "응답 캡처 필요",
+    research_pending: "추가 조사 필요",
+    ready: "연동 준비 완료"
+  };
+  return labels[value] || value || "미확인";
 }
 
 function filenameFromDisposition(disposition, fallback) {
@@ -164,6 +195,13 @@ function App() {
   const [taskStartError, setTaskStartError] = useState("");
   const [taskStartMessage, setTaskStartMessage] = useState("");
   const [taskRefreshKey, setTaskRefreshKey] = useState(0);
+  const [internationalPayload, setInternationalPayload] = useState({
+    sources: [],
+    summary: {},
+    requestPolicy: {}
+  });
+  const [internationalLoading, setInternationalLoading] = useState(false);
+  const [internationalError, setInternationalError] = useState("");
   const [query, setQuery] = useState("");
   const [postedFrom, setPostedFrom] = useState("");
   const [postedTo, setPostedTo] = useState("");
@@ -174,6 +212,16 @@ function App() {
   const [hoursMin, setHoursMin] = useState("");
   const [hoursMax, setHoursMax] = useState("");
   const [sort, setSort] = useState("posted_desc");
+  const [predictionQuery, setPredictionQuery] = useState("");
+  const [predictionYear, setPredictionYear] = useState("");
+  const [predictionSuggestions, setPredictionSuggestions] = useState([]);
+  const [predictionSelected, setPredictionSelected] = useState(null);
+  const [predictionInputFocused, setPredictionInputFocused] = useState(false);
+  const [predictionSuggestionsOpen, setPredictionSuggestionsOpen] = useState(false);
+  const [predictionSuggestionsLoading, setPredictionSuggestionsLoading] = useState(false);
+  const [predictionLoading, setPredictionLoading] = useState(false);
+  const [predictionError, setPredictionError] = useState("");
+  const [predictionResult, setPredictionResult] = useState(null);
 
   const verifyPassword = (password) => {
     return fetch("/api/auth/verify", {
@@ -439,6 +487,89 @@ function App() {
     };
   }, [activeTab, authFetchOptions, authStatus, taskQuery, taskRefreshKey, taskStatus]);
 
+  useEffect(() => {
+    if (authStatus !== "authenticated" || activeTab !== "international") {
+      return undefined;
+    }
+    const controller = new AbortController();
+    setInternationalLoading(true);
+    setInternationalError("");
+    fetch("/api/international-sources", { ...authFetchOptions, signal: controller.signal })
+      .then(readApiResponse)
+      .then((data) => {
+        setInternationalPayload(data);
+        setInternationalLoading(false);
+      })
+      .catch((fetchError) => {
+        if (fetchError.name === "AbortError") {
+          return;
+        }
+        setInternationalError(fetchError.message);
+        setInternationalLoading(false);
+      });
+    return () => controller.abort();
+  }, [activeTab, authFetchOptions, authStatus]);
+
+  useEffect(() => {
+    const queryText = predictionQuery.trim();
+    const hasSelectedModel = predictionSelected?.modelName === queryText;
+    if (
+      authStatus !== "authenticated" ||
+      activeTab !== "prediction" ||
+      !predictionInputFocused ||
+      !queryText ||
+      hasSelectedModel
+    ) {
+      setPredictionSuggestionsOpen(false);
+      if (!queryText) {
+        setPredictionSuggestions([]);
+        setPredictionSuggestionsLoading(false);
+      }
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      const params = new URLSearchParams({ q: queryText, limit: "12" });
+      setPredictionSuggestionsLoading(true);
+      setPredictionError("");
+      fetch(`/api/prediction/models?${params.toString()}`, {
+        ...authFetchOptions,
+        signal: controller.signal
+      })
+        .then(readApiResponse)
+        .then((data) => {
+          const items = Array.isArray(data.items)
+            ? data.items.map((item) => ({ ...item, modelVersion: data.modelVersion }))
+            : [];
+          setPredictionSuggestions(items);
+          setPredictionSuggestionsOpen(true);
+          setPredictionSuggestionsLoading(false);
+        })
+        .catch((fetchError) => {
+          if (fetchError.name === "AbortError") {
+            return;
+          }
+          setPredictionSuggestions([]);
+          setPredictionSuggestionsOpen(false);
+          setPredictionError(fetchError.message);
+          setPredictionSuggestionsLoading(false);
+        });
+    }, 200);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [
+    activeTab,
+    authFetchOptions,
+    authStatus,
+    predictionInputFocused,
+    predictionQuery,
+    predictionSelected
+  ]);
+
   const metrics = useMemo(() => {
     return {
       databaseTotal: payload.databaseTotal || 0,
@@ -463,6 +594,68 @@ function App() {
     setManufacturedTo("");
     setHoursMin("");
     setHoursMax("");
+  };
+
+  const handlePredictionQueryChange = (event) => {
+    const value = event.target.value;
+    setPredictionQuery(value);
+    if (predictionSelected?.modelName !== value.trim()) {
+      setPredictionSelected(null);
+    }
+    setPredictionResult(null);
+    setPredictionError("");
+    setPredictionSuggestions([]);
+    setPredictionSuggestionsLoading(Boolean(value.trim()));
+    setPredictionSuggestionsOpen(Boolean(value.trim()));
+  };
+
+  const selectPredictionModel = (suggestion) => {
+    setPredictionSelected(suggestion);
+    setPredictionQuery(suggestion.modelName);
+    setPredictionSuggestions([]);
+    setPredictionSuggestionsLoading(false);
+    setPredictionSuggestionsOpen(false);
+    setPredictionResult(null);
+    setPredictionError("");
+  };
+
+  const handlePredictionSubmit = (event) => {
+    event.preventDefault();
+    const manufacturedYear = Number(predictionYear);
+    const maximumYear = new Date().getFullYear() + 1;
+    if (!predictionSelected || predictionSelected.modelName !== predictionQuery.trim()) {
+      setPredictionError("검색 결과에서 모델을 선택해주세요.");
+      return;
+    }
+    if (!Number.isInteger(manufacturedYear) || manufacturedYear < 1970 || manufacturedYear > maximumYear) {
+      setPredictionError(`연식은 1970년부터 ${maximumYear}년 사이로 입력해주세요.`);
+      return;
+    }
+
+    setPredictionLoading(true);
+    setPredictionError("");
+    setPredictionResult(null);
+    fetch("/api/prediction/price", {
+      method: "POST",
+      headers: {
+        ...authFetchOptions.headers,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        suggestionId: predictionSelected.id,
+        modelVersion: predictionSelected.modelVersion,
+        manufacturedYear
+      })
+    })
+      .then(readApiResponse)
+      .then((data) => {
+        setPredictionResult(data);
+        setPredictionLoading(false);
+      })
+      .catch((predictionRequestError) => {
+        setPredictionError(predictionRequestError.message);
+        setPredictionLoading(false);
+      });
   };
 
   const ownerMetrics = useMemo(() => {
@@ -545,6 +738,7 @@ function App() {
       total: taskPayload.total || 0,
       running: byStatus.running || 0,
       pending: byStatus.pending || 0,
+      failed: byStatus.failed || 0,
       done: byStatus.done || 0,
       latest: formatDateTime(taskPayload.latestTaskAt)
     };
@@ -576,7 +770,7 @@ function App() {
     setTaskStartQueuedIds((current) => {
       const next = current.filter((id) => {
         const task = visibleTasks.get(id);
-        return !task || task.status === "pending";
+        return !task || (task.status === "pending" && Boolean(task.manualStartRequestedAt));
       });
       return next.length === current.length ? current : next;
     });
@@ -731,7 +925,262 @@ function App() {
         >
           크롤링 작업
         </button>
+        <button
+          className={activeTab === "international" ? "active" : ""}
+          type="button"
+          onClick={() => setActiveTab("international")}
+        >
+          국제 사이트 분석
+        </button>
+        <button
+          className={activeTab === "prediction" ? "active" : ""}
+          type="button"
+          onClick={() => setActiveTab("prediction")}
+        >
+          가격 예측
+        </button>
       </nav>
+
+      {activeTab === "international" && (
+        <section className="international-page" aria-labelledby="international-title">
+          <header className="international-heading">
+            <div>
+              <p className="eyebrow">International sources</p>
+              <h2 id="international-title">국제 중고중장비 수집 분석</h2>
+            </div>
+            <p>공식 공개 목록을 기준으로 수집 표면, 역순 동기화 방식, 파싱 필드를 비교합니다.</p>
+          </header>
+
+          <section className="summary-grid" aria-label="국제 사이트 분석 현황">
+            <div className="metric">
+              <span>조사 사이트</span>
+              <strong>{Number(internationalPayload.summary?.sourceCount || 0).toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>파서 준비</span>
+              <strong>{Number(internationalPayload.summary?.parserReadyCount || 0).toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>요청 활성화</span>
+              <strong>{Number(internationalPayload.summary?.enabledCount || 0).toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>수집 매물</span>
+              <strong>{Number(internationalPayload.summary?.listingCount || 0).toLocaleString("ko-KR")}</strong>
+            </div>
+          </section>
+
+          <div className="request-policy" role="note">
+            <strong>현재 단계: 외부 요청 비활성</strong>
+            <span>{internationalPayload.requestPolicy?.message || "분석 정보를 불러오고 있습니다."}</span>
+            <small>{internationalPayload.requestPolicy?.resumeRule || ""}</small>
+          </div>
+
+          {internationalLoading && <div className="state">국제 사이트 분석 정보를 불러오는 중입니다.</div>}
+          {internationalError && <div className="state error">API 오류: {internationalError}</div>}
+
+          {!internationalLoading && !internationalError && (
+            <div className="source-grid">
+              {(internationalPayload.sources || []).map((source) => (
+                <article className="source-card" key={source.slug}>
+                  <header>
+                    <div>
+                      <span className={`readiness-pill ${source.readiness}`}>
+                        {readinessLabel(source.readiness)}
+                      </span>
+                      <h3>{source.name}</h3>
+                      <p>{source.region}</p>
+                    </div>
+                    <a href={source.listingUrl} target="_blank" rel="noreferrer">
+                      공식 목록
+                    </a>
+                  </header>
+
+                  <dl className="source-facts">
+                    <div><dt>수집 표면</dt><dd>{source.surface}</dd></div>
+                    <div><dt>API 상태</dt><dd>{source.apiStatus}</dd></div>
+                    <div><dt>응답</dt><dd>{source.method} · {source.responseFormat}</dd></div>
+                    <div><dt>정렬</dt><dd>{source.ordering}</dd></div>
+                    <div><dt>페이지</dt><dd>{source.pagination}</dd></div>
+                    <div><dt>범위</dt><dd>{source.categoryScope}</dd></div>
+                  </dl>
+
+                  <div className="field-map">
+                    <strong>확인·정규화 대상 필드</strong>
+                    <div>
+                      {(source.fields || []).map((field) => <span key={field}>{field}</span>)}
+                    </div>
+                  </div>
+
+                  <p className="source-note">{source.notes}</p>
+
+                  <footer>
+                    <span>DB 매물 <strong>{Number(source.stats?.listingCount || 0).toLocaleString("ko-KR")}</strong></span>
+                    <span>작업 <strong>{Number(source.stats?.tasks?.total || 0).toLocaleString("ko-KR")}</strong></span>
+                    <span>체크포인트 <strong>{source.stats?.syncStreams?.length || 0}</strong></span>
+                  </footer>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {activeTab === "prediction" && (
+        <section className="prediction-page" aria-labelledby="prediction-title">
+          <header className="prediction-heading">
+            <div>
+              <p className="eyebrow">Price prediction</p>
+              <h2 id="prediction-title">중장비 가격 예측</h2>
+            </div>
+            <p>학습된 매물 데이터의 모델명·카테고리·연식을 바탕으로 가격을 계산합니다.</p>
+          </header>
+
+          <form className="prediction-form" onSubmit={handlePredictionSubmit}>
+            <div
+              className="prediction-autocomplete"
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setPredictionInputFocused(false);
+                  setPredictionSuggestionsOpen(false);
+                }
+              }}
+            >
+              <label htmlFor="prediction-model">모델명</label>
+              <input
+                id="prediction-model"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-controls="prediction-model-suggestions"
+                aria-expanded={predictionSuggestionsOpen}
+                autoComplete="off"
+                disabled={predictionLoading}
+                value={predictionQuery}
+                onChange={handlePredictionQueryChange}
+                onFocus={() => {
+                  setPredictionInputFocused(true);
+                  if (predictionQuery.trim() && !predictionSelected) {
+                    setPredictionSuggestionsOpen(true);
+                  }
+                }}
+                placeholder="예: EC480, DX380LC"
+              />
+              {predictionSuggestionsOpen && (
+                <ul id="prediction-model-suggestions" className="prediction-suggestions" role="listbox">
+                  {predictionSuggestionsLoading && <li className="prediction-suggestion-state">검색 중...</li>}
+                  {!predictionSuggestionsLoading && !predictionSuggestions.length && (
+                    <li className="prediction-suggestion-state">일치하는 학습 모델이 없습니다.</li>
+                  )}
+                  {!predictionSuggestionsLoading &&
+                    predictionSuggestions.map((suggestion) => (
+                      <li key={suggestion.id}>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={predictionSelected?.id === suggestion.id}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => selectPredictionModel(suggestion)}
+                        >
+                          <span>{suggestion.modelName}</span>
+                          <small>
+                            {[suggestion.manufacturer, suggestion.categoryName].filter(Boolean).join(" · ") ||
+                              "분류 정보 없음"}
+                          </small>
+                          <strong>{Number(suggestion.sampleCount || 0).toLocaleString("ko-KR")}건 학습</strong>
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
+
+            <label className="prediction-year" htmlFor="prediction-year">
+              <span>연식</span>
+              <input
+                id="prediction-year"
+                type="number"
+                inputMode="numeric"
+                min="1970"
+                max={new Date().getFullYear() + 1}
+                step="1"
+                required
+                disabled={predictionLoading}
+                value={predictionYear}
+                onChange={(event) => {
+                  setPredictionYear(event.target.value);
+                  setPredictionResult(null);
+                  setPredictionError("");
+                }}
+                placeholder="예: 2020"
+              />
+            </label>
+
+            <button
+              className="prediction-submit"
+              type="submit"
+              disabled={predictionLoading || !predictionSelected || !predictionYear}
+            >
+              {predictionLoading ? "예측 중" : "가격 예측"}
+            </button>
+
+            {predictionSelected && (
+              <div className="prediction-selected" aria-live="polite">
+                <strong>{predictionSelected.modelName}</strong>
+                <span>
+                  {[predictionSelected.manufacturer, predictionSelected.categoryName]
+                    .filter(Boolean)
+                    .join(" · ") || "분류 정보 없음"}
+                </span>
+                <small>
+                  학습 표본 {Number(predictionSelected.sampleCount || 0).toLocaleString("ko-KR")}건
+                  {predictionSelected.yearMin && predictionSelected.yearMax
+                    ? ` · ${predictionSelected.yearMin}~${predictionSelected.yearMax}년 데이터`
+                    : ""}
+                </small>
+              </div>
+            )}
+          </form>
+
+          {predictionError && <div className="prediction-feedback error">{predictionError}</div>}
+
+          {predictionResult && (
+            <section className="prediction-result" aria-live="polite" aria-label="가격 예측 결과">
+              <div className="prediction-result-main">
+                <span>예측 가격</span>
+                <strong>{formatKrw(predictionResult.predictedPriceKrw)}</strong>
+                <small>
+                  {predictionResult.input?.manufacturedYear}년식 {predictionResult.input?.modelName}
+                </small>
+              </div>
+              <div className="prediction-range">
+                <span>웹 입력 기준 MAE 참고 범위</span>
+                <strong>
+                  {formatKrw(predictionResult.expectedLowKrw)} ~ {formatKrw(predictionResult.expectedHighKrw)}
+                </strong>
+                <small>{predictionResult.rangeNotice || "통계적 신뢰구간이 아닌 참고 범위입니다."}</small>
+              </div>
+              <dl className="prediction-meta">
+                <div>
+                  <dt>분류</dt>
+                  <dd>{predictionResult.input?.categoryName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>제조사</dt>
+                  <dd>{predictionResult.input?.manufacturer || "-"}</dd>
+                </div>
+                <div>
+                  <dt>모델</dt>
+                  <dd>{predictionResult.algorithm || "-"}</dd>
+                </div>
+                <div>
+                  <dt>모델 버전</dt>
+                  <dd>{predictionResult.modelVersion || "-"}</dd>
+                </div>
+              </dl>
+            </section>
+          )}
+        </section>
+      )}
 
       {activeTab === "listings" && (
         <>
@@ -1062,7 +1511,7 @@ function App() {
 
       {activeTab === "tasks" && (
         <>
-          <section className="summary-grid" aria-label="크롤링 작업 현황">
+          <section className="summary-grid task-summary-grid" aria-label="크롤링 작업 현황">
             <div className="metric">
               <span>전체 작업</span>
               <strong>{taskMetrics.total.toLocaleString("ko-KR")}</strong>
@@ -1074,6 +1523,10 @@ function App() {
             <div className="metric">
               <span>대기</span>
               <strong>{taskMetrics.pending.toLocaleString("ko-KR")}</strong>
+            </div>
+            <div className="metric">
+              <span>3회 실패</span>
+              <strong>{taskMetrics.failed.toLocaleString("ko-KR")}</strong>
             </div>
             <div className="metric">
               <span>마지막 크롤링</span>
@@ -1191,7 +1644,9 @@ function App() {
                         <td data-label="다음 실행">{formatDateTime(task.nextRunAt)}</td>
                         <td data-label="시도">
                           <div className="primary-text">{task.attempts}</div>
-                          <div className="sub-text">{task.lastStatusCode ? `HTTP ${task.lastStatusCode}` : ""}</div>
+                          <div className="sub-text" title={task.lastError || ""}>
+                            {task.lastStatusCode ? `HTTP ${task.lastStatusCode}` : task.lastError || ""}
+                          </div>
                         </td>
                         <td data-label="대상 링크">
                           {task.link ? (

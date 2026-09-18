@@ -70,3 +70,39 @@ CREATE TABLE IF NOT EXISTS `crawl_tasks` (
   KEY `idx_crawl_tasks_type` (`site_slug`, `task_type`),
   KEY `idx_crawl_tasks_category` (`site_slug`, `category_code`, `page`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `source_sync_state` (
+  `site_slug` VARCHAR(100) NOT NULL,
+  `stream_key` VARCHAR(191) NOT NULL DEFAULT 'all',
+  `direction` VARCHAR(20) NOT NULL DEFAULT 'backward',
+  `status` VARCHAR(20) NOT NULL DEFAULT 'idle',
+  `next_cursor` VARCHAR(500) NULL,
+  `last_success_cursor` VARCHAR(500) NULL,
+  `newest_seen_at` DATETIME NULL,
+  `oldest_seen_at` DATETIME NULL,
+  `last_request_fingerprint` CHAR(64) NULL,
+  `last_error` TEXT NULL,
+  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`site_slug`, `stream_key`),
+  KEY `idx_source_sync_status` (`status`, `updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `source_request_log` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `site_slug` VARCHAR(100) NOT NULL,
+  `request_fingerprint` CHAR(64) NOT NULL,
+  `method` VARCHAR(10) NOT NULL,
+  `url` TEXT NOT NULL,
+  `cursor_value` VARCHAR(500) NULL,
+  `status` VARCHAR(20) NOT NULL DEFAULT 'planned',
+  `response_status` INT NULL,
+  `item_count` INT NULL,
+  `requested_at` DATETIME NULL,
+  `completed_at` DATETIME NULL,
+  `last_error` TEXT NULL,
+  `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_source_request_fingerprint` (`site_slug`, `request_fingerprint`),
+  KEY `idx_source_request_resume` (`site_slug`, `status`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
