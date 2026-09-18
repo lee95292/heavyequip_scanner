@@ -340,10 +340,26 @@ def ensure_database(config: MySQLConfig) -> None:
                     KEY idx_listings_posted_at (posted_at),
                     KEY idx_listings_crawled_at (crawled_at),
                     KEY idx_listings_price_krw (price_krw),
-                    KEY idx_listings_model_norm (model_norm)
+                    KEY idx_listings_model_norm (model_norm),
+                    KEY idx_listings_source_posted (source_site, posted_at, id)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
                 """
             )
+            cursor.execute(
+                """
+                SELECT COUNT(*) AS index_count
+                FROM information_schema.statistics
+                WHERE table_schema = %s
+                  AND table_name = 'listings'
+                  AND index_name = 'idx_listings_source_posted'
+                """,
+                (config.database,),
+            )
+            if not int(cursor.fetchone().get("index_count") or 0):
+                cursor.execute(
+                    "ALTER TABLE listings "
+                    "ADD KEY idx_listings_source_posted (source_site, posted_at, id)"
+                )
 
 
 def ensure_crawl_queue(config: MySQLConfig) -> None:

@@ -676,7 +676,9 @@ function matchesRangeFilters(item, filters) {
 
 function orderSql(sort) {
   const orders = {
-    posted_desc: "posted_at IS NULL ASC, posted_at DESC, posted_date DESC, crawled_at DESC, id DESC",
+    // MySQL already places NULL values last for DESC. Avoiding the expression lets
+    // the database use the posted-at index instead of filesorting every matching row.
+    posted_desc: "posted_at DESC, posted_date DESC, crawled_at DESC, id DESC",
     posted_asc: "posted_at IS NULL ASC, posted_at ASC, posted_date ASC, crawled_at DESC, id DESC",
     price_desc: "price_krw IS NULL ASC, price_krw DESC, posted_at DESC, id DESC",
     price_asc: "price_krw IS NULL ASC, price_krw ASC, posted_at DESC, id DESC"
