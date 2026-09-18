@@ -999,6 +999,28 @@ tr:last-child td {
   color: #12603a;
 }
 
+.readiness-pill.collection_enabled {
+  background: #dcf7e9;
+  color: #12603a;
+}
+
+.readiness-pill.blocked_by_waf {
+  background: #ffe4e1;
+  color: #8c2f25;
+}
+
+.sync-state {
+  margin: 0;
+  color: #52616f;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.sync-state.error {
+  color: #9f2d20;
+}
+
 .source-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

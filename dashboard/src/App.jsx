@@ -17,6 +17,7 @@ const TASK_STATUS_OPTIONS = [
 
 const AUTH_STORAGE_KEY = "heavyequip_dashboard_auth";
 const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
+const LISTING_PAGE_SIZE = 50;
 
 function ownerPhoneFromLocation() {
   if (typeof window === "undefined") {
@@ -124,7 +125,9 @@ function readinessLabel(value) {
   const labels = {
     response_capture_required: "응답 캡처 필요",
     research_pending: "추가 조사 필요",
-    ready: "연동 준비 완료"
+    ready: "연동 준비 완료",
+    collection_enabled: "수집 활성",
+    blocked_by_waf: "자동 접근 차단"
   };
   return labels[value] || value || "미확인";
 }
@@ -212,6 +215,8 @@ function App() {
   const [hoursMin, setHoursMin] = useState("");
   const [hoursMax, setHoursMax] = useState("");
   const [sort, setSort] = useState("posted_desc");
+  const [sourceScope, setSourceScope] = useState("all");
+  const [loadingMore, setLoadingMore] = useState(false);
   const [predictionQuery, setPredictionQuery] = useState("");
   const [predictionYear, setPredictionYear] = useState("");
   const [predictionSuggestions, setPredictionSuggestions] = useState([]);
@@ -262,6 +267,23 @@ function App() {
     };
   }, [authPassword]);
 
+  const listingQueryBase = useMemo(() => {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    if (postedFrom) params.set("posted_from", postedFrom);
+    if (postedTo) params.set("posted_to", postedTo);
+    if (compactNumber(priceMin)) params.set("price_min", compactNumber(priceMin));
+    if (compactNumber(priceMax)) params.set("price_max", compactNumber(priceMax));
+    if (manufacturedFrom) params.set("manufactured_from", manufacturedFrom);
+    if (manufacturedTo) params.set("manufactured_to", manufacturedTo);
+    if (compactNumber(hoursMin)) params.set("hours_min", compactNumber(hoursMin));
+    if (compactNumber(hoursMax)) params.set("hours_max", compactNumber(hoursMax));
+    params.set("sort", sort);
+    params.set("source_scope", sourceScope);
+    params.set("limit", String(LISTING_PAGE_SIZE));
+    return params.toString();
+  }, [query, postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sort, sourceScope]);
+
   const handleLogin = (event) => {
     event.preventDefault();
     const password = authInput.trim();
@@ -298,37 +320,11 @@ function App() {
     }
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      const params = new URLSearchParams();
-      if (query.trim()) {
-        params.set("q", query.trim());
-      }
-      if (postedFrom) {
-        params.set("posted_from", postedFrom);
-      }
-      if (postedTo) {
-        params.set("posted_to", postedTo);
-      }
-      if (compactNumber(priceMin)) {
-        params.set("price_min", compactNumber(priceMin));
-      }
-      if (compactNumber(priceMax)) {
-        params.set("price_max", compactNumber(priceMax));
-      }
-      if (manufacturedFrom) {
-        params.set("manufactured_from", manufacturedFrom);
-      }
-      if (manufacturedTo) {
-        params.set("manufactured_to", manufacturedTo);
-      }
-      if (compactNumber(hoursMin)) {
-        params.set("hours_min", compactNumber(hoursMin));
-      }
-      if (compactNumber(hoursMax)) {
-        params.set("hours_max", compactNumber(hoursMax));
-      }
-      params.set("sort", sort);
+      const params = new URLSearchParams(listingQueryBase);
+      params.set("offset", "0");
 
       setLoading(true);
+      setLoadingMore(false);
       setError("");
       fetch(`/api/listings?${params.toString()}`, { ...authFetchOptions, signal: controller.signal })
         .then((response) => {
@@ -358,17 +354,43 @@ function App() {
     activeTab,
     authFetchOptions,
     authStatus,
-    query,
-    postedFrom,
-    postedTo,
-    priceMin,
-    priceMax,
-    manufacturedFrom,
-    manufacturedTo,
-    hoursMin,
-    hoursMax,
-    sort
+    listingQueryBase
   ]);
+
+  useEffect(() => {
+    if (authStatus !== "authenticated" || activeTab !== "listings" || loading || !payload.hasMore) {
+      return undefined;
+    }
+    const controller = new AbortController();
+    let requesting = false;
+    const handleScroll = () => {
+      const documentHeight = document.documentElement.scrollHeight;
+      const viewportBottom = window.scrollY + window.innerHeight;
+      if (requesting || documentHeight <= 0 || viewportBottom < documentHeight * 0.9) return;
+      requesting = true;
+      setLoadingMore(true);
+      const params = new URLSearchParams(listingQueryBase);
+      params.set("offset", String(payload.nextOffset || payload.items.length));
+      fetch(`/api/listings?${params.toString()}`, { ...authFetchOptions, signal: controller.signal })
+        .then(readApiResponse)
+        .then((data) => {
+          setPayload((current) => ({ ...data, items: [...current.items, ...data.items] }));
+          setLoadingMore(false);
+          requesting = false;
+        })
+        .catch((fetchError) => {
+          if (fetchError.name !== "AbortError") setError(fetchError.message);
+          setLoadingMore(false);
+          requesting = false;
+        });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      controller.abort();
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [activeTab, authFetchOptions, authStatus, listingQueryBase, loading, payload.hasMore, payload.items.length, payload.nextOffset]);
 
   useEffect(() => {
     if (authStatus !== "authenticated" || activeTab !== "owners") {
@@ -580,10 +602,10 @@ function App() {
   }, [payload]);
 
   const activeFilterCount = useMemo(() => {
-    return [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax].filter(
+    return [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sourceScope === "all" ? "" : sourceScope].filter(
       (value) => String(value || "").trim()
     ).length;
-  }, [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax]);
+  }, [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sourceScope]);
 
   const clearFilters = () => {
     setPostedFrom("");
@@ -594,6 +616,7 @@ function App() {
     setManufacturedTo("");
     setHoursMin("");
     setHoursMax("");
+    setSourceScope("all");
   };
 
   const handlePredictionQueryChange = (event) => {
@@ -949,6 +972,16 @@ function App() {
               <h2 id="international-title">국제 중고중장비 수집 분석</h2>
             </div>
             <p>공식 공개 목록을 기준으로 수집 표면, 역순 동기화 방식, 파싱 필드를 비교합니다.</p>
+            <button
+              className="clear-button"
+              type="button"
+              onClick={() => {
+                setSourceScope("international");
+                setActiveTab("listings");
+              }}
+            >
+              수집된 국제 매물 보기
+            </button>
           </header>
 
           <section className="summary-grid" aria-label="국제 사이트 분석 현황">
@@ -971,7 +1004,7 @@ function App() {
           </section>
 
           <div className="request-policy" role="note">
-            <strong>현재 단계: 외부 요청 비활성</strong>
+            <strong>현재 단계: 공개 목록 수집 활성</strong>
             <span>{internationalPayload.requestPolicy?.message || "분석 정보를 불러오고 있습니다."}</span>
             <small>{internationalPayload.requestPolicy?.resumeRule || ""}</small>
           </div>
@@ -1019,6 +1052,13 @@ function App() {
                     <span>작업 <strong>{Number(source.stats?.tasks?.total || 0).toLocaleString("ko-KR")}</strong></span>
                     <span>체크포인트 <strong>{source.stats?.syncStreams?.length || 0}</strong></span>
                   </footer>
+                  {(source.stats?.syncStreams || []).slice(0, 2).map((stream) => (
+                    <p className={`sync-state ${stream.status === "failed" ? "error" : ""}`} key={stream.streamKey}>
+                      {stream.streamKey} · {stream.status} · {Number(stream.itemCount || 0).toLocaleString("ko-KR")}건
+                      {stream.stopReason ? ` · ${stream.stopReason}` : ""}
+                      {stream.lastError ? ` · ${stream.lastError}` : ""}
+                    </p>
+                  ))}
                 </article>
               ))}
             </div>
@@ -1213,6 +1253,14 @@ function App() {
               />
             </label>
             <label className="select-box">
+              <span>출처</span>
+              <select value={sourceScope} onChange={(event) => setSourceScope(event.target.value)}>
+                <option value="all">전체 매물</option>
+                <option value="international">국제 매물</option>
+                <option value="domestic">국내 매물</option>
+              </select>
+            </label>
+            <label className="select-box">
               <span>정렬</span>
               <select value={sort} onChange={(event) => setSort(event.target.value)}>
                 {SORT_OPTIONS.map((option) => (
@@ -1343,6 +1391,10 @@ function App() {
                 </tbody>
               </table>
               {!payload.items.length && <div className="state">조건에 맞는 매물이 없습니다.</div>}
+              {loadingMore && <div className="state">다음 50건을 불러오는 중입니다.</div>}
+              {!payload.hasMore && payload.items.length > 0 && (
+                <div className="state">전체 {Number(payload.total || 0).toLocaleString("ko-KR")}건을 모두 표시했습니다.</div>
+              )}
             </section>
           )}
         </>

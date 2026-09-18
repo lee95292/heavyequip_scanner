@@ -587,6 +587,13 @@ function buildFilters(query) {
   const postedTo = String(query.posted_to || "").trim();
   const priceMin = parseNumberParam(query.price_min);
   const priceMax = parseNumberParam(query.price_max);
+  const sourceScope = String(query.source_scope || "all").trim();
+
+  if (sourceScope === "international") {
+    where.push("source_site IN ('Machineryline', 'Mascus Global', 'Machinery Trader', 'IronPlanet', 'Ritchie Bros. Auctioneers')");
+  } else if (sourceScope === "domestic") {
+    where.push("source_site NOT IN ('Machineryline', 'Mascus Global', 'Machinery Trader', 'IronPlanet', 'Ritchie Bros. Auctioneers')");
+  }
 
   if (search) {
     const like = `%${search}%`;
@@ -700,38 +707,54 @@ function sortListings(items, sort) {
 async function queryListings(filters) {
   const db = getPool();
   const { whereSql, params } = buildFilters(filters);
-  const limit = Math.min(Math.max(Number(filters.limit || 1000), 1), 5000);
+  const limit = Math.min(Math.max(Number(filters.limit || 50), 1), 100);
+  const offset = Math.max(Number(filters.offset || 0), 0);
   const sort = orderSql(filters.sort);
   const rangeFilters = buildRangeFilters(filters);
-  const baseFetchLimit = 50000;
+  const hasRangeFilters = Object.values(rangeFilters).some((value) => value !== null);
 
   const [statsRows] = await db.execute(
     "SELECT COUNT(*) AS databaseTotal, COUNT(price_krw) AS pricedTotal, MAX(posted_date) AS latestPostedDate FROM listings"
   );
-  const [rows] = await db.execute(
-    `
-      ${listingSelectSql()}
-      ${whereSql}
-      ORDER BY ${sort}
-      LIMIT ${baseFetchLimit}
-    `,
+  const [countRows] = await db.execute(
+    `SELECT COUNT(*) AS filteredTotal FROM listings ${whereSql}`,
     params
   );
+  let filteredItems;
+  let filteredTotal = Number(countRows[0]?.filteredTotal || 0);
+  if (hasRangeFilters) {
+    const [rows] = await db.execute(
+      `${listingSelectSql()} ${whereSql} ORDER BY ${sort} LIMIT 50000`,
+      params
+    );
+    const allFiltered = sortListings(
+      rows.map(normalizeRecord).filter((item) => matchesRangeFilters(item, rangeFilters)),
+      filters.sort
+    );
+    filteredTotal = allFiltered.length;
+    filteredItems = allFiltered.slice(offset, offset + limit);
+  } else {
+    const [rows] = await db.execute(
+      `${listingSelectSql()} ${whereSql} ORDER BY ${sort} LIMIT ${limit} OFFSET ${offset}`,
+      params
+    );
+    filteredItems = rows.map(normalizeRecord);
+  }
 
   const stats = statsRows[0] || {};
-  const filteredItems = sortListings(
-    rows.map(normalizeRecord).filter((item) => matchesRangeFilters(item, rangeFilters)),
-    filters.sort
-  );
+  const nextOffset = offset + filteredItems.length;
   return {
     generatedAt: new Date().toISOString(),
     db: publicDbInfo(activeDbConfig),
     limit,
-    total: filteredItems.length,
+    total: filteredTotal,
     databaseTotal: Number(stats.databaseTotal || 0),
     pricedTotal: Number(stats.pricedTotal || 0),
     latestPostedDate: stats.latestPostedDate || "",
-    items: filteredItems.slice(0, limit)
+    offset,
+    nextOffset,
+    hasMore: nextOffset < filteredTotal,
+    items: filteredItems
   };
 }
 
@@ -957,7 +980,8 @@ async function queryInternationalSources() {
           SELECT site_slug AS siteSlug, stream_key AS streamKey, direction, status,
                  next_cursor AS nextCursor, last_success_cursor AS lastSuccessCursor,
                  newest_seen_at AS newestSeenAt, oldest_seen_at AS oldestSeenAt,
-                 last_error AS lastError, updated_at AS updatedAt
+                 item_count AS itemCount, request_count AS requestCount,
+                 stop_reason AS stopReason, last_error AS lastError, updated_at AS updatedAt
           FROM source_sync_state
           ORDER BY site_slug, stream_key
         `
@@ -981,7 +1005,7 @@ async function queryInternationalSources() {
       {};
     return {
       ...source,
-      collectionEnabled: false,
+      collectionEnabled: source.readiness === "collection_enabled",
       stats: {
         listingCount: Number(listingStat.listingCount || 0),
         latestCrawledAt: listingStat.latestCrawledAt || "",
@@ -999,10 +1023,8 @@ async function queryInternationalSources() {
     requestPolicy: catalog.requestPolicy,
     summary: {
       sourceCount: sources.length,
-      parserReadyCount: sources.filter((source) =>
-        ["machinery_trader", "machineryline", "ironplanet"].includes(source.slug)
-      ).length,
-      enabledCount: 0,
+      parserReadyCount: sources.filter((source) => source.readiness === "collection_enabled").length,
+      enabledCount: sources.filter((source) => source.collectionEnabled).length,
       listingCount: sources.reduce((sum, source) => sum + source.stats.listingCount, 0)
     },
     sources

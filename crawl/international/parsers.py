@@ -11,6 +11,8 @@ SOURCE_NAMES = {
     "machinery_trader": "Machinery Trader",
     "machineryline": "Machineryline",
     "ironplanet": "IronPlanet",
+    "rb_auction": "Ritchie Bros. Auctioneers",
+    "mascus_global": "Mascus Global",
 }
 
 
@@ -114,10 +116,45 @@ def _ironplanet(payload: dict[str, Any]) -> dict[str, Any]:
     return record
 
 
+def _rb_auction(payload: dict[str, Any]) -> dict[str, Any]:
+    return _common_record("rb_auction", payload, "https://www.rbauction.com")
+
+
+def _mascus_global(payload: dict[str, Any]) -> dict[str, Any]:
+    adapted = dict(payload)
+    adapted.update(
+        {
+            "id": _first(payload, "productId", "id"),
+            "url": _first(payload, "assetUrl", "url"),
+            "manufacturer": _first(payload, "brand", "manufacturer"),
+            "model": _first(payload, "model", "modelName"),
+            "year": _first(payload, "yearOfManufacture", "year"),
+            "category": _first(payload, "categoryName", "category"),
+            "price": _first(payload, "priceOriginal", "priceInUserCurrency", "price"),
+            "currency": _first(payload, "priceOriginalUnit", "userCurrency", "currency"),
+            "hours": _first(payload, "meterReadout", "hours"),
+            "location": ", ".join(
+                part for part in (
+                    clean_text(payload.get("locationCity")),
+                    clean_text(payload.get("locationCountryCode")),
+                ) if part and part != "-"
+            ),
+            "sellerName": _first(payload, "companyName", "sellerName"),
+            "phone": _first(payload, "sellerPhone", "phone"),
+            "createdAt": _first(payload, "createDate", "createdAt"),
+        }
+    )
+    record = _common_record("mascus_global", adapted, "https://www.mascus.com")
+    record["raw"]["image_url"] = payload.get("imageUrl")
+    return record
+
+
 PARSERS: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
     "machinery_trader": _machinery_trader,
     "machineryline": _machineryline,
     "ironplanet": _ironplanet,
+    "rb_auction": _rb_auction,
+    "mascus_global": _mascus_global,
 }
 
 

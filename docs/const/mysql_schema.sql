@@ -82,6 +82,9 @@ CREATE TABLE IF NOT EXISTS `source_sync_state` (
   `oldest_seen_at` DATETIME NULL,
   `last_request_fingerprint` CHAR(64) NULL,
   `last_error` TEXT NULL,
+  `item_count` INT NOT NULL DEFAULT 0,
+  `request_count` INT NOT NULL DEFAULT 0,
+  `stop_reason` VARCHAR(100) NULL,
   `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`site_slug`, `stream_key`),
   KEY `idx_source_sync_status` (`status`, `updated_at`)
@@ -105,4 +108,12 @@ CREATE TABLE IF NOT EXISTS `source_request_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_source_request_fingerprint` (`site_slug`, `request_fingerprint`),
   KEY `idx_source_request_resume` (`site_slug`, `status`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `source_sync_item` (
+  `site_slug` VARCHAR(100) NOT NULL,
+  `stream_key` VARCHAR(191) NOT NULL,
+  `content_hash` CHAR(64) NOT NULL,
+  `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`site_slug`, `stream_key`, `content_hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

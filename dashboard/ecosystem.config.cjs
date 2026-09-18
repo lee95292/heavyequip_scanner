@@ -1,3 +1,7 @@
+const path = require("path");
+
+const repoRoot = path.resolve(__dirname, "..");
+
 module.exports = {
   apps: [
     {
@@ -13,6 +17,30 @@ module.exports = {
         NODE_ENV: "production",
         PORT: "5050",
         DASHBOARD_MANUAL_CRAWL_SLEEP: "1.5"
+      }
+    },
+    {
+      name: "heavyequip-international-daily",
+      script: "crawl/international/daily.py",
+      cwd: repoRoot,
+      interpreter: process.env.CRAWL_PYTHON_BIN || "python3",
+      instances: 1,
+      exec_mode: "fork",
+      watch: false,
+      autorestart: true,
+      restart_delay: 5000,
+      kill_timeout: 60000,
+      max_memory_restart: "300M",
+      env: {
+        PYTHONUNBUFFERED: "1",
+        PYTHONPATH: repoRoot,
+        CRAWL_CONFIG_PATH: process.env.CRAWL_CONFIG_PATH || path.join(repoRoot, "crawl", "config.json"),
+        INTERNATIONAL_DAILY_AT: process.env.INTERNATIONAL_DAILY_AT || "05:00",
+        INTERNATIONAL_CRAWL_SLEEP: process.env.INTERNATIONAL_CRAWL_SLEEP || "1.5",
+        INTERNATIONAL_DAILY_STATE_PATH:
+          process.env.INTERNATIONAL_DAILY_STATE_PATH || path.join(repoRoot, "crawl", "data", "international_daily_state.json"),
+        INTERNATIONAL_DAILY_LOCK_PATH:
+          process.env.INTERNATIONAL_DAILY_LOCK_PATH || path.join(repoRoot, "crawl", "data", "international_daily.lock")
       }
     }
   ]
