@@ -122,7 +122,7 @@ def backfill(config_path: Path, batch_size: int) -> dict[str, int]:
                 rows = cursor.fetchall()
                 if not rows:
                     break
-                changes: list[tuple[str, str, str | None, int]] = []
+                changes: list[tuple[str | None, str | None, str | None, int]] = []
                 for row in rows:
                     last_id = int(row["id"])
                     scanned += 1
