@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-18",
+  "updatedAt": "2026-09-19",
   "requestPolicy": {
     "enabled": true,
     "message": "모든 국제 요청은 지정 프록시를 통해 매일 05:00 KST에 수집합니다. 프록시가 없으면 직접 요청하지 않습니다.",
@@ -12,17 +12,18 @@
       "name": "Machinery Trader",
       "region": "글로벌 / 북미 중심",
       "baseUrl": "https://www.machinerytrader.com",
-      "listingUrl": "https://www.machinerytrader.com/listings",
+      "listingUrl": "https://www.machinerytrader.com/listings/search",
       "surface": "공개 매물 목록 HTML",
       "apiStatus": "공개 개발자 API 미확인",
       "readiness": "blocked_by_waf",
       "method": "GET",
       "responseFormat": "HTML + 구조화 데이터 후보",
-      "ordering": "등록/업데이트 최신순 파라미터 캡처 필요",
-      "pagination": "페이지 번호(목록은 28건 단위 노출 확인)",
+      "ordering": "기본 목록 순서(등록/업데이트 최신순 옵션은 응답 검증 필요)",
+      "pagination": "GET /listings/search?page=N, 페이지당 28건",
+      "proxyProbe": "지정 프록시 재현 결과 HTTP 403",
       "categoryScope": "건설장비, 어태치먼트, 해체장비",
       "fields": ["매물 ID", "카테고리", "제조사", "모델", "연식", "가격/통화", "가동시간", "위치", "판매자", "업데이트일", "상세 URL"],
-      "notes": "목록과 상세 페이지에서 가격·시간·판매자·위치·업데이트일을 확인할 수 있습니다. 사설 JSON 엔드포인트는 다음 단계의 브라우저 네트워크 캡처 전까지 사용하지 않습니다."
+      "notes": "브라우저의 2페이지 이동에서 GET /listings/search?page=2 문서 요청과 28건 교체를 확인했습니다. 동일 요청을 지정 프록시로 재현하면 HTTP 403 WAF 응답입니다."
     },
     {
       "slug": "machineryline",
@@ -37,6 +38,7 @@
       "responseFormat": "HTML + 구조화 데이터 후보",
       "ordering": "Placed on(등록일) 최신순",
       "pagination": "page 쿼리, 페이지당 약 26건(프로모션 제외)",
+      "proxyProbe": "지정 프록시로 HTTP 200, HTML 목록 파싱 활성",
       "categoryScope": "건설장비, 산업장비, 창고장비, 부품",
       "fields": ["매물 ID", "카테고리", "제조사", "모델", "연식", "가격/통화", "가동시간", "상태", "위치", "판매자", "등록일", "상세 URL"],
       "notes": "목록에서 Placed on 정렬과 가격·연식·가동시간·지역을 노출합니다. 국가/언어별 도메인 차이를 원본 URL과 함께 보존합니다."
@@ -46,34 +48,36 @@
       "name": "IronPlanet",
       "region": "글로벌 / 경매 중심",
       "baseUrl": "https://www.ironplanet.com",
-      "listingUrl": "https://www.ironplanet.com/marketplace-mpe-construction",
+      "listingUrl": "https://www.ironplanet.com/jsp/s/search.ips?ct=1&p_can=-1&sm=0&sort=ad%20desc",
       "surface": "공개 마켓플레이스 목록 HTML",
       "apiStatus": "공개 개발자 API 미확인",
       "readiness": "blocked_by_waf",
       "method": "GET",
       "responseFormat": "HTML + 구조화 데이터 후보",
-      "ordering": "등록/경매 일정 최신순 파라미터 캡처 필요",
-      "pagination": "페이지 번호(목록은 60건 단위 노출 확인)",
+      "ordering": "sort=ad desc(목록 신규순), 판매형태는 fp 파라미터로 분리",
+      "pagination": "GET /jsp/s/search.ips?...&pstart=N, 페이지당 60건",
+      "proxyProbe": "지정 프록시 재현 결과 HTTP 202 챌린지 응답",
       "categoryScope": "건설, 트럭, 농업, 광산, 임업, 부품",
       "fields": ["아이템 ID", "카테고리", "제조사", "모델", "연식", "현재가/즉시구매가/통화", "미터 시간", "판매 방식", "위치", "검사 인증", "마감일", "상세 URL"],
-      "notes": "경매·Buy Now·Make Offer 가격 의미를 분리해 raw_json에 보존하고, 대표 가격은 판매 방식과 함께 표시해야 합니다."
+      "notes": "브라우저 목록의 다음 페이지 링크에서 pstart=60을 확인했습니다. 지정 프록시는 HTTP 202 자동접근 챌린지를 반환해 현재 수집하지 못합니다."
     },
     {
       "slug": "rb_auction",
       "name": "Ritchie Bros. Auctioneers",
       "region": "글로벌 / 경매 중심",
       "baseUrl": "https://www.rbauction.com",
-      "listingUrl": "https://www.rbauction.com/heavy-equipment-auctions",
+      "listingUrl": "https://www.rbauction.com/cp/construction",
       "surface": "공개 경매/장비 목록 HTML",
       "apiStatus": "공개 개발자 API 미확인",
       "readiness": "blocked_by_waf",
       "method": "GET",
-      "responseFormat": "미확정",
-      "ordering": "미확정",
-      "pagination": "미확정",
+      "responseFormat": "서버 렌더링 HTML 목록",
+      "ordering": "Upcoming 기본 목록",
+      "pagination": "GET /cp/construction?from=N 오프셋 방식",
+      "proxyProbe": "지정 프록시 재현 결과 HTTP 403",
       "categoryScope": "중장비 및 산업 경매",
       "fields": ["아이템 ID", "제조사", "모델", "연식", "미터", "위치", "경매일", "상세 URL"],
-      "notes": "IronPlanet과 같은 Ritchie Bros. 그룹이지만 중복 매물 여부를 source item ID와 상세 URL로 판별해야 합니다."
+      "notes": "from=0/60 요청으로 목록 구간이 바뀌는 것을 확인했습니다. 지정 프록시는 HTTP 403 WAF 응답이며, 재개 시 source item ID와 상세 URL로 IronPlanet 중복을 판별합니다."
     },
     {
       "slug": "mascus_global",
@@ -88,6 +92,7 @@
       "responseFormat": "HTML 내 Next.js 구조화 JSON",
       "ordering": "createDate 최신순",
       "pagination": "카테고리별 page 쿼리, 페이지당 40건",
+      "proxyProbe": "지정 프록시로 HTTP 200, __NEXT_DATA__ JSON 파싱 활성",
       "categoryScope": "건설, 농업, 운송, 임업, 자재운반",
       "fields": ["매물 ID", "카테고리", "제조사", "모델", "연식", "가격/통화", "가동시간", "위치", "판매자", "상세 URL"],
       "notes": "기존 Mascus Korea 샘플과 글로벌 응답의 공통 필드/지역별 차이를 비교한 뒤 파서를 공유합니다."

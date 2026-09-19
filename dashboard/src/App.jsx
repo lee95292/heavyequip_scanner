@@ -67,6 +67,9 @@ function formatPrice(item) {
   if (item.priceValue) {
     return item.priceValue.toLocaleString("ko-KR") + "원";
   }
+  if (item.priceCurrency && item.nativePriceAmount !== null) {
+    return `${item.priceCurrency} ${Number(item.nativePriceAmount).toLocaleString("ko-KR")}`;
+  }
   return item.price || "-";
 }
 
@@ -216,6 +219,8 @@ function App() {
   const [hoursMax, setHoursMax] = useState("");
   const [sort, setSort] = useState("posted_desc");
   const [sourceScope, setSourceScope] = useState("all");
+  const [sourceSite, setSourceSite] = useState("");
+  const [sourceSiteOptions, setSourceSiteOptions] = useState([]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [predictionQuery, setPredictionQuery] = useState("");
   const [predictionYear, setPredictionYear] = useState("");
@@ -267,6 +272,20 @@ function App() {
     };
   }, [authPassword]);
 
+  useEffect(() => {
+    if (authStatus !== "authenticated") {
+      return undefined;
+    }
+    const controller = new AbortController();
+    fetch("/api/listing-sources", { ...authFetchOptions, signal: controller.signal })
+      .then(readApiResponse)
+      .then((data) => setSourceSiteOptions(data.items || []))
+      .catch((fetchError) => {
+        if (fetchError.name !== "AbortError") setSourceSiteOptions([]);
+      });
+    return () => controller.abort();
+  }, [authFetchOptions, authStatus]);
+
   const listingQueryBase = useMemo(() => {
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
@@ -280,9 +299,10 @@ function App() {
     if (compactNumber(hoursMax)) params.set("hours_max", compactNumber(hoursMax));
     params.set("sort", sort);
     params.set("source_scope", sourceScope);
+    if (sourceSite) params.set("source_site", sourceSite);
     params.set("limit", String(LISTING_PAGE_SIZE));
     return params.toString();
-  }, [query, postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sort, sourceScope]);
+  }, [query, postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sort, sourceScope, sourceSite]);
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -602,10 +622,10 @@ function App() {
   }, [payload]);
 
   const activeFilterCount = useMemo(() => {
-    return [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sourceScope === "all" ? "" : sourceScope].filter(
+    return [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sourceScope === "all" ? "" : sourceScope, sourceSite].filter(
       (value) => String(value || "").trim()
     ).length;
-  }, [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sourceScope]);
+  }, [postedFrom, postedTo, priceMin, priceMax, manufacturedFrom, manufacturedTo, hoursMin, hoursMax, sourceScope, sourceSite]);
 
   const clearFilters = () => {
     setPostedFrom("");
@@ -617,6 +637,7 @@ function App() {
     setHoursMin("");
     setHoursMax("");
     setSourceScope("all");
+    setSourceSite("");
   };
 
   const handlePredictionQueryChange = (event) => {
@@ -977,6 +998,7 @@ function App() {
               type="button"
               onClick={() => {
                 setSourceScope("international");
+                setSourceSite("");
                 setActiveTab("listings");
               }}
             >
@@ -1035,6 +1057,7 @@ function App() {
                     <div><dt>응답</dt><dd>{source.method} · {source.responseFormat}</dd></div>
                     <div><dt>정렬</dt><dd>{source.ordering}</dd></div>
                     <div><dt>페이지</dt><dd>{source.pagination}</dd></div>
+                    <div><dt>프록시 검증</dt><dd>{source.proxyProbe || "미확인"}</dd></div>
                     <div><dt>범위</dt><dd>{source.categoryScope}</dd></div>
                   </dl>
 
@@ -1254,10 +1277,27 @@ function App() {
             </label>
             <label className="select-box">
               <span>출처</span>
-              <select value={sourceScope} onChange={(event) => setSourceScope(event.target.value)}>
+              <select
+                value={sourceScope}
+                onChange={(event) => {
+                  setSourceScope(event.target.value);
+                  setSourceSite("");
+                }}
+              >
                 <option value="all">전체 매물</option>
                 <option value="international">국제 매물</option>
                 <option value="domestic">국내 매물</option>
+              </select>
+            </label>
+            <label className="select-box">
+              <span>수집 사이트</span>
+              <select value={sourceSite} onChange={(event) => setSourceSite(event.target.value)}>
+                <option value="">전체 사이트</option>
+                {sourceSiteOptions.map((option) => (
+                  <option key={option.sourceSite} value={option.sourceSite}>
+                    {option.sourceSite} ({Number(option.listingCount || 0).toLocaleString("ko-KR")})
+                  </option>
+                ))}
               </select>
             </label>
             <label className="select-box">

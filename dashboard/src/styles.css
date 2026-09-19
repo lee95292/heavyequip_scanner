@@ -198,7 +198,7 @@ h1 {
 
 .toolbar {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) 220px;
+  grid-template-columns: minmax(320px, 1fr) 180px 220px 180px;
   align-items: end;
   gap: 10px;
   margin-bottom: 10px;

@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import unittest
 
+from crawl.common import MODEL_NORM_MAP, enrich_record
 from crawl.international.catalog import load_source_catalog
 from crawl.international.source_http import _MachinerylineParser
 from crawl.international.parsers import parse_listing_payload
 from crawl.international.sync import build_request_fingerprint, plan_initial_backfill
+from crawl.model_catalog_sync import validated_model
 
 
 class InternationalSourceTests(unittest.TestCase):
@@ -16,6 +18,15 @@ class InternationalSourceTests(unittest.TestCase):
         self.assertTrue({"machinery_trader", "machineryline", "ironplanet"} <= slugs)
         enabled = {source["slug"] for source in catalog["sources"] if source["readiness"] == "collection_enabled"}
         self.assertEqual(enabled, {"machineryline", "mascus_global"})
+
+    def test_blocked_sources_record_browser_request_format_and_proxy_result(self):
+        sources = {source["slug"]: source for source in load_source_catalog()["sources"]}
+        self.assertIn("/listings/search", sources["machinery_trader"]["listingUrl"])
+        self.assertIn("HTTP 403", sources["machinery_trader"]["proxyProbe"])
+        self.assertIn("pstart=N", sources["ironplanet"]["pagination"])
+        self.assertIn("HTTP 202", sources["ironplanet"]["proxyProbe"])
+        self.assertIn("from=N", sources["rb_auction"]["pagination"])
+        self.assertIn("HTTP 403", sources["rb_auction"]["proxyProbe"])
 
     def test_request_fingerprint_is_stable_across_parameter_order(self):
         first = build_request_fingerprint("GET", "https://example.test/list", params={"page": 1, "sort": "new"})
@@ -101,6 +112,22 @@ class InternationalSourceTests(unittest.TestCase):
         self.assertEqual(record["raw"]["currency"], "USD")
         self.assertEqual(record["raw"]["operating_hours"], 7070)
         self.assertEqual(record["seller"], "Dealer")
+
+    def test_official_model_catalog_fills_canonical_model_and_manufacturer(self):
+        self.assertGreaterEqual(len(MODEL_NORM_MAP), 900)
+        record = enrich_record({
+            "listing_name": "2025 Hyundai HX130A LCR tracked excavator",
+            "model_name": None,
+            "manufacturer": None,
+        })
+        self.assertEqual(record["model_name"], "HX130A LCR")
+        self.assertEqual(record["model_norm"], "HX130A LCR")
+        self.assertEqual(record["manufacturer"], "Hyundai")
+
+    def test_observed_model_validation_rejects_years_and_descriptions(self):
+        self.assertEqual(validated_model("EC380EL", "Volvo"), "EC380EL")
+        self.assertIsNone(validated_model("2024", ""))
+        self.assertIsNone(validated_model("used excavator in excellent condition", "CAT"))
 
 
 if __name__ == "__main__":

@@ -20,6 +20,8 @@ DEFAULT_OUTPUT_DIR = DATA_DIR / "parsed"
 DEFAULT_LOG_DIR = DATA_DIR / "logs"
 DEFAULT_CONFIG_PATH = ROOT / "crawl" / "config.json"
 MODEL_CSV_PATH = ROOT / "docs" / "const" / "model.csv"
+MODEL_OFFICIAL_CSV_PATH = ROOT / "docs" / "const" / "model_official.csv"
+MODEL_OBSERVED_CSV_PATH = ROOT / "docs" / "const" / "model_observed.csv"
 KST = dt.timezone(dt.timedelta(hours=9))
 
 
@@ -213,41 +215,93 @@ def normalize_model_key(value: Any) -> str:
     return re.sub(r"[^0-9A-Z가-힣]", "", clean_text(value).upper())
 
 
-def load_model_norm_map(path: Path = MODEL_CSV_PATH) -> dict[str, str]:
+def _read_model_catalog(path: Path) -> tuple[dict[str, str], dict[str, str]]:
     if not path.exists():
-        return {}
+        return {}, {}
     text = path.read_text(encoding="utf-8-sig").strip()
     if not text:
-        return {}
+        return {}, {}
     import csv
     import io
 
     rows = list(csv.reader(io.StringIO(text)))
-    values = rows[0] if rows else []
     result: dict[str, str] = {}
-    for value in values:
+    manufacturers: dict[str, str] = {}
+    if rows and rows[0] and clean_text(rows[0][0]).lower() == "canonical_model":
+        header = [clean_text(value).lower() for value in rows[0]]
+        model_index = header.index("canonical_model")
+        manufacturer_index = header.index("manufacturer") if "manufacturer" in header else -1
+        values = [
+            (
+                row[model_index] if len(row) > model_index else "",
+                row[manufacturer_index] if manufacturer_index >= 0 and len(row) > manufacturer_index else "",
+            )
+            for row in rows[1:]
+        ]
+    else:
+        # The legacy file is a single, headerless row. Reading every cell keeps
+        # compatibility while also accepting a newline-formatted legacy file.
+        values = [(value, "") for row in rows for value in row]
+    for value, manufacturer_value in values:
         model = clean_text(value)
         key = normalize_model_key(model)
         if key:
             result[key] = model
-    return result
+            manufacturer = clean_text(manufacturer_value)
+            if manufacturer:
+                manufacturers[key] = manufacturer
+    return result, manufacturers
 
 
-MODEL_NORM_MAP = load_model_norm_map()
+def load_model_norm_map(path: Path = MODEL_CSV_PATH) -> dict[str, str]:
+    return _read_model_catalog(path)[0]
+
+
+def load_model_catalog(
+    # Later files win: official spelling/manufacturer data takes precedence over
+    # observed marketplace spellings, while the legacy catalog stays compatible.
+    paths: tuple[Path, ...] = (MODEL_OBSERVED_CSV_PATH, MODEL_CSV_PATH, MODEL_OFFICIAL_CSV_PATH),
+) -> tuple[dict[str, str], dict[str, str]]:
+    models: dict[str, str] = {}
+    manufacturers: dict[str, str] = {}
+    for path in paths:
+        path_models, path_manufacturers = _read_model_catalog(path)
+        models.update(path_models)
+        manufacturers.update(path_manufacturers)
+    return models, manufacturers
+
+
+MODEL_NORM_MAP, MODEL_MANUFACTURER_MAP = load_model_catalog()
+MODEL_GENERIC_KEYS = {
+    "EXCAVATOR", "LOADER", "CRANE", "DOZER", "FORKLIFT", "ROLLER",
+    "BACKHOE", "DUMPTRUCK", "ATTACHMENT", "굴삭기", "굴착기", "중장비",
+}
+MODEL_MATCH_CANDIDATES = tuple(
+    (known_key, canonical)
+    for known_key, canonical in sorted(MODEL_NORM_MAP.items(), key=lambda item: len(item[0]), reverse=True)
+    if len(known_key) >= 4 and known_key not in MODEL_GENERIC_KEYS
+)
 
 
 def model_norm(value: Any) -> Optional[str]:
     key = normalize_model_key(value)
-    if not key:
+    if not key or key in MODEL_GENERIC_KEYS:
         return None
-    if key in MODEL_NORM_MAP:
+    if key in MODEL_NORM_MAP and key not in MODEL_GENERIC_KEYS:
         return MODEL_NORM_MAP[key]
     # Many listing titles append work tools or condition text to a valid model code.
     # Prefer the longest known model code contained in the site model string.
-    for known_key, canonical in sorted(MODEL_NORM_MAP.items(), key=lambda item: len(item[0]), reverse=True):
-        if len(known_key) >= 4 and known_key in key:
+    for known_key, canonical in MODEL_MATCH_CANDIDATES:
+        if known_key in key:
             return canonical
     return None
+
+
+def model_manufacturer(value: Any) -> Optional[str]:
+    key = normalize_model_key(value)
+    if not key:
+        return None
+    return MODEL_MANUFACTURER_MAP.get(key)
 
 
 def build_content_hash(record: dict[str, Any]) -> str:
@@ -607,9 +661,23 @@ def nullable_int(value: Any) -> Optional[int]:
 
 
 def enrich_record(record: dict[str, Any]) -> dict[str, Any]:
-    record.setdefault("model_norm", model_norm(record.get("model_name")))
-    if not record.get("model_norm"):
-        record["model_norm"] = model_norm(record.get("listing_name"))
+    source_model = clean_text(record.get("model_name"))
+    canonical = model_norm(source_model) or model_norm(record.get("listing_name"))
+    if canonical:
+        if source_model and normalize_model_key(source_model) != normalize_model_key(canonical):
+            raw = record.get("raw")
+            if not isinstance(raw, dict):
+                raw = {}
+                record["raw"] = raw
+            raw.setdefault("source_model_name", source_model)
+        # Keep the normalized value in both columns so downstream consumers that
+        # predate model_norm no longer see a blank or vendor-specific spelling.
+        record["model_name"] = canonical
+        record["model_norm"] = canonical
+        if not clean_text(record.get("manufacturer")):
+            record["manufacturer"] = model_manufacturer(canonical)
+    elif not record.get("model_norm"):
+        record["model_norm"] = None
     record.setdefault("price_krw", parse_price_krw(record.get("price")))
     return record
 

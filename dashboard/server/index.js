@@ -467,17 +467,38 @@ function extractOperatingHours(record) {
   );
 }
 
+function extractNativePrice(record) {
+  const raw = record.raw_json;
+  if (!raw) {
+    return { currency: "", amount: null };
+  }
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    const currency = String(parsed?.currency || "").trim().toUpperCase();
+    const amount = parsed?.native_price == null ? Number.NaN : Number(parsed.native_price);
+    return {
+      currency,
+      amount: Number.isFinite(amount) ? amount : null
+    };
+  } catch {
+    return { currency: "", amount: null };
+  }
+}
+
 function normalizeRecord(record) {
   const postedValue = record.posted_at || record.posted_date;
   const crawledValue = record.crawled_at;
   const link = record.detail_url || record.crawl_url || "";
   const manufacturedYearMonthValue = parseYearMonth(record.manufactured_ym);
   const operatingHoursValue = extractOperatingHours(record);
+  const nativePrice = extractNativePrice(record);
   return {
     id: record.id,
     contentHash: record.content_hash || "",
     price: record.price || "",
     priceValue: record.price_krw == null ? null : Number(record.price_krw),
+    priceCurrency: nativePrice.currency,
+    nativePriceAmount: nativePrice.amount,
     displayName: record.listing_name || "-",
     modelName: record.model_norm || record.model_name || "",
     sourceSite: record.source_site || record.origin || "-",
@@ -588,11 +609,17 @@ function buildFilters(query) {
   const priceMin = parseNumberParam(query.price_min);
   const priceMax = parseNumberParam(query.price_max);
   const sourceScope = String(query.source_scope || "all").trim();
+  const sourceSite = String(query.source_site || "").trim().slice(0, 100);
 
   if (sourceScope === "international") {
     where.push("source_site IN ('Machineryline', 'Mascus Global', 'Machinery Trader', 'IronPlanet', 'Ritchie Bros. Auctioneers')");
   } else if (sourceScope === "domestic") {
     where.push("source_site NOT IN ('Machineryline', 'Mascus Global', 'Machinery Trader', 'IronPlanet', 'Ritchie Bros. Auctioneers')");
+  }
+
+  if (sourceSite) {
+    where.push("source_site = ?");
+    params.push(sourceSite);
   }
 
   if (search) {
@@ -757,6 +784,25 @@ async function queryListings(filters) {
     nextOffset,
     hasMore: nextOffset < filteredTotal,
     items: filteredItems
+  };
+}
+
+async function queryListingSources() {
+  const db = getPool();
+  const [rows] = await db.execute(
+    `
+      SELECT source_site AS sourceSite, COUNT(*) AS listingCount
+      FROM listings
+      WHERE source_site IS NOT NULL AND TRIM(source_site) <> ''
+      GROUP BY source_site
+      ORDER BY listingCount DESC, source_site ASC
+    `
+  );
+  return {
+    items: rows.map((row) => ({
+      sourceSite: row.sourceSite,
+      listingCount: Number(row.listingCount || 0)
+    }))
   };
 }
 
@@ -1489,6 +1535,15 @@ app.get("/api/listings", async (req, res) => {
   } catch (error) {
     console.error(`[dashboard] listings query failed: ${error.message}`);
     res.status(500).json({ error: "DB 조회에 실패했습니다.", detail: error.message });
+  }
+});
+
+app.get("/api/listing-sources", async (_req, res) => {
+  try {
+    res.json(await queryListingSources());
+  } catch (error) {
+    console.error(`[dashboard] listing source query failed: ${error.message}`);
+    res.status(500).json({ error: "수집 사이트 목록 조회에 실패했습니다.", detail: error.message });
   }
 });
 
