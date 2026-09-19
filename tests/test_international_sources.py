@@ -117,6 +117,12 @@ class InternationalSourceTests(unittest.TestCase):
         self.assertEqual(record["raw"]["operating_hours"], 7070)
         self.assertEqual(record["seller"], "Dealer")
 
+        missing_year = parse_listing_payload(
+            "mascus_global",
+            {"productId": "{MISSING-YEAR}", "yearOfManufacture": 0},
+        )
+        self.assertIsNone(missing_year["manufactured_ym"])
+
     def test_official_model_catalog_fills_canonical_model_and_manufacturer(self):
         self.assertGreaterEqual(len(MODEL_NORM_MAP), 900)
         self.assertLess(len(MODEL_NORM_MAP), 1500)

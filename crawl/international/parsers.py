@@ -50,6 +50,15 @@ def _currency(payload: dict[str, Any], price_text: str) -> str | None:
     return None
 
 
+def _year(value: Any) -> str | None:
+    text = clean_text(value)
+    if not text:
+        return None
+    if re.fullmatch(r"0+", text):
+        return None
+    return text
+
+
 def _common_record(site_slug: str, payload: dict[str, Any], origin: str) -> dict[str, Any]:
     detail_url = clean_text(_first(payload, "url", "detailUrl", "canonicalUrl") or "")
     if detail_url.startswith("/"):
@@ -81,7 +90,7 @@ def _common_record(site_slug: str, payload: dict[str, Any], origin: str) -> dict
         "posted_date": date_string(posted),
         "posted_at": datetime_string(posted),
         "manufacturer": manufacturer or None,
-        "manufactured_ym": str(year) if year not in (None, "") else None,
+        "manufactured_ym": _year(year),
         "location": clean_text(_first(payload, "location", "location.name", "machineLocation") or "") or None,
         "seller": clean_text(_first(payload, "seller.name", "sellerName", "dealer") or "") or None,
         "status": clean_text(_first(payload, "condition", "saleType", "status") or "") or None,

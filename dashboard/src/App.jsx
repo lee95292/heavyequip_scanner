@@ -80,7 +80,12 @@ function formatPrice(item) {
 }
 
 function formatFxRate(item) {
-  if (!item.priceFxRateKrw || !item.priceCurrency || item.priceCurrency === "KRW") {
+  if (
+    item.nativePriceAmount === null
+    || !item.priceFxRateKrw
+    || !item.priceCurrency
+    || item.priceCurrency === "KRW"
+  ) {
     return "";
   }
   return `1 ${item.priceCurrency} = ${Number(item.priceFxRateKrw).toLocaleString("ko-KR", {
