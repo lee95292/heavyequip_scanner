@@ -21,7 +21,6 @@ DEFAULT_LOG_DIR = DATA_DIR / "logs"
 DEFAULT_CONFIG_PATH = ROOT / "crawl" / "config.json"
 MODEL_CSV_PATH = ROOT / "docs" / "const" / "model.csv"
 MODEL_OFFICIAL_CSV_PATH = ROOT / "docs" / "const" / "model_official.csv"
-MODEL_OBSERVED_CSV_PATH = ROOT / "docs" / "const" / "model_observed.csv"
 KST = dt.timezone(dt.timedelta(hours=9))
 
 
@@ -258,9 +257,10 @@ def load_model_norm_map(path: Path = MODEL_CSV_PATH) -> dict[str, str]:
 
 
 def load_model_catalog(
-    # Later files win: official spelling/manufacturer data takes precedence over
-    # observed marketplace spellings, while the legacy catalog stays compatible.
-    paths: tuple[Path, ...] = (MODEL_OBSERVED_CSV_PATH, MODEL_CSV_PATH, MODEL_OFFICIAL_CSV_PATH),
+    # Later files win: manufacturer-maintained spelling and manufacturer data
+    # take precedence while the original project catalog remains compatible.
+    # Marketplace observations must never be promoted into this trusted set.
+    paths: tuple[Path, ...] = (MODEL_CSV_PATH, MODEL_OFFICIAL_CSV_PATH),
 ) -> tuple[dict[str, str], dict[str, str]]:
     models: dict[str, str] = {}
     manufacturers: dict[str, str] = {}
@@ -277,9 +277,25 @@ MODEL_GENERIC_KEYS = {
     "BACKHOE", "DUMPTRUCK", "ATTACHMENT", "굴삭기", "굴착기", "중장비",
 }
 MODEL_MATCH_CANDIDATES = tuple(
-    (known_key, canonical)
+    (
+        re.compile(
+            r"(?<![A-Z0-9])"
+            + r"[\s._+()/\-]*".join(
+                re.escape(part)
+                for part in re.split(r"[\s._+()/\-]+", canonical.upper())
+                if part
+            )
+            + r"(?![A-Z0-9])"
+        ),
+        canonical,
+    )
     for known_key, canonical in sorted(MODEL_NORM_MAP.items(), key=lambda item: len(item[0]), reverse=True)
-    if len(known_key) >= 4 and known_key not in MODEL_GENERIC_KEYS
+    if (
+        len(known_key) >= 4
+        and known_key not in MODEL_GENERIC_KEYS
+        and re.search(r"[A-Z]", known_key)
+        and re.search(r"\d", known_key)
+    )
 )
 
 
@@ -289,10 +305,12 @@ def model_norm(value: Any) -> Optional[str]:
         return None
     if key in MODEL_NORM_MAP and key not in MODEL_GENERIC_KEYS:
         return MODEL_NORM_MAP[key]
-    # Many listing titles append work tools or condition text to a valid model code.
-    # Prefer the longest known model code contained in the site model string.
-    for known_key, canonical in MODEL_MATCH_CANDIDATES:
-        if known_key in key:
+    # Infer only bounded letter+number codes from titles. Numeric-only models are
+    # accepted on exact match (for example an explicit CAT model field of 320),
+    # but never guessed from an arbitrary price, year, or equipment description.
+    source_text = clean_text(value).upper()
+    for known_pattern, canonical in MODEL_MATCH_CANDIDATES:
+        if known_pattern.search(source_text):
             return canonical
     return None
 
@@ -663,20 +681,23 @@ def nullable_int(value: Any) -> Optional[int]:
 def enrich_record(record: dict[str, Any]) -> dict[str, Any]:
     source_model = clean_text(record.get("model_name"))
     canonical = model_norm(source_model) or model_norm(record.get("listing_name"))
+    if source_model and normalize_model_key(source_model) != normalize_model_key(canonical):
+        raw = record.get("raw")
+        if not isinstance(raw, dict):
+            raw = {}
+            record["raw"] = raw
+        raw.setdefault("source_model_name", source_model)
     if canonical:
-        if source_model and normalize_model_key(source_model) != normalize_model_key(canonical):
-            raw = record.get("raw")
-            if not isinstance(raw, dict):
-                raw = {}
-                record["raw"] = raw
-            raw.setdefault("source_model_name", source_model)
         # Keep the normalized value in both columns so downstream consumers that
         # predate model_norm no longer see a blank or vendor-specific spelling.
         record["model_name"] = canonical
         record["model_norm"] = canonical
         if not clean_text(record.get("manufacturer")):
             record["manufacturer"] = model_manufacturer(canonical)
-    elif not record.get("model_norm"):
+    else:
+        # Untrusted marketplace descriptions stay available under raw, but must
+        # not masquerade as a normalized equipment model in searchable columns.
+        record["model_name"] = None
         record["model_norm"] = None
     record.setdefault("price_krw", parse_price_krw(record.get("price")))
     return record

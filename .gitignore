@@ -3,4 +3,3 @@ crawl/data/parsed/*
 crawl/site/__pycache__/*
 crawl/data/logs/*
 crawl/__pycache__/*
-docs/const/model_observed.csv

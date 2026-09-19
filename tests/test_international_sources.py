@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import unittest
 
-from crawl.common import MODEL_NORM_MAP, enrich_record
+from crawl.common import MODEL_NORM_MAP, enrich_record, model_norm
 from crawl.international.catalog import load_source_catalog
 from crawl.international.source_http import _MachinerylineParser
 from crawl.international.parsers import parse_listing_payload
 from crawl.international.sync import build_request_fingerprint, plan_initial_backfill
-from crawl.model_catalog_sync import validated_model
 
 
 class InternationalSourceTests(unittest.TestCase):
@@ -115,6 +114,7 @@ class InternationalSourceTests(unittest.TestCase):
 
     def test_official_model_catalog_fills_canonical_model_and_manufacturer(self):
         self.assertGreaterEqual(len(MODEL_NORM_MAP), 900)
+        self.assertLess(len(MODEL_NORM_MAP), 1500)
         record = enrich_record({
             "listing_name": "2025 Hyundai HX130A LCR tracked excavator",
             "model_name": None,
@@ -124,10 +124,22 @@ class InternationalSourceTests(unittest.TestCase):
         self.assertEqual(record["model_norm"], "HX130A LCR")
         self.assertEqual(record["manufacturer"], "Hyundai")
 
-    def test_observed_model_validation_rejects_years_and_descriptions(self):
-        self.assertEqual(validated_model("EC380EL", "Volvo"), "EC380EL")
-        self.assertIsNone(validated_model("2024", ""))
-        self.assertIsNone(validated_model("used excavator in excellent condition", "CAT"))
+    def test_only_trusted_models_are_normalized(self):
+        self.assertIsNone(model_norm("10저소음뿌레카"))
+        self.assertIsNone(model_norm("08반자동멀티크"))
+        self.assertEqual(model_norm("320"), "320")
+        self.assertIsNone(model_norm("2025 CAT 320 excavator"))
+        self.assertEqual(model_norm("2025 Volvo EC380EL excavator"), "EC380EL")
+
+    def test_untrusted_source_model_is_kept_only_in_raw_payload(self):
+        record = enrich_record({
+            "listing_name": "10저소음뿌레카 판매",
+            "model_name": "10저소음뿌레카",
+            "raw": {},
+        })
+        self.assertIsNone(record["model_name"])
+        self.assertIsNone(record["model_norm"])
+        self.assertEqual(record["raw"]["source_model_name"], "10저소음뿌레카")
 
 
 if __name__ == "__main__":
