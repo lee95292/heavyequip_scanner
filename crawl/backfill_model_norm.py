@@ -11,10 +11,12 @@ if __package__ is None or __package__ == "":
 from crawl.common import (
     DEFAULT_CONFIG_PATH,
     clean_text,
+    ensure_database,
+    find_model_matches,
     load_mysql_config,
     model_manufacturer,
-    model_norm,
     mysql_connect,
+    normalize_model_key,
 )
 
 
@@ -96,6 +98,7 @@ def restore_from_payload(config_path: Path, batch_size: int) -> dict[str, int]:
 
 def backfill(config_path: Path, batch_size: int) -> dict[str, int]:
     config = load_mysql_config(config_path)
+    ensure_database(config)
     last_id = 0
     scanned = updated = filled_model = filled_manufacturer = cleared_untrusted = 0
     with mysql_connect(config, config.database) as conn:
@@ -110,11 +113,13 @@ def backfill(config_path: Path, batch_size: int) -> dict[str, int]:
                 ) ENGINE=InnoDB
                 """
             )
+            cursor.execute("SELECT id, model_key FROM equipment_models")
+            model_ids = {row["model_key"]: int(row["id"]) for row in cursor.fetchall()}
         while True:
             with conn.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT id, listing_name, model_name, model_norm, manufacturer
+                    SELECT id, listing_name, model_name, model_norm, manufacturer, description
                     FROM listings WHERE id > %s ORDER BY id LIMIT %s
                     """,
                     (last_id, batch_size),
@@ -123,10 +128,18 @@ def backfill(config_path: Path, batch_size: int) -> dict[str, int]:
                 if not rows:
                     break
                 changes: list[tuple[str | None, str | None, str | None, int]] = []
+                match_changes: list[tuple[int, int, int, int, str]] = []
+                batch_ids: list[int] = []
                 for row in rows:
                     last_id = int(row["id"])
+                    batch_ids.append(last_id)
                     scanned += 1
-                    canonical = model_norm(row.get("model_name")) or model_norm(row.get("listing_name"))
+                    matches = find_model_matches((row.get("model_name"), row.get("listing_name"), row.get("description")))
+                    canonical = matches[0] if matches else None
+                    for rank, matched_model in enumerate(matches, start=1):
+                        model_id = model_ids.get(normalize_model_key(matched_model))
+                        if model_id:
+                            match_changes.append((last_id, model_id, rank, 1 if rank == 1 else 0, "full_text"))
                     manufacturer = clean_text(row.get("manufacturer")) or model_manufacturer(canonical)
                     desired_model = canonical or None
                     desired_norm = canonical or None
@@ -162,6 +175,21 @@ def backfill(config_path: Path, batch_size: int) -> dict[str, int]:
                         """
                     )
                     updated += len(changes)
+                if batch_ids:
+                    placeholders = ",".join(["%s"] * len(batch_ids))
+                    cursor.execute(
+                        f"DELETE FROM listing_model_matches WHERE listing_id IN ({placeholders})",
+                        batch_ids,
+                    )
+                    if match_changes:
+                        cursor.executemany(
+                            """
+                            INSERT INTO listing_model_matches
+                                (listing_id, model_id, match_rank, is_primary, matched_from)
+                            VALUES (%s, %s, %s, %s, %s)
+                            """,
+                            match_changes,
+                        )
             print(f"[model-backfill] scanned={scanned} updated={updated} last_id={last_id}")
     return {
         "scanned": scanned,

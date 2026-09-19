@@ -222,7 +222,7 @@ def run(
     recover_stale_requests(config)
     now = now_kst()
     stream_key = stream_key_override or (
-        "backfill:2026-09-18" if mode == "backfill" else f"daily:{now.date().isoformat()}"
+        "backfill:2026-09-19-v2" if mode == "backfill" else f"daily:{now.date().isoformat()}"
     )
     cutoff = now - dt.timedelta(days=days if mode == "backfill" else 1)
     summaries: list[dict[str, Any]] = []

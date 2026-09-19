@@ -64,13 +64,28 @@ function clearStoredAuth() {
 }
 
 function formatPrice(item) {
+  if (item.priceCurrency && item.nativePriceAmount !== null) {
+    const native = item.priceCurrency === "KRW"
+      ? `${Number(item.nativePriceAmount).toLocaleString("ko-KR")}원`
+      : `${item.priceCurrency} ${Number(item.nativePriceAmount).toLocaleString("ko-KR")}`;
+    if (item.priceCurrency !== "KRW" && item.priceValue) {
+      return `${native} · 약 ${item.priceValue.toLocaleString("ko-KR")}원`;
+    }
+    return native;
+  }
   if (item.priceValue) {
     return item.priceValue.toLocaleString("ko-KR") + "원";
   }
-  if (item.priceCurrency && item.nativePriceAmount !== null) {
-    return `${item.priceCurrency} ${Number(item.nativePriceAmount).toLocaleString("ko-KR")}`;
-  }
   return item.price || "-";
+}
+
+function formatFxRate(item) {
+  if (!item.priceFxRateKrw || !item.priceCurrency || item.priceCurrency === "KRW") {
+    return "";
+  }
+  return `1 ${item.priceCurrency} = ${Number(item.priceFxRateKrw).toLocaleString("ko-KR", {
+    maximumFractionDigits: 4
+  })}원 · ${item.priceFxRateDate || "기준일 미상"}`;
 }
 
 function compactNumber(value) {
@@ -1399,7 +1414,8 @@ function App() {
                   {payload.items.map((item) => (
                     <tr key={item.id}>
                       <td data-label="가격" className="price-cell">
-                        {formatPrice(item)}
+                        <div className="primary-text">{formatPrice(item)}</div>
+                        {formatFxRate(item) && <div className="sub-text">{formatFxRate(item)}</div>}
                       </td>
                       <td data-label="표시명">
                         <div className="primary-text">{item.displayName}</div>

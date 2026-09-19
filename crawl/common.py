@@ -13,6 +13,8 @@ from typing import Any, Iterable, Optional
 
 import pymysql
 
+from crawl.fx_rates import load_snapshot, sale_price_fields
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "crawl" / "data"
@@ -22,6 +24,7 @@ DEFAULT_CONFIG_PATH = ROOT / "crawl" / "config.json"
 MODEL_CSV_PATH = ROOT / "docs" / "const" / "model.csv"
 MODEL_OFFICIAL_CSV_PATH = ROOT / "docs" / "const" / "model_official.csv"
 KST = dt.timezone(dt.timedelta(hours=9))
+_MODEL_CATALOG_SYNCED: set[tuple[str, int, str]] = set()
 
 
 MODE_ALIASES = {
@@ -214,41 +217,55 @@ def normalize_model_key(value: Any) -> str:
     return re.sub(r"[^0-9A-Z가-힣]", "", clean_text(value).upper())
 
 
-def _read_model_catalog(path: Path) -> tuple[dict[str, str], dict[str, str]]:
+def _read_model_catalog_rows(path: Path) -> list[dict[str, str]]:
     if not path.exists():
-        return {}, {}
+        return []
     text = path.read_text(encoding="utf-8-sig").strip()
     if not text:
-        return {}, {}
+        return []
     import csv
     import io
 
     rows = list(csv.reader(io.StringIO(text)))
-    result: dict[str, str] = {}
-    manufacturers: dict[str, str] = {}
+    result: list[dict[str, str]] = []
     if rows and rows[0] and clean_text(rows[0][0]).lower() == "canonical_model":
         header = [clean_text(value).lower() for value in rows[0]]
         model_index = header.index("canonical_model")
         manufacturer_index = header.index("manufacturer") if "manufacturer" in header else -1
+        source_url_index = header.index("source_url") if "source_url" in header else -1
         values = [
             (
                 row[model_index] if len(row) > model_index else "",
                 row[manufacturer_index] if manufacturer_index >= 0 and len(row) > manufacturer_index else "",
+                row[source_url_index] if source_url_index >= 0 and len(row) > source_url_index else "",
             )
             for row in rows[1:]
         ]
     else:
         # The legacy file is a single, headerless row. Reading every cell keeps
         # compatibility while also accepting a newline-formatted legacy file.
-        values = [(value, "") for row in rows for value in row]
-    for value, manufacturer_value in values:
+        values = [(value, "", "") for row in rows for value in row]
+    for value, manufacturer_value, source_url in values:
         model = clean_text(value)
         key = normalize_model_key(model)
         if key:
-            result[key] = model
-            manufacturer = clean_text(manufacturer_value)
-            if manufacturer:
-                manufacturers[key] = manufacturer
+            result.append({
+                "model_key": key,
+                "canonical_model": model,
+                "manufacturer": clean_text(manufacturer_value),
+                "source_url": clean_text(source_url),
+            })
+    return result
+
+
+def _read_model_catalog(path: Path) -> tuple[dict[str, str], dict[str, str]]:
+    result: dict[str, str] = {}
+    manufacturers: dict[str, str] = {}
+    for row in _read_model_catalog_rows(path):
+        key = row["model_key"]
+        result[key] = row["canonical_model"]
+        if row["manufacturer"]:
+            manufacturers[key] = row["manufacturer"]
     return result, manufacturers
 
 
@@ -271,7 +288,30 @@ def load_model_catalog(
     return models, manufacturers
 
 
-MODEL_NORM_MAP, MODEL_MANUFACTURER_MAP = load_model_catalog()
+def load_model_catalog_entries() -> dict[str, dict[str, str]]:
+    entries: dict[str, dict[str, str]] = {}
+    for path, source_type in ((MODEL_CSV_PATH, "legacy"), (MODEL_OFFICIAL_CSV_PATH, "official")):
+        for row in _read_model_catalog_rows(path):
+            entries[row["model_key"]] = {**row, "source_type": source_type}
+    official_rows = [row for row in entries.values() if row["source_type"] == "official" and row["manufacturer"]]
+    for key, row in entries.items():
+        if row["manufacturer"] or len(key) < 4:
+            continue
+        manufacturers = {
+            candidate["manufacturer"]
+            for candidate in official_rows
+            if candidate["model_key"].startswith(key)
+        }
+        if len(manufacturers) == 1:
+            row["manufacturer"] = manufacturers.pop()
+    return entries
+
+
+MODEL_CATALOG_ENTRIES = load_model_catalog_entries()
+MODEL_NORM_MAP = {key: row["canonical_model"] for key, row in MODEL_CATALOG_ENTRIES.items()}
+MODEL_MANUFACTURER_MAP = {
+    key: row["manufacturer"] for key, row in MODEL_CATALOG_ENTRIES.items() if row["manufacturer"]
+}
 MODEL_GENERIC_KEYS = {
     "EXCAVATOR", "LOADER", "CRANE", "DOZER", "FORKLIFT", "ROLLER",
     "BACKHOE", "DUMPTRUCK", "ATTACHMENT", "굴삭기", "굴착기", "중장비",
@@ -287,6 +327,7 @@ MODEL_MATCH_CANDIDATES = tuple(
             )
             + r"(?![A-Z0-9])"
         ),
+        known_key,
         canonical,
     )
     for known_key, canonical in sorted(MODEL_NORM_MAP.items(), key=lambda item: len(item[0]), reverse=True)
@@ -299,6 +340,48 @@ MODEL_MATCH_CANDIDATES = tuple(
 )
 
 
+def find_model_matches(values: Any | Iterable[Any]) -> list[str]:
+    if isinstance(values, (str, bytes)) or values is None:
+        candidates = [values]
+    else:
+        candidates = list(values)
+    matched: dict[str, str] = {}
+    for value in candidates:
+        text = clean_text(value)
+        if not text:
+            continue
+        exact_key = normalize_model_key(text)
+        if exact_key in MODEL_NORM_MAP and exact_key not in MODEL_GENERIC_KEYS:
+            matched[exact_key] = MODEL_NORM_MAP[exact_key]
+        upper = text.upper()
+        for pattern, known_key, canonical in MODEL_MATCH_CANDIDATES:
+            if pattern.search(upper):
+                matched[known_key] = canonical
+    return [
+        canonical
+        for _, canonical in sorted(matched.items(), key=lambda item: (-len(item[0]), item[0]))
+    ]
+
+
+def model_variant_relations() -> list[tuple[str, str]]:
+    """Return trusted parent/variant key pairs without numeric-prefix false positives."""
+    relations: list[tuple[str, str]] = []
+    keys = sorted(MODEL_CATALOG_ENTRIES, key=len)
+    for parent_key in keys:
+        if len(parent_key) < 4 or not re.search(r"[A-Z]", parent_key) or not re.search(r"\d", parent_key):
+            continue
+        parent_name = MODEL_CATALOG_ENTRIES[parent_key]["canonical_model"].upper()
+        for child_key in keys:
+            if len(child_key) <= len(parent_key) or not child_key.startswith(parent_key):
+                continue
+            next_character = child_key[len(parent_key)]
+            child_name = MODEL_CATALOG_ENTRIES[child_key]["canonical_model"].upper()
+            separator_suffix = child_name.startswith(parent_name) and child_name[len(parent_name):len(parent_name) + 1] in " -_/"
+            if next_character.isalpha() or separator_suffix:
+                relations.append((parent_key, child_key))
+    return relations
+
+
 def model_norm(value: Any) -> Optional[str]:
     key = normalize_model_key(value)
     if not key or key in MODEL_GENERIC_KEYS:
@@ -308,11 +391,8 @@ def model_norm(value: Any) -> Optional[str]:
     # Infer only bounded letter+number codes from titles. Numeric-only models are
     # accepted on exact match (for example an explicit CAT model field of 320),
     # but never guessed from an arbitrary price, year, or equipment description.
-    source_text = clean_text(value).upper()
-    for known_pattern, canonical in MODEL_MATCH_CANDIDATES:
-        if known_pattern.search(source_text):
-            return canonical
-    return None
+    matches = find_model_matches(value)
+    return matches[0] if matches else None
 
 
 def model_manufacturer(value: Any) -> Optional[str]:
@@ -390,6 +470,10 @@ def ensure_database(config: MySQLConfig) -> None:
                     model_norm VARCHAR(255) NULL,
                     description MEDIUMTEXT NULL,
                     price VARCHAR(100) NULL,
+                    sale_currency CHAR(3) NULL,
+                    sale_amount DECIMAL(20,4) NULL,
+                    sale_fx_rate_krw DECIMAL(20,8) NULL,
+                    sale_fx_rate_date DATE NULL,
                     price_krw BIGINT NULL,
                     contact VARCHAR(255) NULL,
                     posted_date DATE NULL,
@@ -419,6 +503,23 @@ def ensure_database(config: MySQLConfig) -> None:
             )
             cursor.execute(
                 """
+                SELECT COLUMN_NAME FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA=%s AND TABLE_NAME='listings'
+                """,
+                (config.database,),
+            )
+            listing_columns = {row["COLUMN_NAME"] for row in cursor.fetchall()}
+            listing_additions = {
+                "sale_currency": "CHAR(3) NULL AFTER price",
+                "sale_amount": "DECIMAL(20,4) NULL AFTER sale_currency",
+                "sale_fx_rate_krw": "DECIMAL(20,8) NULL AFTER sale_amount",
+                "sale_fx_rate_date": "DATE NULL AFTER sale_fx_rate_krw",
+            }
+            for name, definition in listing_additions.items():
+                if name not in listing_columns:
+                    cursor.execute(f"ALTER TABLE listings ADD COLUMN {name} {definition}")
+            cursor.execute(
+                """
                 SELECT COUNT(*) AS index_count
                 FROM information_schema.statistics
                 WHERE table_schema = %s
@@ -432,6 +533,93 @@ def ensure_database(config: MySQLConfig) -> None:
                     "ALTER TABLE listings "
                     "ADD KEY idx_listings_source_posted (source_site, posted_at, id)"
                 )
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS equipment_models (
+                    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    model_key VARCHAR(255) NOT NULL,
+                    canonical_model VARCHAR(255) NOT NULL,
+                    manufacturer VARCHAR(255) NULL,
+                    source_type VARCHAR(20) NOT NULL,
+                    source_url TEXT NULL,
+                    created_at DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id),
+                    UNIQUE KEY uq_equipment_models_key (model_key),
+                    KEY idx_equipment_models_name (canonical_model),
+                    KEY idx_equipment_models_manufacturer (manufacturer)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                """
+            )
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS equipment_model_relations (
+                    parent_model_id BIGINT UNSIGNED NOT NULL,
+                    child_model_id BIGINT UNSIGNED NOT NULL,
+                    relation_type VARCHAR(30) NOT NULL DEFAULT 'variant_of',
+                    created_at DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (parent_model_id, child_model_id, relation_type),
+                    KEY idx_model_relations_child (child_model_id, relation_type)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                """
+            )
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS listing_model_matches (
+                    listing_id BIGINT UNSIGNED NOT NULL,
+                    model_id BIGINT UNSIGNED NOT NULL,
+                    match_rank INT NOT NULL,
+                    is_primary TINYINT(1) NOT NULL DEFAULT 0,
+                    matched_from VARCHAR(30) NOT NULL DEFAULT 'full_text',
+                    created_at DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (listing_id, model_id),
+                    KEY idx_listing_model_matches_model (model_id, is_primary, listing_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                """
+            )
+
+            sync_key = (config.host, config.port, config.database)
+            if sync_key not in _MODEL_CATALOG_SYNCED:
+                cursor.executemany(
+                    """
+                    INSERT INTO equipment_models
+                        (model_key, canonical_model, manufacturer, source_type, source_url)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                        canonical_model=VALUES(canonical_model),
+                        manufacturer=VALUES(manufacturer),
+                        source_type=VALUES(source_type),
+                        source_url=VALUES(source_url)
+                    """,
+                    [
+                        (
+                            key,
+                            row["canonical_model"],
+                            row["manufacturer"] or None,
+                            row["source_type"],
+                            row["source_url"] or None,
+                        )
+                        for key, row in MODEL_CATALOG_ENTRIES.items()
+                    ],
+                )
+                cursor.execute("SELECT id, model_key FROM equipment_models")
+                model_ids = {row["model_key"]: int(row["id"]) for row in cursor.fetchall()}
+                cursor.execute("DELETE FROM equipment_model_relations")
+                relation_rows = [
+                    (model_ids[parent], model_ids[child], "variant_of")
+                    for parent, child in model_variant_relations()
+                    if parent in model_ids and child in model_ids
+                ]
+                if relation_rows:
+                    cursor.executemany(
+                        """
+                        INSERT IGNORE INTO equipment_model_relations
+                            (parent_model_id, child_model_id, relation_type)
+                        VALUES (%s, %s, %s)
+                        """,
+                        relation_rows,
+                    )
+                _MODEL_CATALOG_SYNCED.add(sync_key)
 
 
 def ensure_crawl_queue(config: MySQLConfig) -> None:
@@ -680,7 +868,9 @@ def nullable_int(value: Any) -> Optional[int]:
 
 def enrich_record(record: dict[str, Any]) -> dict[str, Any]:
     source_model = clean_text(record.get("model_name"))
-    canonical = model_norm(source_model) or model_norm(record.get("listing_name"))
+    matches = find_model_matches((source_model, record.get("listing_name"), record.get("description")))
+    canonical = matches[0] if matches else None
+    record["model_matches"] = matches
     if source_model and normalize_model_key(source_model) != normalize_model_key(canonical):
         raw = record.get("raw")
         if not isinstance(raw, dict):
@@ -699,7 +889,10 @@ def enrich_record(record: dict[str, Any]) -> dict[str, Any]:
         # not masquerade as a normalized equipment model in searchable columns.
         record["model_name"] = None
         record["model_norm"] = None
-    record.setdefault("price_krw", parse_price_krw(record.get("price")))
+    fx_fields = sale_price_fields(record, load_snapshot())
+    for field, value in fx_fields.items():
+        if value is not None or record.get(field) is None:
+            record[field] = value
     return record
 
 
@@ -716,14 +909,16 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                 INSERT INTO listings (
                     content_hash, origin, source_site, crawl_url, detail_url, pid,
                     category_code, category_name, listing_name, model_name, model_norm,
-                    description, price, price_krw, contact, posted_date, posted_at,
+                    description, price, sale_currency, sale_amount, sale_fx_rate_krw,
+                    sale_fx_rate_date, price_krw, contact, posted_date, posted_at,
                     crawled_at, manufacturer, manufactured_ym, location, seller, status,
                     view_count, raw_json, payload_json
                 ) VALUES (
                     %(content_hash)s, %(origin)s, %(source_site)s, %(crawl_url)s,
                     %(detail_url)s, %(pid)s, %(category_code)s, %(category_name)s,
                     %(listing_name)s, %(model_name)s, %(model_norm)s, %(description)s,
-                    %(price)s, %(price_krw)s, %(contact)s, %(posted_date)s,
+                    %(price)s, %(sale_currency)s, %(sale_amount)s, %(sale_fx_rate_krw)s,
+                    %(sale_fx_rate_date)s, %(price_krw)s, %(contact)s, %(posted_date)s,
                     %(posted_at)s, %(crawled_at)s, %(manufacturer)s, %(manufactured_ym)s,
                     %(location)s, %(seller)s, %(status)s, %(view_count)s,
                     %(raw_json)s, %(payload_json)s
@@ -741,6 +936,10 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                     model_norm=VALUES(model_norm),
                     description=VALUES(description),
                     price=VALUES(price),
+                    sale_currency=VALUES(sale_currency),
+                    sale_amount=VALUES(sale_amount),
+                    sale_fx_rate_krw=VALUES(sale_fx_rate_krw),
+                    sale_fx_rate_date=VALUES(sale_fx_rate_date),
                     price_krw=VALUES(price_krw),
                     contact=VALUES(contact),
                     posted_date=VALUES(posted_date),
@@ -754,8 +953,11 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                     view_count=VALUES(view_count),
                     raw_json=VALUES(raw_json),
                     payload_json=VALUES(payload_json),
+                    id=LAST_INSERT_ID(id),
                     updated_at=CURRENT_TIMESTAMP
             """
+            cursor.execute("SELECT id, model_key FROM equipment_models")
+            model_ids = {row["model_key"]: int(row["id"]) for row in cursor.fetchall()}
             for record in records:
                 enriched = enrich_record(record)
                 payload = {
@@ -772,6 +974,10 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                     "model_norm": enriched.get("model_norm"),
                     "description": enriched.get("description"),
                     "price": enriched.get("price"),
+                    "sale_currency": enriched.get("sale_currency"),
+                    "sale_amount": enriched.get("sale_amount"),
+                    "sale_fx_rate_krw": enriched.get("sale_fx_rate_krw"),
+                    "sale_fx_rate_date": enriched.get("sale_fx_rate_date"),
                     "price_krw": enriched.get("price_krw"),
                     "contact": enriched.get("contact"),
                     "posted_date": mysql_date(enriched.get("posted_date") or enriched.get("posted_at")),
@@ -787,6 +993,26 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                     "payload_json": json.dumps(enriched, ensure_ascii=False, sort_keys=True),
                 }
                 cursor.execute(sql, payload)
+                listing_id = int(cursor.lastrowid or 0)
+                if not listing_id:
+                    cursor.execute("SELECT id FROM listings WHERE content_hash=%s", (payload["content_hash"],))
+                    listing_id = int((cursor.fetchone() or {}).get("id") or 0)
+                if listing_id:
+                    cursor.execute("DELETE FROM listing_model_matches WHERE listing_id=%s", (listing_id,))
+                    match_rows = []
+                    for rank, canonical in enumerate(enriched.get("model_matches") or [], start=1):
+                        model_id = model_ids.get(normalize_model_key(canonical))
+                        if model_id:
+                            match_rows.append((listing_id, model_id, rank, 1 if rank == 1 else 0, "full_text"))
+                    if match_rows:
+                        cursor.executemany(
+                            """
+                            INSERT INTO listing_model_matches
+                                (listing_id, model_id, match_rank, is_primary, matched_from)
+                            VALUES (%s, %s, %s, %s, %s)
+                            """,
+                            match_rows,
+                        )
     print(f"[db] upsert done: {len(records)} records")
     return len(records)
 

@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import unittest
 
-from crawl.common import MODEL_NORM_MAP, enrich_record, model_norm
+import datetime as dt
+from decimal import Decimal
+
+from crawl.common import MODEL_NORM_MAP, enrich_record, find_model_matches, model_manufacturer, model_norm, model_variant_relations
+from crawl.fx_monthly import next_due_run as next_fx_due_run
+from crawl.fx_rates import parse_ecb_xml, sale_price_fields
 from crawl.international.catalog import load_source_catalog
 from crawl.international.source_http import _MachinerylineParser
 from crawl.international.parsers import parse_listing_payload
@@ -140,6 +145,51 @@ class InternationalSourceTests(unittest.TestCase):
         self.assertIsNone(record["model_name"])
         self.assertIsNone(record["model_norm"])
         self.assertEqual(record["raw"]["source_model_name"], "10저소음뿌레카")
+
+    def test_full_text_model_matching_deduplicates_and_prefers_detailed_variant(self):
+        matches = find_model_matches((
+            "Volvo EC480DL crawler; compatible with EC480 and EC480DL",
+            "EC480DL",
+        ))
+        self.assertEqual(matches[0], "EC480DL")
+        self.assertEqual(matches.count("EC480DL"), 1)
+        self.assertIn("EC480", matches)
+
+    def test_model_variant_relations_include_volvo_parent_chain(self):
+        relations = set(model_variant_relations())
+        self.assertIn(("EC480", "EC480D"), relations)
+        self.assertIn(("EC480D", "EC480DL"), relations)
+        self.assertEqual(model_manufacturer("EC480"), "Volvo")
+
+    def test_ecb_cross_rates_are_converted_to_krw(self):
+        snapshot = parse_ecb_xml("""
+            <Envelope><Cube><Cube time="2026-09-18">
+              <Cube currency="USD" rate="1.25"/>
+              <Cube currency="KRW" rate="1500"/>
+            </Cube></Cube></Envelope>
+        """)
+        self.assertEqual(snapshot.rates_krw["USD"], Decimal("1200"))
+        fields = sale_price_fields({
+            "source_site": "Machineryline",
+            "price": "USD 10,000",
+            "raw": {"currency": "USD", "native_price": 10000},
+        }, snapshot)
+        self.assertEqual(fields["sale_currency"], "USD")
+        self.assertEqual(fields["sale_fx_rate_krw"], 1200.0)
+        self.assertEqual(fields["price_krw"], 12_000_000)
+
+        domestic = sale_price_fields({"source_site": "그린중기", "price": "2,500만원"}, None)
+        self.assertEqual(domestic["sale_currency"], "KRW")
+        self.assertEqual(domestic["sale_fx_rate_krw"], 1.0)
+        self.assertEqual(domestic["price_krw"], 25_000_000)
+
+    def test_monthly_fx_worker_runs_immediately_once_per_month(self):
+        now = dt.datetime(2026, 9, 19, 10, 0, tzinfo=dt.timezone(dt.timedelta(hours=9)))
+        self.assertEqual(next_fx_due_run(now, 1, (5, 30), ""), now)
+        self.assertEqual(
+            next_fx_due_run(now, 1, (5, 30), "2026-09"),
+            dt.datetime(2026, 10, 1, 5, 30, tzinfo=now.tzinfo),
+        )
 
 
 if __name__ == "__main__":

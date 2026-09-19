@@ -106,10 +106,22 @@ Mascus Global의 공식 목록 진입점과 응답 형식·정렬·페이지네�
 아직 없어도 분석 카탈로그는 표시됩니다.
 
 우선순위 3개 사이트의 캡처 응답은 `crawl.international.parsers.parse_listing_payload()`로
-기존 `listings` 형식에 정규화합니다. 외화 가격은 환율 기준이 확정되기 전까지
-`price_krw`에 넣지 않고 `raw_json.currency`와 `raw_json.native_price`로 보존합니다.
+기존 `listings` 형식에 정규화합니다. 원문 판매통화와 금액은 `sale_currency`,
+`sale_amount`에 보존하고, 마지막으로 성공한 ECB 기준환율을 `sale_fx_rate_krw`,
+`sale_fx_rate_date`에 기록합니다. 계산된 원화값은 `price_krw`에 저장합니다.
+환율 수집 실패 시 마지막 캐시를 사용하며 크롤링을 중단하지 않습니다.
+
+`heavyequip-fx-monthly` 워커는 매월 1일 05:30 KST에 ECB 환율을 한 번 갱신한 뒤 전체
+매물의 환율과 원화 계산값을 다시 계산합니다. 수동 실행은 다음과 같습니다.
+
+```bash
+python3 crawl/fx_monthly.py --run-once
+```
 
 초기 백필은 등록일 최신순의 1페이지부터 과거 방향으로 진행하도록 설계했습니다.
 `source_sync_state`가 다음 cursor/page를 저장하고, `source_request_log` 및 `crawl_tasks`의
 결정적 `request_fingerprint`가 완료된 요청의 재전송을 막습니다. 실제 네트워크 실행기는
 사이트별 응답 캡처와 이용조건 검토가 끝난 다음 활성화해야 합니다.
+
+차단 응답을 같은 프록시와 헤더로 재현하는 방법은
+`docs/international_request_reproduction.md`에 정리했습니다.

@@ -497,8 +497,10 @@ function normalizeRecord(record) {
     contentHash: record.content_hash || "",
     price: record.price || "",
     priceValue: record.price_krw == null ? null : Number(record.price_krw),
-    priceCurrency: nativePrice.currency,
-    nativePriceAmount: nativePrice.amount,
+    priceCurrency: record.sale_currency || nativePrice.currency,
+    nativePriceAmount: record.sale_amount == null ? nativePrice.amount : Number(record.sale_amount),
+    priceFxRateKrw: record.sale_fx_rate_krw == null ? null : Number(record.sale_fx_rate_krw),
+    priceFxRateDate: record.sale_fx_rate_date || "",
     displayName: record.listing_name || "-",
     modelName: record.model_norm || record.model_name || "",
     sourceSite: record.source_site || record.origin || "-",
@@ -562,7 +564,8 @@ function listingSelectSql() {
     SELECT
       id, content_hash, origin, source_site, crawl_url, detail_url, pid,
       category_code, category_name, listing_name, model_name, model_norm,
-      description, price, price_krw, contact, posted_date, posted_at, crawled_at,
+      description, price, sale_currency, sale_amount, sale_fx_rate_krw,
+      sale_fx_rate_date, price_krw, contact, posted_date, posted_at, crawled_at,
       manufacturer, manufactured_ym, location, seller, status, view_count, raw_json
     FROM listings
   `;
