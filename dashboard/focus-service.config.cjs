@@ -1,0 +1,1 @@
+module.exports={apps:[{name:'heavyequip-focus-scan',cwd:'/home/marco/heavyequip_scanner',script:'crawl/focus_scan.py',interpreter:'python3',args:'',instances:1,autorestart:true,restart_delay:15000,kill_timeout:45000,max_restarts:10,env:{PYTHONDONTWRITEBYTECODE:'1',TZ:'Asia/Seoul',FOCUS_ENV_PATH:'/home/marco/.config/heavyequip-focus/focus.env'}}]};

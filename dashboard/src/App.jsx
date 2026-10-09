@@ -1,3 +1,4 @@
+import FocusScan from "./FocusScan";
 import { useEffect, useMemo, useState } from "react";
 
 const SORT_OPTIONS = [
@@ -731,7 +732,9 @@ function App() {
         >
           크롤링 작업
         </button>
+      <button type="button" className={activeTab === "focusScan" ? "active" : ""} onClick={() => setActiveTab("focusScan")}>집중탐색</button>
       </nav>
+      {activeTab === "focusScan" && <FocusScan authFetchOptions={authFetchOptions} />}
 
       {activeTab === "listings" && (
         <>

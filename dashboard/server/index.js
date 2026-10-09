@@ -1116,6 +1116,7 @@ app.post("/api/auth/verify", (req, res) => {
 });
 
 app.use("/api", requireDashboardAuth);
+require("./focus-scan.cjs").registerFocusScan(app, getPool);
 
 app.get("/api/listings", async (req, res) => {
   try {
