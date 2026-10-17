@@ -10,5 +10,16 @@
   },
   "dashboard": {
     "password": "heavyequip"
+  },
+  "international": {
+    "http_proxy": "http://user:password@proxy-host:port",
+    "minimum_price_krw": 10000000,
+    "exchange_rate_date": "2026-09-01",
+    "exchange_rates_krw": {
+      "USD": 1400,
+      "EUR": 1650,
+      "GBP": 1900,
+      "JPY": 9.5
+    }
   }
 }

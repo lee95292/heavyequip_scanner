@@ -1,21 +1,35 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const http = require("http");
+const https = require("https");
 const { spawn } = require("child_process");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const { analyzePriceMarkets } = require("./price-statistics.cjs");
+const { analyzeMarket } = require("./market-analytics.cjs");
 
 const app = express();
 const port = Number(process.env.PORT || 5050);
 const repoRoot = path.resolve(__dirname, "..", "..");
 const configPath = process.env.CRAWL_CONFIG_PATH || path.join(repoRoot, "crawl", "config.json");
+const internationalCatalogPath = path.join(repoRoot, "docs", "international_sources.json");
 const defaultDashboardPassword = "heavyequip";
 const listingLinkCheckConcurrency = 6;
 const listingLinkCheckTimeoutMs = 8000;
 const listingLinkCheckSnippetBytes = 128 * 1024;
 const supportedCrawlSites = new Set(["green_heavy"]);
 const maxManualCrawlTasks = Math.max(1, Number(process.env.DASHBOARD_MAX_MANUAL_CRAWL_TASKS || 500) || 500);
+const maxCrawlTaskAttempts = 3;
+const staleRunningTaskSeconds = 15 * 60;
+const internationalSourceSites = JSON.parse(fs.readFileSync(internationalCatalogPath, 'utf8')).sources.map(source => source.name);
+const minimumInternationalPriceKrw = 10_000_000;
+const predictionApiUrl = String(process.env.PREDICTION_API_URL || "http://127.0.0.1:5060").replace(/\/$/, "");
+const predictionApiTimeoutMs = Math.min(
+  Math.max(Number(process.env.PREDICTION_API_TIMEOUT_MS || 8000) || 8000, 1000),
+  30000
+);
 const manualStartRequests = new Map();
 const deletedPagePatterns = [
   /삭제된\s*(게시물|게시글|페이지|상품|매물)/i,
@@ -65,6 +79,10 @@ function readMysqlConfig() {
   };
 }
 
+function readInternationalCatalog() {
+  return JSON.parse(fs.readFileSync(internationalCatalogPath, "utf8"));
+}
+
 function readDashboardPassword() {
   const raw = readRawConfig();
   return String(
@@ -95,6 +113,82 @@ function requireDashboardAuth(req, res, next) {
     return;
   }
   next();
+}
+
+function requestPredictionApi(endpoint, options = {}) {
+  return new Promise((resolve, reject) => {
+    const target = new URL(endpoint, `${predictionApiUrl}/`);
+    const client = target.protocol === "https:" ? https : http;
+    const body = options.body ? String(options.body) : "";
+    const request = client.request(
+      target,
+      {
+        method: options.method || "GET",
+        headers: {
+          accept: "application/json",
+          ...(body
+            ? {
+                "content-type": "application/json",
+                "content-length": Buffer.byteLength(body)
+              }
+            : {}),
+          ...(options.headers || {})
+        }
+      },
+      (response) => {
+        const chunks = [];
+        let responseBytes = 0;
+        response.on("data", (chunk) => {
+          responseBytes += chunk.length;
+          if (responseBytes > 1024 * 1024) {
+            request.destroy(new Error("prediction response is too large"));
+            return;
+          }
+          chunks.push(chunk);
+        });
+        response.on("end", () => {
+          const text = Buffer.concat(chunks).toString("utf8");
+          let payload = {};
+          try {
+            payload = JSON.parse(text);
+          } catch {
+            payload = {};
+          }
+          resolve({ status: Number(response.statusCode || 502), payload });
+        });
+      }
+    );
+    request.setTimeout(predictionApiTimeoutMs, () => {
+      const timeoutError = new Error("prediction request timed out");
+      timeoutError.name = "AbortError";
+      request.destroy(timeoutError);
+    });
+    request.on("error", reject);
+    if (body) {
+      request.write(body);
+    }
+    request.end();
+  });
+}
+
+function predictionProxyStatus(status) {
+  if (status >= 400 && status < 500) {
+    return status;
+  }
+  return status >= 200 && status < 300 ? status : 503;
+}
+
+function predictionProxyPayload(status, payload) {
+  if (status >= 500) {
+    return { error: "가격 예측 모델을 현재 사용할 수 없습니다." };
+  }
+  return payload && typeof payload === "object" ? payload : { error: "가격 예측 응답이 올바르지 않습니다." };
+}
+
+function predictionProxyError(error) {
+  return error?.name === "AbortError"
+    ? "가격 예측 서버 응답 시간이 초과되었습니다."
+    : "가격 예측 서버에 연결할 수 없습니다.";
 }
 
 function publicDbInfo(config) {
@@ -265,6 +359,18 @@ function siteShortName(record) {
   if (source.includes("Mascus")) {
     return "Mascus";
   }
+  if (source.includes("Machineryline")) {
+    return "Machineryline";
+  }
+  if (source.includes("Machinery Trader")) {
+    return "Machinery Trader";
+  }
+  if (source.includes("IronPlanet")) {
+    return "IronPlanet";
+  }
+  if (source.includes("Ritchie Bros")) {
+    return "Ritchie Bros.";
+  }
   if (source.includes("중기114")) {
     return "중기114";
   }
@@ -336,7 +442,9 @@ function parseHoursFromText(value) {
   let match;
   while ((match = pattern.exec(text))) {
     const number = Number(match[1].replace(/[, ]/g, ""));
-    if (!Number.isFinite(number) || number < 100) {
+    // Flattened descriptions can join a year and meter ("2021 375 h").
+    // Do not turn that ambiguous text into a multi-million-hour machine.
+    if (!Number.isFinite(number) || number < 100 || number > 100000) {
       continue;
     }
     const context = text.slice(Math.max(0, match.index - 12), match.index + match[0].length + 16);
@@ -353,6 +461,13 @@ function extractOperatingHours(record) {
   if (raw) {
     try {
       const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+      const meter = parsed?.operating_hours;
+      if (meter !== null && meter !== undefined && meter !== "") {
+        const number = Number(meter);
+        if (Number.isFinite(number) && number >= 0 && number <= 100000) {
+          return number;
+        }
+      }
       const detail = parsed?.detail || {};
       const detailEntries = Object.entries(detail);
       const priority = detailEntries.filter(([key]) => /가동|운행|사용|시간/.test(key));
@@ -497,6 +612,21 @@ function buildFilters(query) {
   const postedTo = String(query.posted_to || "").trim();
   const priceMin = parseNumberParam(query.price_min);
   const priceMax = parseNumberParam(query.price_max);
+  const sourceScope = String(query.source_scope || "all").trim();
+  const sourceSite = String(query.source_site || "").trim();
+
+  if (sourceScope === "international") {
+    where.push(`source_site IN (${internationalSourceSites.map(() => "?").join(", ")})`);
+    params.push(...internationalSourceSites);
+  } else if (sourceScope === "domestic") {
+    where.push(`source_site NOT IN (${internationalSourceSites.map(() => "?").join(", ")})`);
+    params.push(...internationalSourceSites);
+  }
+
+  if (sourceSite) {
+    where.push("source_site = ?");
+    params.push(sourceSite);
+  }
 
   if (search) {
     const like = `%${search}%`;
@@ -610,38 +740,69 @@ function sortListings(items, sort) {
 async function queryListings(filters) {
   const db = getPool();
   const { whereSql, params } = buildFilters(filters);
-  const limit = Math.min(Math.max(Number(filters.limit || 1000), 1), 5000);
+  const limit = Math.min(Math.max(Number(filters.limit || 50), 1), 100);
+  const offset = Math.max(Number(filters.offset || 0), 0);
   const sort = orderSql(filters.sort);
   const rangeFilters = buildRangeFilters(filters);
-  const baseFetchLimit = 50000;
+  const hasRangeFilters = Object.values(rangeFilters).some((value) => value !== null);
 
   const [statsRows] = await db.execute(
     "SELECT COUNT(*) AS databaseTotal, COUNT(price_krw) AS pricedTotal, MAX(posted_date) AS latestPostedDate FROM listings"
   );
-  const [rows] = await db.execute(
+  const [sourceRows] = await db.execute(
     `
-      ${listingSelectSql()}
-      ${whereSql}
-      ORDER BY ${sort}
-      LIMIT ${baseFetchLimit}
-    `,
+      SELECT source_site AS sourceSite, COUNT(*) AS listingCount
+      FROM listings
+      WHERE source_site IS NOT NULL AND TRIM(source_site) <> ''
+      GROUP BY source_site
+      ORDER BY listingCount DESC, source_site ASC
+    `
+  );
+  const [countRows] = await db.execute(
+    `SELECT COUNT(*) AS filteredTotal FROM listings ${whereSql}`,
     params
   );
+  let filteredItems;
+  let filteredTotal = Number(countRows[0]?.filteredTotal || 0);
+  if (hasRangeFilters) {
+    const [rows] = await db.execute(
+      `${listingSelectSql()} ${whereSql} ORDER BY ${sort} LIMIT 50000`,
+      params
+    );
+    const allFiltered = sortListings(
+      rows.map(normalizeRecord).filter((item) => matchesRangeFilters(item, rangeFilters)),
+      filters.sort
+    );
+    filteredTotal = allFiltered.length;
+    filteredItems = allFiltered.slice(offset, offset + limit);
+  } else {
+    const [rows] = await db.execute(
+      `${listingSelectSql()} ${whereSql} ORDER BY ${sort} LIMIT ${limit} OFFSET ${offset}`,
+      params
+    );
+    filteredItems = rows.map(normalizeRecord);
+  }
 
   const stats = statsRows[0] || {};
-  const filteredItems = sortListings(
-    rows.map(normalizeRecord).filter((item) => matchesRangeFilters(item, rangeFilters)),
-    filters.sort
-  );
+  const nextOffset = offset + filteredItems.length;
   return {
     generatedAt: new Date().toISOString(),
     db: publicDbInfo(activeDbConfig),
     limit,
-    total: filteredItems.length,
+    total: filteredTotal,
     databaseTotal: Number(stats.databaseTotal || 0),
     pricedTotal: Number(stats.pricedTotal || 0),
     latestPostedDate: stats.latestPostedDate || "",
-    items: filteredItems.slice(0, limit)
+    sourceSites: sourceRows.map((row) => ({
+      value: row.sourceSite,
+      label: siteShortName({ source_site: row.sourceSite }),
+      count: Number(row.listingCount || 0),
+      international: internationalSourceSites.includes(row.sourceSite)
+    })),
+    offset,
+    nextOffset,
+    hasMore: nextOffset < filteredTotal,
+    items: filteredItems
   };
 }
 
@@ -820,6 +981,257 @@ async function tableExists(tableName) {
   return Number(rows?.[0]?.cnt || 0) > 0;
 }
 
+async function queryInternationalSources() {
+  const catalog = readInternationalCatalog();
+  const listingStats = new Map();
+  const tasksBySite = new Map();
+  const syncBySite = new Map();
+  const extensionsByStream = new Map();
+  let databaseAvailable = true;
+
+  try {
+    const db = getPool();
+    const [listingRows] = await db.execute(
+      `
+        SELECT source_site AS sourceSite, origin, COUNT(*) AS listingCount,
+               MAX(crawled_at) AS latestCrawledAt, MIN(posted_at) AS oldestPostedAt
+        FROM listings
+        GROUP BY source_site, origin
+      `
+    );
+    for (const row of listingRows) {
+      listingStats.set(String(row.sourceSite || "").toLowerCase(), row);
+      listingStats.set(String(row.origin || "").toLowerCase(), row);
+    }
+
+    if (await tableExists("crawl_tasks")) {
+      const [taskRows] = await db.execute(
+        `
+          SELECT site_slug AS siteSlug, status, COUNT(*) AS count, MAX(updated_at) AS latestTaskAt
+          FROM crawl_tasks
+          GROUP BY site_slug, status
+        `
+      );
+      for (const row of taskRows) {
+        const current = tasksBySite.get(row.siteSlug) || { total: 0, byStatus: {}, latestTaskAt: "" };
+        current.total += Number(row.count || 0);
+        current.byStatus[row.status] = Number(row.count || 0);
+        if (row.latestTaskAt && (!current.latestTaskAt || String(row.latestTaskAt) > String(current.latestTaskAt))) {
+          current.latestTaskAt = row.latestTaskAt;
+        }
+        tasksBySite.set(row.siteSlug, current);
+      }
+    }
+
+    if (await tableExists("source_sync_state")) {
+      if (await tableExists("source_sync_extensions")) {
+        const [extensions] = await db.execute(`
+          SELECT site_slug AS siteSlug, stream_key AS streamKey, expansion_key AS expansionKey,
+                 baseline_count AS baselineCount, target_count AS targetCount
+          FROM source_sync_extensions ORDER BY created_at ASC
+        `);
+        for (const extension of extensions) extensionsByStream.set(`${extension.siteSlug}:${extension.streamKey}`, extension);
+      }
+      const [syncRows] = await db.execute(
+        `
+          SELECT site_slug AS siteSlug, stream_key AS streamKey, direction, status,
+                 next_cursor AS nextCursor, last_success_cursor AS lastSuccessCursor,
+                 newest_seen_at AS newestSeenAt, oldest_seen_at AS oldestSeenAt,
+                 item_count AS itemCount, request_count AS requestCount,
+                 stop_reason AS stopReason, last_error AS lastError, updated_at AS updatedAt,
+                 IS_USED_LOCK(CONCAT('scanner:international:', site_slug)) IS NOT NULL AS collectorRunning
+          FROM source_sync_state
+          ORDER BY site_slug, stream_key
+        `
+      );
+      for (const row of syncRows) {
+        if (!syncBySite.has(row.siteSlug)) {
+          syncBySite.set(row.siteSlug, []);
+        }
+        const extension = extensionsByStream.get(`${row.siteSlug}:${row.streamKey}`);
+        syncBySite.get(row.siteSlug).push({ ...row, extension: extension ? {
+          ...extension, additionalCount: Math.max(0, Number(row.itemCount) - Number(extension.baselineCount)),
+          additionalTarget: Number(extension.targetCount) - Number(extension.baselineCount)
+        } : null });
+      }
+    }
+  } catch (error) {
+    databaseAvailable = false;
+    console.warn(`[dashboard] international catalog loaded without DB stats: ${error.message}`);
+  }
+
+  const sources = (catalog.sources || []).map((source) => {
+    const listingStat =
+      listingStats.get(String(source.name || "").toLowerCase()) ||
+      listingStats.get(String(source.baseUrl || "").toLowerCase()) ||
+      {};
+    return {
+      ...source,
+      collectionEnabled: source.readiness === "collection_enabled",
+      stats: {
+        listingCount: Number(listingStat.listingCount || 0),
+        latestCrawledAt: listingStat.latestCrawledAt || "",
+        oldestPostedAt: listingStat.oldestPostedAt || "",
+        tasks: tasksBySite.get(source.slug) || { total: 0, byStatus: {}, latestTaskAt: "" },
+        syncStreams: syncBySite.get(source.slug) || []
+      }
+    };
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    updatedAt: catalog.updatedAt,
+    databaseAvailable,
+    requestPolicy: catalog.requestPolicy,
+    summary: {
+      sourceCount: sources.length,
+      parserReadyCount: sources.filter((source) => source.readiness === "collection_enabled").length,
+      enabledCount: sources.filter((source) => source.collectionEnabled).length,
+      listingCount: sources.reduce((sum, source) => sum + source.stats.listingCount, 0)
+    },
+    sources
+  };
+}
+
+function parseRawJson(value) {
+  if (!value) return {};
+  if (typeof value === "object" && !Buffer.isBuffer(value)) return value;
+  try {
+    return JSON.parse(String(value));
+  } catch {
+    return {};
+  }
+}
+
+function countryLabelFromCode(value) {
+  const original = String(value || "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(original)) return "";
+  const code = original === "UK" ? "GB" : original;
+  try {
+    return new Intl.DisplayNames(["ko"], { type: "region" }).of(code) || original;
+  } catch {
+    return original;
+  }
+}
+
+function buildCountryNameMap() {
+  const result = new Map();
+  const english = new Intl.DisplayNames(["en"], { type: "region" });
+  const korean = new Intl.DisplayNames(["ko"], { type: "region" });
+  for (let first = 65; first <= 90; first += 1) {
+    for (let second = 65; second <= 90; second += 1) {
+      const code = String.fromCharCode(first, second);
+      const englishName = english.of(code);
+      const koreanName = korean.of(code);
+      if (englishName && koreanName && englishName !== code && koreanName !== code) {
+        result.set(englishName.toLowerCase(), koreanName);
+      }
+    }
+  }
+  const aliases = {
+    usa: "US",
+    "u.s.a.": "US",
+    "u.s.": "US",
+    uk: "GB",
+    uae: "AE",
+    "south korea": "KR",
+    "czech republic": "CZ",
+    turkey: "TR",
+    turkiye: "TR",
+    türkiye: "TR",
+  };
+  for (const [name, code] of Object.entries(aliases)) {
+    result.set(name, countryLabelFromCode(code));
+  }
+  return result;
+}
+
+const COUNTRY_NAME_TO_KOREAN = buildCountryNameMap();
+
+function canonicalCountryLabel(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  return countryLabelFromCode(text) || COUNTRY_NAME_TO_KOREAN.get(text.toLowerCase()) || text;
+}
+
+function listingCountry(row) {
+  const raw = parseRawJson(row.raw_json);
+  const source = raw.source && typeof raw.source === "object" ? raw.source : {};
+  const explicit =
+    source.locationCountryCode || source.countryCode || source.country ||
+    raw.locationCountryCode || raw.countryCode || raw.country;
+  const explicitCode = countryLabelFromCode(explicit);
+  if (explicitCode) return explicitCode;
+  if (explicit) return canonicalCountryLabel(explicit);
+
+  const location = String(row.location || source.location || "").trim();
+  if (!location) return "국가 미상";
+  const parts = location.split(",").map((part) => part.trim()).filter(Boolean);
+  const trailingCode = countryLabelFromCode(parts.at(-1));
+  if (trailingCode) return trailingCode;
+  return canonicalCountryLabel(parts[0]) || "국가 미상";
+}
+
+function aggregatePrices(rows, keySelector) {
+  const groups = new Map();
+  for (const row of rows) {
+    const label = String(keySelector(row) || "").trim();
+    const price = Number(row.price_krw);
+    if (!label || !Number.isFinite(price)) continue;
+    const group = groups.get(label) || { label, count: 0, total: 0, minimum: price, maximum: price };
+    group.count += 1;
+    group.total += price;
+    group.minimum = Math.min(group.minimum, price);
+    group.maximum = Math.max(group.maximum, price);
+    groups.set(label, group);
+  }
+  return [...groups.values()]
+    .map((group) => ({
+      label: group.label,
+      count: group.count,
+      averagePriceKrw: Math.round(group.total / group.count),
+      minimumPriceKrw: group.minimum,
+      maximumPriceKrw: group.maximum
+    }))
+    .sort((a, b) => b.count - a.count || b.averagePriceKrw - a.averagePriceKrw || a.label.localeCompare(b.label, "ko"));
+}
+
+let marketRowsCache = { expiresAt: 0, rows: [] };
+let marketRowsInFlight = null;
+
+async function queryInternationalPriceAnalytics(filters = {}, analyze = analyzeMarket) {
+  if (marketRowsCache.expiresAt > Date.now()) {
+    return analyze(marketRowsCache.rows, filters);
+  }
+  if (marketRowsInFlight) {
+    return analyze(await marketRowsInFlight, filters);
+  }
+  const db = getPool();
+  const placeholders = internationalSourceSites.map(() => "?").join(", ");
+  marketRowsInFlight = db.execute(
+    `
+      SELECT id, source_site, model_name, model_norm, listing_name, location,
+             category_name, manufactured_ym, detail_url,
+             price_krw, posted_date, posted_at, raw_json
+      FROM listings
+      WHERE source_site IN (${placeholders})
+        AND price_krw IS NOT NULL
+        AND price_krw >= ?
+      ORDER BY posted_at DESC, posted_date DESC, id DESC
+    `,
+    [...internationalSourceSites, minimumInternationalPriceKrw]
+  ).then(([rows]) => {
+    const compact = rows.map((row) => {
+      const country = listingCountry(row);
+      const { raw_json, ...fields } = row;
+      return { ...fields, country };
+    });
+    marketRowsCache = { expiresAt: Date.now() + 15000, rows: compact };
+    return compact;
+  }).finally(() => { marketRowsInFlight = null; });
+  return analyze(await marketRowsInFlight, filters);
+}
+
 function parseTaskIds(value) {
   const source = Array.isArray(value) ? value : [];
   const ids = [];
@@ -853,10 +1265,33 @@ function manualCrawlerSleepSeconds() {
   return Number.isFinite(value) && value >= 0 ? String(value) : "1.5";
 }
 
-function markManualStartRequests(taskIds) {
+function markManualStartRequests(taskIds, ownerId) {
   const requestedAt = new Date().toISOString();
   for (const taskId of taskIds) {
-    manualStartRequests.set(Number(taskId), requestedAt);
+    manualStartRequests.set(Number(taskId), {
+      ownerId,
+      requestedAt,
+      heartbeatAt: requestedAt
+    });
+  }
+}
+
+function touchManualStartRequests(taskIds, ownerId) {
+  const heartbeatAt = new Date().toISOString();
+  for (const taskId of taskIds) {
+    const request = manualStartRequests.get(Number(taskId));
+    if (request?.ownerId === ownerId) {
+      request.heartbeatAt = heartbeatAt;
+    }
+  }
+}
+
+function clearManualStartRequests(taskIds, ownerId) {
+  for (const taskId of taskIds) {
+    const request = manualStartRequests.get(Number(taskId));
+    if (request?.ownerId === ownerId) {
+      manualStartRequests.delete(Number(taskId));
+    }
   }
 }
 
@@ -867,14 +1302,49 @@ function normalizeTaskWithManualStart(record) {
     manualStartRequests.delete(taskId);
     return task;
   }
-  const requestedAt = manualStartRequests.get(taskId);
-  if (requestedAt) {
-    task.manualStartRequestedAt = requestedAt;
+  const request = manualStartRequests.get(taskId);
+  if (request?.requestedAt) {
+    task.manualStartRequestedAt = request.requestedAt;
   }
   return task;
 }
 
-function spawnCrawler(siteSlug, taskIds) {
+function pruneStaleManualStartRequests(nowMs = Date.now()) {
+  const cutoffMs = nowMs - staleRunningTaskSeconds * 1000;
+  let removedCount = 0;
+  for (const [taskId, request] of manualStartRequests.entries()) {
+    const heartbeatAtMs = Date.parse(request?.heartbeatAt || request?.requestedAt || "");
+    if (!Number.isFinite(heartbeatAtMs) || heartbeatAtMs <= cutoffMs) {
+      manualStartRequests.delete(taskId);
+      removedCount += 1;
+    }
+  }
+  return removedCount;
+}
+
+async function recoverStaleCrawlerTasks() {
+  const db = getPool();
+  if (!(await tableExists("crawl_tasks"))) {
+    return 0;
+  }
+  const [result] = await db.execute(
+    `
+      UPDATE crawl_tasks
+      SET status=IF(attempts >= ?, 'failed', 'pending'),
+          attempts=attempts + 1,
+          last_status_code=NULL,
+          last_error=COALESCE(last_error, 'crawler stopped before task completion'),
+          next_run_at=NULL,
+          updated_at=CURRENT_TIMESTAMP
+      WHERE status='running'
+        AND updated_at <= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? SECOND)
+    `,
+    [maxCrawlTaskAttempts - 1, staleRunningTaskSeconds]
+  );
+  return Number(result.affectedRows || 0);
+}
+
+function spawnCrawler(siteSlug, taskIds, ownerId) {
   const pythonBin = process.env.CRAWL_PYTHON_BIN || "python3";
   const mode = process.env.DASHBOARD_MANUAL_CRAWL_MODE || "all";
   const args = [
@@ -900,24 +1370,25 @@ function spawnCrawler(siteSlug, taskIds) {
 
   const prefix = `[crawler:${siteSlug}:${child.pid || "pending"}]`;
   child.stdout?.on("data", (chunk) => {
+    touchManualStartRequests(taskIds, ownerId);
     const text = chunk.toString().trimEnd();
     if (text) {
       console.log(`${prefix} ${text}`);
     }
   });
   child.stderr?.on("data", (chunk) => {
+    touchManualStartRequests(taskIds, ownerId);
     const text = chunk.toString().trimEnd();
     if (text) {
       console.error(`${prefix} ${text}`);
     }
   });
   child.on("error", (error) => {
-    for (const taskId of taskIds) {
-      manualStartRequests.delete(Number(taskId));
-    }
+    clearManualStartRequests(taskIds, ownerId);
     console.error(`${prefix} spawn failed: ${error.message}`);
   });
   child.on("exit", (code, signal) => {
+    clearManualStartRequests(taskIds, ownerId);
     console.log(`${prefix} exited code=${code} signal=${signal || "-"}`);
   });
 
@@ -943,13 +1414,30 @@ async function startCrawlTasks(taskIds) {
 
   const [rows] = await db.execute(
     `
-      SELECT id, site_slug, status
+      SELECT id, site_slug, status, attempts
       FROM crawl_tasks
       WHERE id IN (${sqlPlaceholders(taskIds)})
     `,
     taskIds
   );
-  const pendingRows = rows.filter((row) => row.status === "pending");
+  const exhaustedTaskIds = rows
+    .filter((row) => row.status === "pending" && Number(row.attempts || 0) >= maxCrawlTaskAttempts)
+    .map((row) => Number(row.id));
+  if (exhaustedTaskIds.length) {
+    await db.execute(
+      `
+        UPDATE crawl_tasks
+        SET status='failed', next_run_at=NULL, updated_at=CURRENT_TIMESTAMP
+        WHERE id IN (${sqlPlaceholders(exhaustedTaskIds)})
+          AND status='pending'
+          AND attempts >= ?
+      `,
+      [...exhaustedTaskIds, maxCrawlTaskAttempts]
+    );
+  }
+  const pendingRows = rows.filter(
+    (row) => row.status === "pending" && Number(row.attempts || 0) < maxCrawlTaskAttempts
+  );
   const supportedRows = pendingRows.filter((row) => supportedCrawlSites.has(row.site_slug));
   const unsupportedTaskCount = pendingRows.length - supportedRows.length;
   const alreadyRequestedRows = supportedRows.filter((row) => manualStartRequests.has(Number(row.id)));
@@ -969,22 +1457,38 @@ async function startCrawlTasks(taskIds) {
     };
   }
 
-  await db.execute(
-    `
-      UPDATE crawl_tasks
-      SET next_run_at=NULL,
-          last_status_code=NULL,
-          last_error=NULL,
-          updated_at=CURRENT_TIMESTAMP
-      WHERE id IN (${sqlPlaceholders(supportedTaskIds)})
-        AND status = 'pending'
-    `,
-    supportedTaskIds
+  const runDefinitions = [...groupTaskIdsBySite(startableRows).entries()].map(
+    ([siteSlug, siteTaskIds]) => ({
+      siteSlug,
+      siteTaskIds,
+      ownerId: crypto.randomUUID()
+    })
   );
-
-  markManualStartRequests(supportedTaskIds);
-  const runs = [...groupTaskIdsBySite(startableRows).entries()].map(([siteSlug, siteTaskIds]) =>
-    spawnCrawler(siteSlug, siteTaskIds)
+  for (const run of runDefinitions) {
+    markManualStartRequests(run.siteTaskIds, run.ownerId);
+  }
+  try {
+    await db.execute(
+      `
+        UPDATE crawl_tasks
+        SET next_run_at=NULL,
+            last_status_code=NULL,
+            last_error=NULL,
+            updated_at=CURRENT_TIMESTAMP
+        WHERE id IN (${sqlPlaceholders(supportedTaskIds)})
+          AND status = 'pending'
+          AND attempts < ${maxCrawlTaskAttempts}
+      `,
+      supportedTaskIds
+    );
+  } catch (error) {
+    for (const run of runDefinitions) {
+      clearManualStartRequests(run.siteTaskIds, run.ownerId);
+    }
+    throw error;
+  }
+  const runs = runDefinitions.map((run) =>
+    spawnCrawler(run.siteSlug, run.siteTaskIds, run.ownerId)
   );
 
   return {
@@ -1019,6 +1523,15 @@ async function queryCrawlTasks(filters) {
       items: []
     };
   }
+
+  await db.execute(
+    `
+      UPDATE crawl_tasks
+      SET status='failed', next_run_at=NULL, updated_at=CURRENT_TIMESTAMP
+      WHERE status='pending' AND attempts >= ?
+    `,
+    [maxCrawlTaskAttempts]
+  );
 
   if (status) {
     where.push("status = ?");
@@ -1078,7 +1591,7 @@ async function queryCrawlTasks(filters) {
       FROM crawl_tasks
       ${whereSql}
       ORDER BY
-        FIELD(status, 'running', 'pending', 'done') ASC,
+        FIELD(status, 'running', 'pending', 'failed', 'done') ASC,
         COALESCE(next_run_at, success_at, updated_at, created_at) DESC,
         id DESC
       LIMIT ${limit}
@@ -1116,7 +1629,60 @@ app.post("/api/auth/verify", (req, res) => {
 });
 
 app.use("/api", requireDashboardAuth);
+require("./construction-businesses.cjs").registerConstructionBusinesses(app, getPool);
 require("./focus-scan.cjs").registerFocusScan(app, getPool);
+
+app.get("/api/prediction/models", async (req, res) => {
+  const query = String(req.query.q || "").trim().slice(0, 100);
+  const parsedLimit = Number(req.query.limit || 12);
+  const limit = Number.isInteger(parsedLimit) ? Math.min(Math.max(parsedLimit, 1), 20) : 12;
+  const params = new URLSearchParams({ q: query, limit: String(limit) });
+
+  try {
+    const upstream = await requestPredictionApi(`/models?${params.toString()}`);
+    res.setHeader("Cache-Control", "no-store");
+    res
+      .status(predictionProxyStatus(upstream.status))
+      .json(predictionProxyPayload(upstream.status, upstream.payload));
+  } catch (error) {
+    console.error(`[dashboard] prediction model lookup failed: ${error.message}`);
+    res.status(503).json({ error: predictionProxyError(error) });
+  }
+});
+
+app.post("/api/prediction/price", async (req, res) => {
+  const suggestionId = String(req.body?.suggestionId || "").trim();
+  const modelVersion = String(req.body?.modelVersion || "").trim();
+  const manufacturedYear = Number(req.body?.manufacturedYear);
+  const maximumYear = new Date().getFullYear() + 1;
+
+  if (!/^[a-f0-9]{20}$/.test(suggestionId)) {
+    res.status(422).json({ error: "제안 목록에서 모델을 선택해주세요." });
+    return;
+  }
+  if (!/^[A-Za-z0-9_.-]{1,100}$/.test(modelVersion)) {
+    res.status(422).json({ error: "가격 모델 버전이 올바르지 않습니다. 모델을 다시 선택해주세요." });
+    return;
+  }
+  if (!Number.isInteger(manufacturedYear) || manufacturedYear < 1970 || manufacturedYear > maximumYear) {
+    res.status(422).json({ error: `연식은 1970년부터 ${maximumYear}년 사이의 정수여야 합니다.` });
+    return;
+  }
+
+  try {
+    const upstream = await requestPredictionApi("/predict", {
+      method: "POST",
+      body: JSON.stringify({ suggestionId, modelVersion, manufacturedYear })
+    });
+    res.setHeader("Cache-Control", "no-store");
+    res
+      .status(predictionProxyStatus(upstream.status))
+      .json(predictionProxyPayload(upstream.status, upstream.payload));
+  } catch (error) {
+    console.error(`[dashboard] price prediction failed: ${error.message}`);
+    res.status(503).json({ error: predictionProxyError(error) });
+  }
+});
 
 app.get("/api/listings", async (req, res) => {
   try {
@@ -1172,6 +1738,33 @@ app.get("/api/crawl-tasks", async (req, res) => {
   }
 });
 
+app.get("/api/international-sources", requireDashboardAuth, async (_req, res) => {
+  try {
+    res.json(await queryInternationalSources());
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "국제 사이트 분석 정보를 불러오지 못했습니다." });
+  }
+});
+
+app.get("/api/international-price-analytics", async (req, res) => {
+  try {
+    res.json(await queryInternationalPriceAnalytics(req.query));
+  } catch (error) {
+    console.error(`[dashboard] international price analytics failed: ${error.message}`);
+    res.status(500).json({ error: "국제 매물 가격 분석 정보를 불러오지 못했습니다.", detail: error.message });
+  }
+});
+
+app.get("/api/international-price-statistics", async (req, res) => {
+  try {
+    res.json(await queryInternationalPriceAnalytics(req.query, analyzePriceMarkets));
+  } catch (error) {
+    console.error(`[dashboard] matched price statistics failed: ${error.message}`);
+    res.status(500).json({ error: "국가·모델 가격 통계를 불러오지 못했습니다." });
+  }
+});
+
 app.post("/api/crawl-tasks/start", async (req, res) => {
   const rawTaskIds = req.body?.taskIds || req.body?.ids || [];
   const taskIds = parseTaskIds(rawTaskIds);
@@ -1211,3 +1804,20 @@ app.listen(port, () => {
   console.log(`[dashboard] API server listening on http://localhost:${port}`);
   console.log(`[dashboard] reading MySQL ${dbInfo.database} at ${dbInfo.host}:${dbInfo.port}`);
 });
+
+const staleTaskRecoveryTimer = setInterval(() => {
+  const prunedRequestCount = pruneStaleManualStartRequests();
+  recoverStaleCrawlerTasks()
+    .then((recoveredCount) => {
+      if (recoveredCount) {
+        console.log(`[dashboard] recovered stale crawl tasks=${recoveredCount}`);
+      }
+      if (prunedRequestCount) {
+        console.log(`[dashboard] cleared stale manual crawl requests=${prunedRequestCount}`);
+      }
+    })
+    .catch((error) => {
+      console.error(`[dashboard] stale task recovery failed: ${error.message}`);
+    });
+}, 60 * 1000);
+staleTaskRecoveryTimer.unref();

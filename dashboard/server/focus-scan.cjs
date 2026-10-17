@@ -44,6 +44,24 @@ function logPayload(value) {
   };
 }
 
+const snapshotFields=['listing_name','model_name','manufacturer','price','manufactured_ym','location','seller','status','category_code','category_name','posted_at','detail_url','contact','description'];
+function mailSnapshot(value) {
+  let snapshot=value;
+  if(typeof snapshot==='string'){try{snapshot=JSON.parse(snapshot)}catch{return null}}
+  if(!snapshot||typeof snapshot!=='object'||Array.isArray(snapshot)||snapshot.version!==1)return null;
+  const text=value=>typeof value==='string'?value:null;
+  return {version:1,captured_at:text(snapshot.captured_at),
+    contact_status:['available','missing','fetch_failed','unavailable','not_collected'].includes(snapshot.contact_status)?snapshot.contact_status:'unavailable',
+    ...Object.fromEntries(snapshotFields.map(key=>[key,text(snapshot[key])]))};
+}
+
+async function ensureMailSnapshotColumn(pool) {
+  const [columns]=await pool.query("SHOW COLUMNS FROM focus_mail_history LIKE 'listing_snapshot_json'");
+  if(columns.length)return;
+  try {await pool.query('ALTER TABLE focus_mail_history ADD COLUMN listing_snapshot_json JSON NULL')}
+  catch(error){if(error.code!=='ER_DUP_FIELDNAME'&&error.errno!==1060)throw error}
+}
+
 function registerFocusScan(app, getPool) {
   let ready;
   async function db() {
@@ -51,6 +69,7 @@ function registerFocusScan(app, getPool) {
     if (!ready) ready = (async()=>{
       const schema=fs.readFileSync(path.join(__dirname,'../../crawl/focus_schema.sql'),'utf8');
       for (const sql of schema.split(';').filter(s=>s.trim())) await pool.query(sql);
+      await ensureMailSnapshotColumn(pool);
       const [tables]=await pool.query("SHOW TABLES LIKE 'listing_alert_rules'");
       const [imported]=await pool.query("SELECT name FROM focus_migrations WHERE name='legacy-rules-imported'");
       if (tables.length&&!imported.length) {
@@ -135,8 +154,8 @@ function registerFocusScan(app, getPool) {
     const where="status='sent'"+(q?' AND (listing_name LIKE ? OR recipient LIKE ?)':'');
     const args=q?[pattern,pattern]:[];
     const [[count]]=await pool.query('SELECT COUNT(*) total FROM focus_mail_history WHERE '+where,args);
-    const [rows]=await pool.query('SELECT id,rule_id,recipient,listing_name,price_text,manufactured_ym,detail_url,category_code,condition_json,sent_at FROM focus_mail_history WHERE '+where+' ORDER BY sent_at DESC,id DESC LIMIT ? OFFSET ?',[...args,limit,(page-1)*limit]);
-    res.json({total:count.total,page,limit,rows:rows.map(r=>({...r,condition:typeof r.condition_json==='string'?JSON.parse(r.condition_json):r.condition_json,condition_json:undefined}))});
+    const [rows]=await pool.query('SELECT id,rule_id,recipient,listing_name,price_text,manufactured_ym,detail_url,category_code,condition_json,listing_snapshot_json,sent_at FROM focus_mail_history WHERE '+where+' ORDER BY sent_at DESC,id DESC LIMIT ? OFFSET ?',[...args,limit,(page-1)*limit]);
+    res.json({total:count.total,page,limit,rows:rows.map(r=>({...r,condition:typeof r.condition_json==='string'?JSON.parse(r.condition_json):r.condition_json,condition_json:undefined,listing_snapshot:mailSnapshot(r.listing_snapshot_json),listing_snapshot_json:undefined}))});
   }));
   app.patch('/api/focus-scan/:id',handler(async(req,res)=>{
     const id=Number(req.params.id);
@@ -149,4 +168,5 @@ function registerFocusScan(app, getPool) {
     res.json({ok:true});
   }));
 }
-module.exports={registerFocusScan,validateRule,validateScan,logPayload};
+module.exports={registerFocusScan,validateRule,validateScan,logPayload,mailSnapshot,ensureMailSnapshotColumn};
+

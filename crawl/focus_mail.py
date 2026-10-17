@@ -136,3 +136,4 @@ def send(config, delivery, listing):
     finally:
         close(connection)
     return msg['Message-ID']
+

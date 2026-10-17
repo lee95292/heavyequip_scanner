@@ -69,10 +69,11 @@ CREATE TABLE IF NOT EXISTS focus_mail_history (
  recipient VARCHAR(254) NOT NULL, listing_name VARCHAR(240) NOT NULL,
  price_text VARCHAR(120) NULL, manufactured_ym VARCHAR(40) NULL,
  detail_url VARCHAR(500) NULL, category_code VARCHAR(16) NULL,
- condition_json JSON NOT NULL, status VARCHAR(24) NOT NULL DEFAULT 'sending',
+ condition_json JSON NOT NULL, listing_snapshot_json JSON NULL, status VARCHAR(24) NOT NULL DEFAULT 'sending',
  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, sent_at DATETIME NULL,
  UNIQUE KEY focus_mail_once(rule_id,identity_hash), KEY focus_mail_sent(status,sent_at,id)
 );
 CREATE TABLE IF NOT EXISTS focus_migrations (
  name VARCHAR(80) PRIMARY KEY, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+

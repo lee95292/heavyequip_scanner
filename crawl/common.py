@@ -7,11 +7,13 @@ import random
 import re
 import time
 import traceback
+from contextlib import nullcontext
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
 import pymysql
+from crawl.model_catalog import CAT_ALIAS_KEYS, CAT_BRAND, is_cat_family, match_cat, model_pattern
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,7 +22,12 @@ DEFAULT_OUTPUT_DIR = DATA_DIR / "parsed"
 DEFAULT_LOG_DIR = DATA_DIR / "logs"
 DEFAULT_CONFIG_PATH = ROOT / "crawl" / "config.json"
 MODEL_CSV_PATH = ROOT / "docs" / "const" / "model.csv"
+GENERIC_MODEL_TERMS = {
+    "EXCAVATOR",
+    "WHEELLOADER",
+}
 KST = dt.timezone(dt.timedelta(hours=9))
+MAX_CRAWL_TASK_ATTEMPTS = 3
 
 
 MODE_ALIASES = {
@@ -74,6 +81,7 @@ class CrawlConfig:
     max_categories: Optional[int] = None
     max_items: Optional[int] = None
     selected_task_ids: tuple[int, ...] = ()
+    run_key: Optional[str] = None
     write_db: bool = True
 
     def normalized_mode(self) -> str:
@@ -228,7 +236,7 @@ def load_model_norm_map(path: Path = MODEL_CSV_PATH) -> dict[str, str]:
     for value in values:
         model = clean_text(value)
         key = normalize_model_key(model)
-        if key:
+        if key and key not in GENERIC_MODEL_TERMS:
             result[key] = model
     return result
 
@@ -236,18 +244,44 @@ def load_model_norm_map(path: Path = MODEL_CSV_PATH) -> dict[str, str]:
 MODEL_NORM_MAP = load_model_norm_map()
 
 
-def model_norm(value: Any) -> Optional[str]:
+def model_norm(value: Any, manufacturer: Any = None) -> Optional[str]:
     key = normalize_model_key(value)
     if not key:
         return None
-    if key in MODEL_NORM_MAP:
-        return MODEL_NORM_MAP[key]
-    # Many listing titles append work tools or condition text to a valid model code.
-    # Prefer the longest known model code contained in the site model string.
-    for known_key, canonical in sorted(MODEL_NORM_MAP.items(), key=lambda item: len(item[0]), reverse=True):
-        if len(known_key) >= 4 and known_key in key:
-            return canonical
-    return None
+    text = clean_text(value).upper()
+    branded = bool(CAT_BRAND.search(text) or CAT_BRAND.search(str(manufacturer or "")))
+    cat = match_cat(value, manufacturer)
+    matches = [cat] if cat else []
+    for known_key, canonical in MODEL_NORM_MAP.items():
+        if not any(char.isdigit() for char in known_key):
+            continue
+        alias = canonical[3:] if canonical.upper().startswith("CAT") else canonical
+        if manufacturer and not branded and (canonical.upper().startswith("CAT") or normalize_model_key(alias) in CAT_ALIAS_KEYS):
+            continue
+        candidate_text = CAT_BRAND.sub(" ", text) if branded else text
+        if len(known_key) >= 3 and model_pattern(alias).search(candidate_text):
+            if known_key.isdigit() and not branded and key != known_key:
+                continue
+            matches.append(canonical)
+    if not matches:
+        return None
+    # Compare lengths without the manufacturer prefix so CAT320 never wins
+    # over an existing, more-specific 320D2L solely because of 'CAT'.
+    result = max(matches, key=lambda item: (len(normalize_model_key(item).removeprefix("CAT")), item.startswith("CAT")))
+    if (branded and is_cat_family(result)) or result.startswith("CAT") or (cat and normalize_model_key(cat).removeprefix("CAT") == normalize_model_key(result)):
+        return "CAT" + re.sub(r"\s+", "", result.upper()).removeprefix("CAT")
+    return result
+
+
+def record_model_norm(record: dict[str, Any]) -> Optional[str]:
+    maker = record.get("manufacturer")
+    primary = model_norm(record.get("model_name"), maker)
+    title = model_norm(record.get("listing_name"), maker)
+    # Preserve a known primary model; only refine it with a longer same-family
+    # code from the title. Descriptions may mention other machines/attachments.
+    if primary and title and normalize_model_key(title).startswith(normalize_model_key(primary)):
+        return title
+    return primary or title
 
 
 def build_content_hash(record: dict[str, Any]) -> str:
@@ -319,6 +353,10 @@ def ensure_database(config: MySQLConfig) -> None:
                     description MEDIUMTEXT NULL,
                     price VARCHAR(100) NULL,
                     price_krw BIGINT NULL,
+                    sale_currency VARCHAR(8) NULL,
+                    sale_price DECIMAL(18,2) NULL,
+                    exchange_rate_krw DECIMAL(18,6) NULL,
+                    exchange_rate_date DATE NULL,
                     contact VARCHAR(255) NULL,
                     posted_date DATE NULL,
                     posted_at DATETIME NULL,
@@ -344,6 +382,21 @@ def ensure_database(config: MySQLConfig) -> None:
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
                 """
             )
+            cursor.execute("SHOW COLUMNS FROM listings")
+            existing_columns = {str(row["Field"]) for row in cursor.fetchall()}
+            migrations = {
+                "sale_currency": "ALTER TABLE listings ADD COLUMN sale_currency VARCHAR(8) NULL AFTER price_krw",
+                "sale_price": "ALTER TABLE listings ADD COLUMN sale_price DECIMAL(18,2) NULL AFTER sale_currency",
+                "exchange_rate_krw": (
+                    "ALTER TABLE listings ADD COLUMN exchange_rate_krw DECIMAL(18,6) NULL AFTER sale_price"
+                ),
+                "exchange_rate_date": (
+                    "ALTER TABLE listings ADD COLUMN exchange_rate_date DATE NULL AFTER exchange_rate_krw"
+                ),
+            }
+            for column, statement in migrations.items():
+                if column not in existing_columns:
+                    cursor.execute(statement)
 
 
 def ensure_crawl_queue(config: MySQLConfig) -> None:
@@ -394,20 +447,21 @@ def enqueue_crawl_task(
     page: Optional[int] = None,
     priority: int = 100,
     metadata: Optional[dict[str, Any]] = None,
+    dedupe_key: Optional[str] = None,
+    reset_key: Optional[str] = None,
     reset_done: bool = False,
     ensure: bool = True,
 ) -> None:
     if ensure:
         ensure_crawl_queue(config)
-    status_sql = "IF(status = 'running', 'running', 'pending')" if reset_done else (
-        "IF(status = 'done', 'done', IF(status = 'running', 'running', 'pending'))"
-    )
-    success_sql = "IF(status = 'running', success_at, NULL)" if reset_done else "success_at"
-    attempts_sql = "IF(status = 'running', attempts, 0)" if reset_done else "attempts"
+    task_url_hash = url_hash(f"{url}\n{dedupe_key}" if dedupe_key else url)
+    metadata_json = json.dumps(metadata or {}, ensure_ascii=False, sort_keys=True)
     with mysql_connect(config, config.database) as conn:
         with conn.cursor() as cursor:
+            # Preserve an unfinished/failed task exactly as it was.  LAST_INSERT_ID
+            # gives us the existing id on a duplicate without rewriting its payload.
             cursor.execute(
-                f"""
+                """
                 INSERT INTO crawl_tasks (
                     site_slug, origin, task_type, url_hash, url, category_code, category_name,
                     page, priority, status, attempts, metadata_json
@@ -417,33 +471,69 @@ def enqueue_crawl_task(
                     'pending', 0, %(metadata_json)s
                 )
                 ON DUPLICATE KEY UPDATE
-                    origin=VALUES(origin),
-                    task_type=VALUES(task_type),
-                    url=VALUES(url),
-                    category_code=VALUES(category_code),
-                    category_name=VALUES(category_name),
-                    page=VALUES(page),
-                    priority=VALUES(priority),
-                    metadata_json=VALUES(metadata_json),
-                    status={status_sql},
-                    attempts={attempts_sql},
-                    last_status_code=NULL,
-                    last_error=NULL,
-                    next_run_at=NULL,
-                    success_at={success_sql},
-                    updated_at=CURRENT_TIMESTAMP
+                    id=LAST_INSERT_ID(id)
                 """,
                 {
                     "site_slug": site_slug,
                     "origin": origin,
                     "task_type": task_type,
-                    "url_hash": url_hash(url),
+                    "url_hash": task_url_hash,
                     "url": url,
                     "category_code": category_code,
                     "category_name": category_name,
                     "page": page,
                     "priority": priority,
-                    "metadata_json": json.dumps(metadata or {}, ensure_ascii=False, sort_keys=True),
+                    "metadata_json": metadata_json,
+                },
+            )
+            task_id = int(cursor.lastrowid or 0)
+            if not task_id:
+                cursor.execute(
+                    "SELECT id FROM crawl_tasks WHERE site_slug=%s AND url_hash=%s",
+                    (site_slug, task_url_hash),
+                )
+                row = cursor.fetchone() or {}
+                task_id = int(row.get("id") or 0)
+            if not reset_done or not task_id:
+                return
+
+            reset_filter = "id=%(task_id)s AND status='done'"
+            if reset_key:
+                reset_filter += (
+                    " AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(metadata_json, '$.run_key')), '') "
+                    "<> %(reset_key)s"
+                )
+            cursor.execute(
+                f"""
+                UPDATE crawl_tasks
+                SET origin=%(origin)s,
+                    task_type=%(task_type)s,
+                    url=%(url)s,
+                    category_code=%(category_code)s,
+                    category_name=%(category_name)s,
+                    page=%(page)s,
+                    priority=%(priority)s,
+                    status='pending',
+                    attempts=0,
+                    last_status_code=NULL,
+                    last_error=NULL,
+                    next_run_at=NULL,
+                    success_at=NULL,
+                    metadata_json=%(metadata_json)s,
+                    updated_at=CURRENT_TIMESTAMP
+                WHERE {reset_filter}
+                """,
+                {
+                    "task_id": task_id,
+                    "origin": origin,
+                    "task_type": task_type,
+                    "url": url,
+                    "category_code": category_code,
+                    "category_name": category_name,
+                    "page": page,
+                    "priority": priority,
+                    "metadata_json": metadata_json,
+                    "reset_key": reset_key or "",
                 },
             )
 
@@ -453,6 +543,7 @@ def fetch_pending_crawl_tasks(
     site_slug: str,
     limit: int = 20,
     task_ids: Optional[Iterable[int]] = None,
+    max_attempts: int = MAX_CRAWL_TASK_ATTEMPTS,
     ensure: bool = True,
 ) -> list[dict[str, Any]]:
     if ensure:
@@ -466,7 +557,7 @@ def fetch_pending_crawl_tasks(
         if task_id > 0 and task_id not in selected_ids:
             selected_ids.append(task_id)
     task_filter_sql = ""
-    params: list[Any] = [site_slug]
+    params: list[Any] = [site_slug, max_attempts]
     if selected_ids:
         task_filter_sql = f" AND id IN ({','.join(['%s'] * len(selected_ids))})"
         params.extend(selected_ids)
@@ -479,6 +570,7 @@ def fetch_pending_crawl_tasks(
                 FROM crawl_tasks
                 WHERE site_slug = %s
                   AND status = 'pending'
+                  AND attempts < %s
                   AND (next_run_at IS NULL OR next_run_at <= CURRENT_TIMESTAMP)
                   {task_filter_sql}
                 ORDER BY priority ASC, id ASC
@@ -489,20 +581,111 @@ def fetch_pending_crawl_tasks(
             return list(cursor.fetchall())
 
 
-def mark_crawl_task_started(config: MySQLConfig, task_id: int) -> None:
+def mark_crawl_task_started(
+    config: MySQLConfig,
+    task_id: int,
+    max_attempts: int = MAX_CRAWL_TASK_ATTEMPTS,
+) -> bool:
     with mysql_connect(config, config.database) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "UPDATE crawl_tasks SET status='running', updated_at=CURRENT_TIMESTAMP WHERE id=%s",
-                (task_id,),
+                """
+                UPDATE crawl_tasks
+                SET status='running', updated_at=CURRENT_TIMESTAMP
+                WHERE id=%s
+                  AND status='pending'
+                  AND attempts < %s
+                  AND (next_run_at IS NULL OR next_run_at <= CURRENT_TIMESTAMP)
+                """,
+                (task_id, max_attempts),
             )
+            return int(cursor.rowcount or 0) == 1
+
+
+def touch_crawl_tasks(config: MySQLConfig, task_ids: Iterable[int]) -> int:
+    normalized_ids = sorted({int(value) for value in task_ids if int(value) > 0})
+    if not normalized_ids:
+        return 0
+    placeholders = ",".join(["%s"] * len(normalized_ids))
+    with mysql_connect(config, config.database) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                f"""
+                UPDATE crawl_tasks
+                SET updated_at=CURRENT_TIMESTAMP
+                WHERE status='running' AND id IN ({placeholders})
+                """,
+                normalized_ids,
+            )
+            cursor.execute(
+                f"""
+                SELECT COUNT(*) AS cnt
+                FROM crawl_tasks
+                WHERE status='running' AND id IN ({placeholders})
+                """,
+                normalized_ids,
+            )
+            row = cursor.fetchone() or {}
+            return int(row.get("cnt") or 0)
+
+
+def release_running_crawl_tasks(
+    config: MySQLConfig,
+    task_ids: Iterable[int],
+    error: str = "crawler interrupted before task completion",
+) -> int:
+    normalized_ids = sorted({int(value) for value in task_ids if int(value) > 0})
+    if not normalized_ids:
+        return 0
+    placeholders = ",".join(["%s"] * len(normalized_ids))
+    with mysql_connect(config, config.database) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                f"""
+                UPDATE crawl_tasks
+                SET status='pending',
+                    next_run_at=NULL,
+                    last_error=%s,
+                    updated_at=CURRENT_TIMESTAMP
+                WHERE status='running' AND id IN ({placeholders})
+                """,
+                [error[:2000], *normalized_ids],
+            )
+            return int(cursor.rowcount or 0)
+
+
+def mark_exhausted_crawl_tasks(
+    config: MySQLConfig,
+    site_slug: Optional[str] = None,
+    max_attempts: int = MAX_CRAWL_TASK_ATTEMPTS,
+) -> int:
+    where = "status='pending' AND attempts >= %s"
+    params: list[Any] = [max_attempts]
+    if site_slug:
+        where += " AND site_slug=%s"
+        params.append(site_slug)
+    with mysql_connect(config, config.database) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                f"""
+                UPDATE crawl_tasks
+                SET status='failed',
+                    next_run_at=NULL,
+                    updated_at=CURRENT_TIMESTAMP
+                WHERE {where}
+                """,
+                params,
+            )
+            return int(cursor.rowcount or 0)
 
 
 def reset_running_crawl_tasks(
     config: MySQLConfig,
     site_slug: str,
     older_than_seconds: Optional[int] = None,
+    max_attempts: int = MAX_CRAWL_TASK_ATTEMPTS,
 ) -> int:
+    failure_threshold = max(1, max_attempts) - 1
     where = "site_slug=%s AND status='running'"
     params: list[Any] = [site_slug]
     if older_than_seconds is not None:
@@ -513,17 +696,19 @@ def reset_running_crawl_tasks(
             cursor.execute(
                 f"""
                 UPDATE crawl_tasks
-                SET status='pending',
+                SET status=IF(attempts >= %s, 'failed', 'pending'),
                     next_run_at=NULL,
+                    last_error=COALESCE(last_error, 'crawler stopped before task completion'),
+                    attempts=attempts + 1,
                     updated_at=CURRENT_TIMESTAMP
                 WHERE {where}
                 """,
-                params,
+                [failure_threshold, *params],
             )
             return int(cursor.rowcount or 0)
 
 
-def mark_crawl_task_done(config: MySQLConfig, task_id: int) -> None:
+def mark_crawl_task_done(config: MySQLConfig, task_id: int) -> bool:
     with mysql_connect(config, config.database) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
@@ -535,10 +720,11 @@ def mark_crawl_task_done(config: MySQLConfig, task_id: int) -> None:
                     next_run_at=NULL,
                     success_at=CURRENT_TIMESTAMP,
                     updated_at=CURRENT_TIMESTAMP
-                WHERE id=%s
+                WHERE id=%s AND status='running'
                 """,
                 (task_id,),
             )
+            return int(cursor.rowcount or 0) == 1
 
 
 def mark_crawl_task_retry(
@@ -548,22 +734,38 @@ def mark_crawl_task_retry(
     status_code: Optional[int],
     error: str,
     retry_after_seconds: int,
-) -> None:
+    max_attempts: int = MAX_CRAWL_TASK_ATTEMPTS,
+) -> str:
+    failure_threshold = max(1, max_attempts) - 1
     with mysql_connect(config, config.database) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
                 """
                 UPDATE crawl_tasks
-                SET status='pending',
-                    attempts=attempts + 1,
+                SET status=IF(attempts >= %s, 'failed', 'pending'),
                     last_status_code=%s,
                     last_error=%s,
-                    next_run_at=DATE_ADD(CURRENT_TIMESTAMP, INTERVAL %s SECOND),
+                    next_run_at=IF(
+                        attempts >= %s,
+                        NULL,
+                        DATE_ADD(CURRENT_TIMESTAMP, INTERVAL %s SECOND)
+                    ),
+                    attempts=attempts + 1,
                     updated_at=CURRENT_TIMESTAMP
-                WHERE id=%s
+                WHERE id=%s AND status='running'
                 """,
-                (status_code, error[:2000], retry_after_seconds, task_id),
+                (
+                    failure_threshold,
+                    status_code,
+                    error[:2000],
+                    failure_threshold,
+                    retry_after_seconds,
+                    task_id,
+                ),
             )
+            cursor.execute("SELECT status FROM crawl_tasks WHERE id=%s", (task_id,))
+            row = cursor.fetchone() or {}
+            return str(row.get("status") or "")
 
 
 def crawl_task_counts(config: MySQLConfig, site_slug: str) -> dict[str, int]:
@@ -591,34 +793,35 @@ def nullable_int(value: Any) -> Optional[int]:
 
 
 def enrich_record(record: dict[str, Any]) -> dict[str, Any]:
-    record.setdefault("model_norm", model_norm(record.get("model_name")))
-    if not record.get("model_norm"):
-        record["model_norm"] = model_norm(record.get("listing_name"))
+    record["model_norm"] = record_model_norm(record)
     record.setdefault("price_krw", parse_price_krw(record.get("price")))
     return record
 
 
-def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> int:
+def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]], *, connection=None) -> int:
     records = list(records)
     if not records:
         print("[db] upsert skip: 0 records")
         return 0
-    ensure_database(config)
+    if connection is None:
+        ensure_database(config)
     print(f"[db] upsert start: {len(records)} records")
-    with mysql_connect(config, config.database) as conn:
+    with (nullcontext(connection) if connection is not None else mysql_connect(config, config.database)) as conn:
         with conn.cursor() as cursor:
             sql = """
                 INSERT INTO listings (
                     content_hash, origin, source_site, crawl_url, detail_url, pid,
                     category_code, category_name, listing_name, model_name, model_norm,
-                    description, price, price_krw, contact, posted_date, posted_at,
+                    description, price, price_krw, sale_currency, sale_price,
+                    exchange_rate_krw, exchange_rate_date, contact, posted_date, posted_at,
                     crawled_at, manufacturer, manufactured_ym, location, seller, status,
                     view_count, raw_json, payload_json
                 ) VALUES (
                     %(content_hash)s, %(origin)s, %(source_site)s, %(crawl_url)s,
                     %(detail_url)s, %(pid)s, %(category_code)s, %(category_name)s,
                     %(listing_name)s, %(model_name)s, %(model_norm)s, %(description)s,
-                    %(price)s, %(price_krw)s, %(contact)s, %(posted_date)s,
+                    %(price)s, %(price_krw)s, %(sale_currency)s, %(sale_price)s,
+                    %(exchange_rate_krw)s, %(exchange_rate_date)s, %(contact)s, %(posted_date)s,
                     %(posted_at)s, %(crawled_at)s, %(manufacturer)s, %(manufactured_ym)s,
                     %(location)s, %(seller)s, %(status)s, %(view_count)s,
                     %(raw_json)s, %(payload_json)s
@@ -637,6 +840,10 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                     description=VALUES(description),
                     price=VALUES(price),
                     price_krw=VALUES(price_krw),
+                    sale_currency=VALUES(sale_currency),
+                    sale_price=VALUES(sale_price),
+                    exchange_rate_krw=VALUES(exchange_rate_krw),
+                    exchange_rate_date=VALUES(exchange_rate_date),
                     contact=VALUES(contact),
                     posted_date=VALUES(posted_date),
                     posted_at=VALUES(posted_at),
@@ -668,6 +875,10 @@ def upsert_records(config: MySQLConfig, records: Iterable[dict[str, Any]]) -> in
                     "description": enriched.get("description"),
                     "price": enriched.get("price"),
                     "price_krw": enriched.get("price_krw"),
+                    "sale_currency": enriched.get("sale_currency"),
+                    "sale_price": enriched.get("sale_price"),
+                    "exchange_rate_krw": enriched.get("exchange_rate_krw"),
+                    "exchange_rate_date": mysql_date(enriched.get("exchange_rate_date")),
                     "contact": enriched.get("contact"),
                     "posted_date": mysql_date(enriched.get("posted_date") or enriched.get("posted_at")),
                     "posted_at": mysql_datetime(enriched.get("posted_at")),

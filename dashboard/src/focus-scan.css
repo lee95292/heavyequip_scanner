@@ -20,3 +20,10 @@
 @media(prefers-reduced-motion:reduce){.focus-scan button{transition:none}}
 .focus-log summary{cursor:pointer;min-height:44px;padding:12px 0;font-weight:600;color:#174ea6}.focus-log summary:focus-visible{outline:3px solid #2563eb;outline-offset:3px;border-radius:4px}.focus-log li{overflow-wrap:anywhere}.focus-log details ul{margin-top:0}
 .focus-rule summary{cursor:pointer;min-height:44px;padding:12px 0}.focus-rule summary:focus-visible{outline:3px solid #2563eb;outline-offset:3px}.focus-rule a{color:#174ea6}.focus-rule a:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+
+
+.mail-listing-snapshot { overflow-wrap: anywhere; }
+.mail-listing-snapshot dl { display: grid; grid-template-columns: minmax(5rem, auto) 1fr; gap: .35rem 1rem; }
+.mail-listing-snapshot dt { font-weight: 600; }
+.mail-listing-snapshot dd { margin: 0; }
+.mail-listing-description { white-space: pre-wrap; }

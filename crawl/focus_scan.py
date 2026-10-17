@@ -1,4 +1,4 @@
-"""Independent, ephemeral Green monitoring. Never writes listings or crawl_tasks.
+"""Independent Green monitoring with durable mail snapshots. Never writes listings or crawl_tasks.
 
 The restored Green crawler supplies URL construction and parsing only. Its
 crawl/persist/queue entry points are never called. Source dates without time
@@ -121,6 +121,59 @@ def response_fields(rows):
             for row in rows if isinstance(row, dict)]
 
 
+SNAPSHOT_FIELDS = {
+    'listing_name': 240, 'model_name': 240, 'manufacturer': 240,
+    'price': 120, 'manufactured_ym': 40, 'location': 240, 'seller': 240,
+    'status': 120, 'category_code': 16, 'category_name': 240,
+    'posted_at': 80, 'detail_url': 500, 'contact': 500, 'description': 4000,
+}
+
+
+def snapshot_text(value, limit):
+    if isinstance(value, bool) or not isinstance(value, (str, int, float)):
+        return None
+    text = str(value).strip()
+    return text[:limit] or None
+
+
+def listing_snapshot(row):
+    """An allowlisted send-time snapshot, never source HTML/raw metadata."""
+    return {
+        'version': 1,
+        'captured_at': row.get('_snapshot_captured_at') or now_kst().isoformat(timespec='seconds'),
+        'contact_status': row.get('_contact_status') or ('available' if snapshot_text(row.get('contact'), 500) else 'not_collected'),
+        **{key: snapshot_text(row.get(key), limit) for key, limit in SNAPSHOT_FIELDS.items()},
+    }
+
+
+def mail_listing(crawler, row, store, category):
+    """Fetch advertised detail contact once, without changing list match inputs."""
+    result = dict(row)
+    result['_snapshot_captured_at'] = now_kst().isoformat(timespec='seconds')
+    result['_contact_status'] = 'available' if snapshot_text(row.get('contact'), 500) else 'unavailable'
+    if not row.get('detail_url'):
+        return result
+    try:
+        detail = crawler.parse_detail(row['detail_url'], referer=row.get('crawl_url'))
+        if not isinstance(detail, dict) or not any(snapshot_text(detail.get(key), 500) for key in ('detail_title', 'model_name', 'manufacturer', 'manufactured_ym', 'contact')):
+            raise SourceResponseError('listing detail missing')
+        # Keep nonempty list values as the values that matched and are mailed.
+        for key in ('model_name', 'manufacturer', 'price', 'manufactured_ym', 'location', 'status', 'description'):
+            if not snapshot_text(result.get(key), SNAPSHOT_FIELDS[key]):
+                result[key] = snapshot_text(detail.get(key), SNAPSHOT_FIELDS[key])
+        result['contact'] = snapshot_text(detail.get('contact'), 500) or snapshot_text(row.get('contact'), 500)
+        result['_contact_status'] = 'available' if result['contact'] else 'missing'
+    except (InterruptedError, BudgetExceeded):
+        raise
+    except Exception as error:
+        # Preserve the existing access/rate-limit circuit breaker and scan budget.
+        if getattr(getattr(error, 'response', None), 'status_code', None) in (400, 401, 403, 407, 429):
+            raise
+        result['_contact_status'] = 'available' if snapshot_text(row.get('contact'), 500) else 'fetch_failed'
+        store.log(None, category, 'detail', 'failed', '연락처 상세 조회 실패 · ' + type(error).__name__)
+    return result
+
+
 class BudgetExceeded(Exception):
     pass
 
@@ -132,6 +185,19 @@ class SourceResponseError(Exception):
 class Store:
     def __init__(self, mysql):
         self.mysql = mysql
+
+    def ensure_schema(self):
+        for sql in Path(__file__).with_name('focus_schema.sql').read_text().split(';'):
+            if sql.strip():
+                self.execute(sql)
+        if not self.query("SHOW COLUMNS FROM focus_mail_history LIKE 'listing_snapshot_json'"):
+            try:
+                self.execute('ALTER TABLE focus_mail_history ADD COLUMN listing_snapshot_json JSON NULL')
+            except Exception as error:
+                # Dashboard and worker can initialize together; tolerate only a
+                # concurrent successful addition of this same column.
+                if not error.args or error.args[0] != 1060:
+                    raise
 
     def query(self, sql, params=(), one=False):
         with mysql_connect(self.mysql, self.mysql.database) as conn:
@@ -191,11 +257,12 @@ class Store:
         if url:
             safe_path(url)
         return self.execute('''INSERT IGNORE INTO focus_mail_history
-            (rule_id,identity_hash,recipient,listing_name,price_text,manufactured_ym,detail_url,category_code,condition_json)
-            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+            (rule_id,identity_hash,recipient,listing_name,price_text,manufactured_ym,detail_url,category_code,condition_json,listing_snapshot_json)
+            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
             (rule['id'],key,rule['email'],str(row.get('listing_name') or row.get('model_name') or '')[:240],
              str(row.get('price') or '')[:120],str(row.get('manufactured_ym') or '')[:40],url[:500],
-             row.get('category_code'),json.dumps(condition,ensure_ascii=False))) == 1
+             row.get('category_code'),json.dumps(condition,ensure_ascii=False),
+             json.dumps(listing_snapshot(row),ensure_ascii=False))) == 1
 
     def delivery(self, rule, key, status):
         # Durable receipt first: even if the expendable dedupe update fails, a sent
@@ -293,10 +360,10 @@ def deliver(store, rule, row, mail, scan=None):
                 if attempt < 2:
                     time.sleep(2 * (attempt + 1))
         store.delivery(rule, key, 'failed')
-        store.log(rule['id'], row.get('category_code'), 'mail', 'failed', '메일 3회 실패 · 매물 본문은 보관하지 않으므로 자동 복구 없음')
+        store.log(rule['id'], row.get('category_code'), 'mail', 'failed', '메일 3회 실패 · 발송 당시 정보 보관 · 자동 재발송 없음')
         return False
     except BaseException:
-        # The claim remains ambiguous on process death; no full payload is stored.
+        # The durable claim and snapshot remain on process death; never replay automatically.
         raise
 
 
@@ -340,13 +407,20 @@ def scan_category(store, rule, category, config, mail, factory=FocusCrawler, rul
                 # Date-only first pass establishes a baseline, without historical mail.
                 if not cursor or key in boundary:
                     continue
+                eligible = []
                 for alert in rules:
                     if not store.current(rule):
                         raise InterruptedError('common scanner paused or changed')
-                    if not alert['enabled'] or not store.current(alert) or not matches(alert, row):
-                        continue
+                    if alert['enabled'] and store.current(alert) and matches(alert, row) and not store.known(alert, key):
+                        eligible.append(alert)
+                if not eligible:
+                    continue
+                # One throttled detail request per new listing, shared by all recipients.
+                # Eligibility is always evaluated against the original list row.
+                enriched = mail_listing(crawler, row, store, category)
+                for alert in eligible:
                     try:
-                        sent += int(deliver(store, alert, row, mail, scan=rule))
+                        sent += int(deliver(store, alert, enriched, mail, scan=rule))
                     except InterruptedError:
                         raise
                     except Exception as error:
@@ -417,9 +491,7 @@ def main():
     signal.signal(signal.SIGINT, stop)
     mysql = load_mysql_config()
     store = Store(mysql)
-    for sql in Path(__file__).with_name('focus_schema.sql').read_text().split(';'):
-        if sql.strip():
-            store.execute(sql)
+    store.ensure_schema()
     env = focus_mail.runtime_env()
     # Reuse only the existing account, never a direct fallback on proxy failure.
     proxy = env.get('GREEN_PROXY_URL') or env.get('HTTPS_PROXY') or env.get('HTTP_PROXY')
@@ -450,3 +522,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

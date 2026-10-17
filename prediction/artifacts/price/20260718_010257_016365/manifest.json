@@ -1,0 +1,223 @@
+{
+  "artifact_sha256": {
+    "dataset_members.csv": "3259615c09a1396d643832fff4905215a3cbb0e1eb65a710423b7686aac0c482",
+    "lightgbm.txt": "910019eb37f66862f6fb06ce1d417d9d5712ae2be4063bda28ceac9eca227c95",
+    "model_suggestions.json": "d0f715e6504dec4bd44c116ab3dcaa3a86ba2a0680efd9fb16bd57f3e2161926",
+    "preprocessor.joblib": "279382f39a58bfcddd6a65d0c2c0a74a10767b587adf16ae8dbad4103232553f",
+    "training_outliers.csv": "3b4b8b81fe248586ea4f912091141e5fda897e4cf12881ce41798625d5cf5707",
+    "xgboost.ubj": "5c040f5cca0afb905d7dadce0be04f0e722990a5a803d34ad243b4fcf5438f32"
+  },
+  "baseline_test": {
+    "mae_krw": 45834218.289085545,
+    "r2": -0.09535750299952772,
+    "rmse_krw": 60968073.75749307,
+    "wmape": 0.5209097431289853
+  },
+  "best_model": "lightgbm",
+  "code": {
+    "git_commit": "298d972765bf4f52fa0cd7f3b7fccc8befa5909a",
+    "git_dirty": true
+  },
+  "config_sha256": "d0f373a79398db38a625eb06613e5db3c2c32ae94856b5ad8d03855acef45150",
+  "data_quality": {
+    "categorical_missing_policy": "explicit_unknown_category",
+    "eligible_model_norm_count": 137,
+    "eligible_model_norm_rows": 2188,
+    "excluded_invalid_price": 0,
+    "excluded_invalid_year": 0,
+    "excluded_missing_model_norm": 30,
+    "input_cleaned_rows": 2218,
+    "manufactured_year_missing_policy": "exclude",
+    "missing_manufactured_month": 5,
+    "missing_operating_hours": 1591,
+    "model_policy": "source_model_norm_present_only",
+    "optional_numeric_policy": "median_impute_with_missing_indicator",
+    "outlier_policy": {
+      "maximum_removed_fraction": 0.03,
+      "method": "per_model_huber_year_log_price_residual",
+      "minimum_log_threshold": 0.9162907318741551,
+      "minimum_model_rows": 12,
+      "minimum_unique_years": 3,
+      "minimum_year_span": 3,
+      "robust_sigma_multiplier": 4.5,
+      "scope": "training_split_only"
+    },
+    "target_missing_policy": "exclude",
+    "train_price_outliers_removed": 28,
+    "train_rows_after_outlier_filter": 1513,
+    "train_rows_before_outlier_filter": 1541
+  },
+  "dataset_members": "dataset_members.csv",
+  "dataset_sha256": "3259615c09a1396d643832fff4905215a3cbb0e1eb65a710423b7686aac0c482",
+  "feature_encoding": {
+    "categorical": "one_hot",
+    "categorical_cardinality": {
+      "category_code": 19,
+      "category_name": 19,
+      "equipment_status": 6,
+      "location": 17,
+      "manufacturer": 22,
+      "model_norm": 132,
+      "source_site": 1
+    },
+    "categorical_features": [
+      "model_norm",
+      "manufacturer",
+      "category_code",
+      "category_name",
+      "equipment_status",
+      "source_site",
+      "location"
+    ],
+    "model_norm": "exact_one_hot",
+    "web_serving": {
+      "categorical_context": "dominant_observed_tuple_per_model",
+      "inputs": [
+        "model_norm",
+        "manufactured_year"
+      ],
+      "manufactured_month": "missing",
+      "operating_hours": "missing"
+    }
+  },
+  "features": [
+    "model_norm",
+    "manufacturer",
+    "category_code",
+    "category_name",
+    "equipment_status",
+    "source_site",
+    "location",
+    "manufactured_year",
+    "manufactured_month",
+    "manufactured_month_missing",
+    "equipment_age",
+    "operating_hours_log",
+    "operating_hours_missing",
+    "reference_date_missing"
+  ],
+  "format_version": 1,
+  "metrics": {
+    "lightgbm": {
+      "api_serving_test": {
+        "mae_krw": 11359685.763774801,
+        "r2": 0.821839915068659,
+        "rmse_krw": 24665891.115930077,
+        "wmape": 0.12940345035507203
+      },
+      "api_serving_validation": {
+        "mae_krw": 11475035.523118583,
+        "r2": 0.7136250640895332,
+        "rmse_krw": 24928660.57855769,
+        "wmape": 0.14118648254882862
+      },
+      "best_iteration": 1652,
+      "test": {
+        "mae_krw": 9552467.834608365,
+        "r2": 0.8989122721552991,
+        "rmse_krw": 18521397.298458874,
+        "wmape": 0.10856459980596334
+      },
+      "validation": {
+        "mae_krw": 11745573.199506113,
+        "r2": 0.6028630559398374,
+        "rmse_krw": 32076808.89063686,
+        "wmape": 0.14315594190275982
+      },
+      "web_serving_test": {
+        "mae_krw": 11574096.940854546,
+        "r2": 0.8142269538511742,
+        "rmse_krw": 25108217.46547075,
+        "wmape": 0.13154058451229678
+      },
+      "web_serving_validation": {
+        "mae_krw": 12859842.99669551,
+        "r2": 0.544002707005818,
+        "rmse_krw": 34371789.555502914,
+        "wmape": 0.15673674716794286
+      }
+    },
+    "xgboost": {
+      "api_serving_test": {
+        "mae_krw": 18496525.043413173,
+        "r2": 0.7364983800389151,
+        "rmse_krw": 29997374.791268434,
+        "wmape": 0.21070249740793037
+      },
+      "api_serving_validation": {
+        "mae_krw": 19163456.312295083,
+        "r2": 0.5699917846703647,
+        "rmse_krw": 30547088.163274482,
+        "wmape": 0.23578323437518908
+      },
+      "best_iteration": 976,
+      "test": {
+        "mae_krw": 10374930.541297935,
+        "r2": 0.8874589073713197,
+        "rmse_krw": 19542498.798988014,
+        "wmape": 0.11791195759382062
+      },
+      "validation": {
+        "mae_krw": 11585002.917207792,
+        "r2": 0.6126824864962026,
+        "rmse_krw": 31677768.408811536,
+        "wmape": 0.14119889905661123
+      },
+      "web_serving_test": {
+        "mae_krw": 18754351.989675514,
+        "r2": 0.7270223383542651,
+        "rmse_krw": 30436035.70580078,
+        "wmape": 0.2131447866280902
+      },
+      "web_serving_validation": {
+        "mae_krw": 20470224.97159091,
+        "r2": 0.4172776629825702,
+        "rmse_krw": 38855441.20905377,
+        "wmape": 0.2494926630649846
+      }
+    }
+  },
+  "model_name_resolver_sha256": null,
+  "model_suggestions": "model_suggestions.json",
+  "models": {
+    "lightgbm": "lightgbm.txt",
+    "xgboost": "xgboost.ubj"
+  },
+  "preprocessor": "preprocessor.joblib",
+  "rows": {
+    "api_serving_test": 334,
+    "api_serving_validation": 305,
+    "eligible_before_outlier_filter": 2188,
+    "test": 339,
+    "total": 2160,
+    "train": 1513,
+    "validation": 308
+  },
+  "selection_metric": "api_serving_validation.mae_krw",
+  "split": {
+    "method": "entity-owner connected-component chronological cumulative-row boundary",
+    "rows_before_train_outlier_filter": {
+      "test": 339,
+      "train": 1541,
+      "validation": 308
+    },
+    "target_row_ratios": {
+      "test": 0.15,
+      "train": 0.7,
+      "validation": 0.15
+    }
+  },
+  "target": "log1p(price_krw)",
+  "trained_at": "2026-07-17T16:03:09.248713+00:00",
+  "training_outliers": "training_outliers.csv",
+  "versions": {
+    "joblib": "1.5.3",
+    "lightgbm": "4.6.0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "python": "3.11.15",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.17.1",
+    "xgboost": "3.2.0"
+  }
+}
