@@ -1,5 +1,5 @@
 // Original source text is always retained; terminology translation never alters numbers.
-export const MAKERS={Caterpillar:'캐터필러',Komatsu:'고마쓰',Volvo_CE:'볼보건설기계',DEVELON:'디벨론',Kobelco:'코벨코',Bobcat:'밥캣',XCMG:'쉬저우공정기계',John_Deere:'존디어',Liebherr:'리버',SANY:'싼이',Hitachi:'히타치'};
+export const MAKERS={Caterpillar:'캐터필러',Komatsu:'고마쓰',Volvo_CE:'볼보건설기계',DEVELON:'디벨론',Kobelco:'코벨코',Bobcat:'밥캣',XCMG:'쉬저우공정기계',John_Deere:'존디어',Liebherr:'립헬',SANY:'싼이',Hitachi:'히타치'};
 const pairs=`rated lifting capacity|정격 인양 능력
 maximum lift-point radius|최대 인양점 반경
 maximum lift point radius|최대 인양점 반경
