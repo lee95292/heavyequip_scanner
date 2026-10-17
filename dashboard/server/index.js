@@ -1629,6 +1629,7 @@ app.post("/api/auth/verify", (req, res) => {
 });
 
 app.use("/api", requireDashboardAuth);
+require("./specifications.cjs").registerSpecifications(app);
 require("./construction-businesses.cjs").registerConstructionBusinesses(app, getPool);
 require("./focus-scan.cjs").registerFocusScan(app, getPool);
 

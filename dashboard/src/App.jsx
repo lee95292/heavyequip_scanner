@@ -1,3 +1,4 @@
+import Specifications from "./Specifications";
 import ConstructionBusinesses from "./ConstructionBusinesses";
 import FocusScan from "./FocusScan";
 import { useEffect, useMemo, useState } from "react";
@@ -1112,8 +1113,10 @@ function App() {
           가격 예측
         </button>
       <button type="button" className={activeTab === "focusScan" ? "active" : ""} onClick={() => setActiveTab("focusScan")}>집중탐색</button>
+      <button type="button" className={activeTab === "specifications" ? "active" : ""} onClick={() => setActiveTab("specifications")}>제원표</button>
       <button type="button" className={activeTab === "constructionBusinesses" ? "active" : ""} onClick={() => setActiveTab("constructionBusinesses")}>건설기계 사업자</button>
       </nav>
+      {activeTab === "specifications" && <Specifications authFetchOptions={authFetchOptions} />}
       {activeTab === "constructionBusinesses" && <ConstructionBusinesses authFetchOptions={authFetchOptions} />}
       {activeTab === "focusScan" && <FocusScan authFetchOptions={authFetchOptions} />}
 
