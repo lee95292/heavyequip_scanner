@@ -14,6 +14,13 @@ class Facets(unittest.TestCase):
   self.assertIsNone(b.numeric_facet(self.fact(),assembly=True))
  def test_power(self):
   f=self.fact();f.update(attribute='Net Power ISO 9249',unit='kW',value='120',category='Engine');self.assertEqual(b.numeric_facet(f)[1]['power_type'],'net');f['attribute']='Hydraulic pump power';self.assertIsNone(b.numeric_facet(f))
+ def test_new_dimensions_and_capacity(self):
+  for attr,unit,value,key,expected in [('Overall width','in',100,'overall_width_mm',2540),('Bucket digging force','kN',100,'bucket_digging_force_kn',100),('Rated operating capacity','lb',1000,'rated_operating_capacity_kg',453.59237),('Drum width','mm',2130,'drum_width_mm',2130)]:
+   f=self.fact();f.update(attribute=attr,unit=unit,value=value);k,v=b.numeric_facet(f);self.assertEqual(k,key);self.assertAlmostEqual(v['min'],expected)
+  for attr in ['Change in Overall Width','Bucket width','Overall width of fork carriage']:
+   f=self.fact();f.update(attribute=attr,unit='mm');self.assertIsNone(b.numeric_facet(f))
+ def test_attachment_dimension_is_not_machine_width(self):
+  f=self.fact();f.update(attribute='Overall width',unit='mm',category='Attachment: PALLET FORKS');self.assertIsNone(b.numeric_facet(f))
  def test_safe_urls(self):
   for s in ['javascript:alert(1)','data:text/html,x','file:///etc/passwd','https://name:password@example.com']:self.assertIsNone(b.safe_url(s))
   self.assertEqual(b.safe_url('https://www.cat.com/a'),'https://www.cat.com/a')

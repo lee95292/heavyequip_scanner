@@ -1,0 +1,1414 @@
+[
+  {
+    "manufacturer": "XCMG",
+    "model_name": "XE215E",
+    "category": "굴착기",
+    "url": "https://www.xcmgglobal.com/product/electric-excavator/xe215e/",
+    "region": "글로벌 공식 페이지 · 세부 판매시장 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 22500,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Rated electric motor power",
+        "value": 140,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": 1,
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SY215C",
+    "category": "굴착기",
+    "url": "https://www.sanyglobal.com/product/excavator/medium_excavator/113/145",
+    "region": "글로벌 공식 페이지 · 세부 판매시장 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 21900,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Engine power",
+        "value": 118,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": 0.93,
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "R 920 Litronic",
+    "category": "굴착기",
+    "url": "https://www.liebherr.com/en-sg/p/69636-6066657",
+    "region": "싱가포르 공식 페이지 · 배출가스 IIIA",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "21400–21900",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Engine power ISO 3046",
+        "value": 110,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "0.60–1.25",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "L 550",
+    "category": "휠 로더",
+    "url": "https://www.liebherr.com/en-int/p/657355-5376616",
+    "region": "글로벌 · 5세대 · Stage V",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "17750–19550",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power ISO 9249",
+        "value": 155,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "3.10–9.50",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Hitachi",
+    "model_name": "ZX210LC-7H",
+    "category": "굴착기",
+    "url": "https://www.hitachicm.com/us/en/products/excavators/medium-large/product.zx210lc-7h/?r=1",
+    "region": "북미",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 23100,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 122,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 6.67,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Hitachi",
+    "model_name": "ZX210LC-7G",
+    "category": "굴착기",
+    "url": "https://www.hitachicm.com/sg/en/machinery/excavators/medium-excavators/product.zx210lc-7g/",
+    "region": "아시아·태평양",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "19800–21100",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Engine power",
+        "value": 120,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "0.80–1.10",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Hitachi",
+    "model_name": "ZW180-7",
+    "category": "휠 로더",
+    "url": "https://www.hitachicm.com/us/en/products/wheel-loaders/medium-large/product.zw180-7/",
+    "region": "북미",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "15080–15330",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 125,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "2.6–3.2",
+        "unit": "m3"
+      },
+      {
+        "attribute": "Bucket breakout force",
+        "value": 114,
+        "unit": "kN"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW936K1 (Cummins)",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 11.25,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": 2,
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 3.5,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW936K1 (WEICHAI)",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 11,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": 2,
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 3.5,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW940L",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 14.6,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "2.3–2.7",
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 4.2,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SYL956H5",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 17.2,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "2.7–4.0",
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 5,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW956K1",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 17.9,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "2.7–5.0",
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 5.5,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW966K1",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 21.4,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "3.3–6.0",
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 6,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW978K1Pro",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 25.5,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": 4.5,
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 7.5,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SW978K1Pro-In",
+    "category": "휠 로더",
+    "url": "https://www.sanyglobal.com/product/loader/wheel_loader_new/222/",
+    "region": "글로벌 · 엔진·시장 구성은 모델명과 원문 확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 25.5,
+        "unit": "t"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": 7,
+        "unit": "m3"
+      },
+      {
+        "attribute": "Rated payload",
+        "value": 7.5,
+        "unit": "t"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SMG200AWD (PDJ100000148)",
+    "category": "모터 그레이더",
+    "url": "https://www.sanyglobal.com/product/road_machinery/motor_grader/44/54/",
+    "region": "글로벌 · PDJ100000148 사양",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 18.843,
+        "unit": "t"
+      },
+      {
+        "attribute": "Rated engine power",
+        "value": 186,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Length of blade",
+        "value": 4270,
+        "unit": "mm"
+      },
+      {
+        "attribute": "Minimum turning radius",
+        "value": 7.5,
+        "unit": "m"
+      },
+      {
+        "attribute": "Overall length",
+        "value": 9192,
+        "unit": "mm"
+      },
+      {
+        "attribute": "Overall width",
+        "value": 2750,
+        "unit": "mm"
+      },
+      {
+        "attribute": "Overall height",
+        "value": 3498,
+        "unit": "mm"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "30 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 3275,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 17.4,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 2.79,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "35 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 3690,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 17.4,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 3.06,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "50 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 4920,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 26.8,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 3.53,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "60 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 6180,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 39.6,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 3.77,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "75 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "8418–8766",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 50.4,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 4.65,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "85 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "8726–9206",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 50.4,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 4.53,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "130 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 13407,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 73,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 6.03,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "135 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "14300–15400",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 75,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 5.98,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "160 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 17945,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 90,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 6.49,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "230 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "23950–25200",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 127,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 6.65,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "245 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 25800,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 119,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 6.62,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "250 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 27500,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 140,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 7.61,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "260 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "25650–27400",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 151,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": "7.19–7.79",
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "300 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 31150,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 166,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 7.87,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "345 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 35700,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 186,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 7.57,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "350 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 36734,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 202,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 8.18,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "380 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.com/en-us/industries/construction/all-about-excavators",
+    "region": "미국 · 공식 굴착기 비교표",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 38765,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 202,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 8.18,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "210 P-Tier",
+    "category": "굴착기",
+    "url": "https://www.deere.ca/en/excavators/mid-size-excavators/210-p-excavator/",
+    "region": "캐나다 · New 210 P-Tier",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": "22400–23300",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Net engine power",
+        "value": 117,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Maximum digging depth",
+        "value": 6.65,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "244 P-Tier",
+    "category": "휠 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 52,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "0.8–1.1",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "544 P-Tier",
+    "category": "휠 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 123,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "1.9–4.0",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "644 P-Tier",
+    "category": "휠 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 186,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "3.1–3.6",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "744 P-Tier",
+    "category": "휠 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 236,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "3.8–4.5",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "450 P-Tier",
+    "category": "도저",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet · 구성별 범위",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 53,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "8081–8634",
+        "unit": "kg"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "650 P-Tier",
+    "category": "도저",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet · 구성별 범위",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 78,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "9600–10198",
+        "unit": "kg"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "850 P-Tier",
+    "category": "도저",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05 Fleet sheet · 구성별 범위",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 168,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "21581–23299",
+        "unit": "kg"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "317 P-Tier",
+    "category": "스키드·컴팩트 트랙 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · Compact track loader · 2025-05",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 45.6,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Rated operating capacity",
+        "value": 965,
+        "unit": "kg"
+      }
+    ],
+    "original_category": "Compact track loader"
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "333 P-Tier",
+    "category": "스키드·컴팩트 트랙 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · Compact track loader · 2025-05",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 79,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Rated operating capacity",
+        "value": 1748,
+        "unit": "kg"
+      }
+    ],
+    "original_category": "Compact track loader"
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "655K",
+    "category": "트랙 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 116,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "1.6–3.6",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "755K",
+    "category": "트랙 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 145,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Bucket capacity",
+        "value": "2.0–4.5",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "310 P-Tier",
+    "category": "백호 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 75,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Digging depth",
+        "value": 4.15,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "John_Deere",
+    "model_name": "410 P-Tier",
+    "category": "백호 로더",
+    "url": "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+    "region": "북미 · 2025-05",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Net engine power",
+        "value": 87,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Digging depth",
+        "value": 4.85,
+        "unit": "m"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 716 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 97,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "13300–15800",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "2.92–3.30",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 726 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 125,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "17500–20800",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "3.33–3.87",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 736 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 160,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "21200–25500",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "4.10–5.57",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 746 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 190,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "25900–31500",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "6.00–7.20",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 756 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 260,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "35400–43000",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "8.92–11.80",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 766 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 310,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "53460–54333",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "13.60–17.00",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "Liebherr",
+    "model_name": "PR 776 G8",
+    "category": "도저",
+    "url": "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+    "region": "2026 공식 제품군 안내 · 8세대",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Engine power",
+        "value": 565,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Operating weight",
+        "value": "71800–73189",
+        "unit": "kg"
+      },
+      {
+        "attribute": "Blade capacity",
+        "value": "18.50–22.00",
+        "unit": "m3"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SSR100-5",
+    "category": "다짐 장비",
+    "url": "https://www.sanyglobal.com/all/d/file/p/2017-03-03/e530a791f0cdb723de1919cf7b3c86d8.pdf",
+    "region": "공식 과거 롤러 카탈로그 · 현재 판매 여부 미확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 10000,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Rated engine power",
+        "value": 119,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Drum width",
+        "value": 2130,
+        "unit": "mm"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SSR120-5",
+    "category": "다짐 장비",
+    "url": "https://www.sanyglobal.com/all/d/file/p/2017-03-03/e530a791f0cdb723de1919cf7b3c86d8.pdf",
+    "region": "공식 과거 롤러 카탈로그 · 현재 판매 여부 미확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 12000,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Rated engine power",
+        "value": 119,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Drum width",
+        "value": 2130,
+        "unit": "mm"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SSR180-5S",
+    "category": "다짐 장비",
+    "url": "https://www.sanyglobal.com/all/d/file/p/2017-03-03/e530a791f0cdb723de1919cf7b3c86d8.pdf",
+    "region": "공식 과거 롤러 카탈로그 · 현재 판매 여부 미확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 18000,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Rated engine power",
+        "value": 180,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Drum width",
+        "value": 2130,
+        "unit": "mm"
+      }
+    ]
+  },
+  {
+    "manufacturer": "SANY",
+    "model_name": "SSR200-5S",
+    "category": "다짐 장비",
+    "url": "https://www.sanyglobal.com/all/d/file/p/2017-03-03/e530a791f0cdb723de1919cf7b3c86d8.pdf",
+    "region": "공식 과거 롤러 카탈로그 · 현재 판매 여부 미확인",
+    "reviewed_at": "2026-10-18",
+    "facts": [
+      {
+        "attribute": "Operating weight",
+        "value": 20000,
+        "unit": "kg"
+      },
+      {
+        "attribute": "Rated engine power",
+        "value": 180,
+        "unit": "kW"
+      },
+      {
+        "attribute": "Drum width",
+        "value": 2130,
+        "unit": "mm"
+      }
+    ]
+  }
+]

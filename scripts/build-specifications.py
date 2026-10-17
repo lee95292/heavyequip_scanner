@@ -14,6 +14,17 @@ FACETS = {
  'max_digging_depth_mm': {'label':'최대 굴착 깊이','unit':'mm'},
  'max_reach_mm': {'label':'최대 도달 거리','unit':'mm'},
  'travel_speed_kmh': {'label':'주행 속도','unit':'km/h'},
+ 'overall_length_mm': {'label':'전장','unit':'mm'},
+ 'overall_width_mm': {'label':'전폭','unit':'mm'},
+ 'overall_height_mm': {'label':'전고','unit':'mm'},
+ 'ground_clearance_mm': {'label':'최저 지상고','unit':'mm'},
+ 'bucket_digging_force_kn': {'label':'버킷 굴착력','unit':'kN'},
+ 'arm_digging_force_kn': {'label':'암 굴착력','unit':'kN'},
+ 'rated_operating_capacity_kg': {'label':'정격 작업 용량','unit':'kg'},
+ 'blade_width_mm': {'label':'블레이드 폭','unit':'mm'},
+ 'drum_width_mm': {'label':'다짐 드럼 폭','unit':'mm'},
+ 'turning_radius_mm': {'label':'최소 회전반경','unit':'mm'},
+
 }
 def digest(p):
  h=hashlib.sha256()
@@ -71,7 +82,12 @@ def numeric_facet(f, assembly=False):
  elif re.search(r'(maximum|max\.?).*digging depth|digging depth.*(?:maximum|max\.)',a) and not re.search(r'vertical|wall|level cut|segment|2[.,]44|2440',a):key='max_digging_depth_mm'
  elif re.search(r'(maximum|max\.?).*(digging reach|reach at ground|ground.level reach)|maximum reach$',a) and not re.search(r'hook|height|arms|tool',a):key='max_reach_mm'
  elif re.search(r'travel speed|maximum.*speed',a) and not re.search(r'swing|engine|rotational|fan|wind',a):key='travel_speed_kmh'
+ if not key:
+  rules=[('overall_length_mm',r'^(?:overall|transport|shipping) length(?:\s*\([^)]*\))?[*†]?$'),('overall_width_mm',r'^(?:overall|transport|shipping) width(?:\s*\([^)]*\))?[*†]?$'),('overall_height_mm',r'^(?:overall|transport|shipping) height(?:\s*\([^)]*\))?[*†]?$'),('ground_clearance_mm',r'^(?:minimum |min\.? )?ground clearance[*†]?$'),('bucket_digging_force_kn',r'^(?:maximum |max\.? )?bucket (?:digging|breakout) force(?:\s*\([^)]*\))?$'),('arm_digging_force_kn',r'^(?:maximum |max\.? )?(?:arm|stick) (?:digging|crowd) force(?:\s*\([^)]*\))?$'),('rated_operating_capacity_kg',r'^rated operating capacity(?:\s*\([^)]*\))?$'),('blade_width_mm',r'^(?:blade (?:width|length)|length of blade)$'),('drum_width_mm',r'^(?:drum width|width of drum)$'),('turning_radius_mm',r'^(?:minimum|min\.?) turning radius$')]
+  key=next((k for k,r in rules if re.search(r,a)),None)
  if not key:return None
+ # Attachment tables describe implements, not the complete machine envelope.
+ if key in {'overall_length_mm','overall_width_mm','overall_height_mm','ground_clearance_mm','turning_radius_mm'} and re.search(r'^attachment:|bucket operating matrix|fork.*carriage|attachment dimensions',cat):return None
  unit=text(f.get('unit')).lower().strip().replace(' ','').replace('³','3')
  factors={
  'operating_weight_kg':{'kg':1,'t':1000,'tonne':1000,'tonnes':1000,'lb':0.45359237,'lbs':0.45359237},
@@ -82,6 +98,9 @@ def numeric_facet(f, assembly=False):
  'max_reach_mm':{'mm':1,'m':1000,'cm':10,'in':25.4,'ft':304.8},
  'travel_speed_kmh':{'km/h':1,'km/hr':1,'kmh':1,'kph':1,'mph':1.609344},
  }
+ for k in FACETS:
+  if k in factors:continue
+  u=FACETS[k]['unit'];factors[k]={'mm':1,'cm':10,'m':1000,'in':25.4,'in.':25.4,'ft':304.8} if u=='mm' else {'kg':1,'t':1000,'lb':0.45359237,'lbs':0.45359237} if u=='kg' else {'kn':1,'n':0.001,'lbf':0.004448221615}
  if unit not in factors[key]:return None
  vals=numeric_range(f.get('value'))
  if not vals:return None

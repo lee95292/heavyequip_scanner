@@ -1,0 +1,264 @@
+{
+  "reviewed_at": "2026-10-18",
+  "before": 820,
+  "after": 878,
+  "new_manufacturers": {
+    "John_Deere": 31,
+    "SANY": 14,
+    "Liebherr": 9,
+    "Hitachi": 3,
+    "XCMG": 1
+  },
+  "scope": "18개 기존 분류의 확장 경로 검토. 모든 제조사·지역·역대 모델의 완전 수집은 아님. 추가 가능성은 제품군 확인에 따른 판단이며 신규 고유 모델 수의 확정 추정치가 아님.",
+  "selection_basis": "기존에 없는 글로벌 상위권 제조사 5개를 선택. 엄격한 최신 매출 순위의 1~5위라는 뜻은 아님.",
+  "categories": [
+    {
+      "category": "굴착기",
+      "before": 329,
+      "after": 352,
+      "added": 23,
+      "potential": "높음",
+      "next_step": "지역별 중·소형 모델과 구형 모델, 휠·롱리치 구분",
+      "manufacturers": "CAT, Komatsu, Volvo, Hitachi, SANY, XCMG",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products",
+        "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf"
+      ]
+    },
+    {
+      "category": "휠 로더",
+      "before": 88,
+      "after": 102,
+      "added": 14,
+      "potential": "높음",
+      "next_step": "기존 제조사 지역 모델과 신규 제조사 전동·소형 로더",
+      "manufacturers": "CAT, Komatsu, Volvo, John Deere, Liebherr, SANY",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products",
+        "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "덤프·운반 장비",
+      "before": 58,
+      "after": 58,
+      "added": 0,
+      "potential": "높음",
+      "next_step": "굴절식과 경성 덤프 분리, 적재량·총중량 분리",
+      "manufacturers": "CAT, Komatsu, Volvo, John Deere",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "도저",
+      "before": 47,
+      "after": 57,
+      "added": 10,
+      "potential": "높음",
+      "next_step": "세대·하부체·블레이드 구성 중복을 정리하며 확장",
+      "manufacturers": "CAT, Komatsu, Liebherr, John Deere",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products",
+        "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "다짐 장비",
+      "before": 57,
+      "after": 61,
+      "added": 4,
+      "potential": "높음",
+      "next_step": "단일 드럼·탠덤·타이어식 구분과 폭·진동 제원 확보",
+      "manufacturers": "CAT, SANY, XCMG",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.sanyglobal.com/all/d/file/p/2017-03-03/e530a791f0cdb723de1919cf7b3c86d8.pdf"
+      ]
+    },
+    {
+      "category": "모터 그레이더",
+      "before": 13,
+      "after": 14,
+      "added": 1,
+      "potential": "높음",
+      "next_step": "모델별 자료 확보. G/GP처럼 묶인 제원표는 분리 근거 확보 후 반영",
+      "manufacturers": "CAT, Komatsu, John Deere, SANY",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+        "https://www.sanyglobal.com/product/road_machinery/motor_grader"
+      ]
+    },
+    {
+      "category": "백호 로더",
+      "before": 18,
+      "after": 20,
+      "added": 2,
+      "potential": "높음",
+      "next_step": "굴착 깊이와 로더 적재 능력 구분",
+      "manufacturers": "CAT, John Deere, XCMG",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf",
+        "https://www.xcmgglobal.com/product/list/earthmoving-machinery/loader/wheel-loader/"
+      ]
+    },
+    {
+      "category": "스키드·컴팩트 트랙 로더",
+      "before": 46,
+      "after": 48,
+      "added": 2,
+      "potential": "높음",
+      "next_step": "스키드/트랙 형식을 구분하고 ROC 측정비율 보존",
+      "manufacturers": "CAT, Bobcat, John Deere",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "트랙 로더",
+      "before": 5,
+      "after": 7,
+      "added": 2,
+      "potential": "높음",
+      "next_step": "존디어와 CAT 모델·세대 보완",
+      "manufacturers": "CAT, John Deere",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "아스팔트 포장·절삭 장비",
+      "before": 28,
+      "after": 28,
+      "added": 0,
+      "potential": "가능",
+      "next_step": "포장기·절삭기·리클레이머 분류 세분화 우선",
+      "manufacturers": "CAT, XCMG",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html"
+      ]
+    },
+    {
+      "category": "머티리얼 핸들러·임업 장비",
+      "before": 22,
+      "after": 22,
+      "added": 0,
+      "potential": "가능",
+      "next_step": "임업과 자재취급 분리, 리버 및 고마쓰 라인업 확인",
+      "manufacturers": "CAT, Komatsu, Liebherr",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products",
+        "https://www-assets.liebherr.com/media/bu-media/lhbu-emt/brochures/applications/the-earthmoving-programme-en-12.pdf"
+      ]
+    },
+    {
+      "category": "광산·지하 장비",
+      "before": 12,
+      "after": 12,
+      "added": 0,
+      "potential": "가능",
+      "next_step": "드릴·LHD·광산 굴착 장비 분리 후 전용 제원 추가",
+      "manufacturers": "CAT, Komatsu",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.komatsu.com/en-us/products"
+      ]
+    },
+    {
+      "category": "스크레이퍼",
+      "before": 13,
+      "after": 13,
+      "added": 0,
+      "potential": "가능",
+      "next_step": "자주식과 견인식 구분. 묶음 시리즈를 모델 수로 세지 않음",
+      "manufacturers": "CAT, John Deere",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "텔레핸들러",
+      "before": 8,
+      "after": 8,
+      "added": 0,
+      "potential": "가능",
+      "next_step": "최대 인양능력과 최대 높이에서의 인양능력 구분",
+      "manufacturers": "CAT, Bobcat",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html"
+      ]
+    },
+    {
+      "category": "파이프레이어",
+      "before": 2,
+      "after": 2,
+      "added": 0,
+      "potential": "가능",
+      "next_step": "도저의 선택 장치와 독립 모델 중복 판별",
+      "manufacturers": "CAT, John Deere",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html",
+        "https://www.deere.ca/assets/pdfs/common/industries/construction/john-deere-construction-equipment-fleet-sheet-dkeceflt.pdf"
+      ]
+    },
+    {
+      "category": "파쇄 장비",
+      "before": 1,
+      "after": 1,
+      "added": 0,
+      "potential": "추가 확인",
+      "next_step": "모바일 파쇄기 제품별 공식 수치 확보 후 추가",
+      "manufacturers": "Komatsu 및 전문 제조사",
+      "sources": [
+        "https://www.komatsu.com/en-us/products"
+      ]
+    },
+    {
+      "category": "구성품·어셈블리",
+      "before": 17,
+      "after": 17,
+      "added": 0,
+      "potential": "모델 수 확장 제외",
+      "next_step": "완성 장비와 별도 유지. 부품을 장비 모델 수로 부풀리지 않음",
+      "manufacturers": "기존 제조사",
+      "sources": [
+        "https://www.cat.com/en_US/products/new/equipment.html"
+      ]
+    },
+    {
+      "category": "기타·분류 확인 중",
+      "before": 56,
+      "after": 56,
+      "added": 0,
+      "potential": "분류 우선",
+      "next_step": "56개 기존 레코드의 잔디관리·농업·부속장치 여부 재검토 후 분류",
+      "manufacturers": "Bobcat 등",
+      "sources": []
+    }
+  ],
+  "new_categories_to_review": [
+    "크레인",
+    "콘크리트 장비"
+  ],
+  "data_limitations": [
+    "신규 58개는 공식 자료의 주요 수치만 부분 수록",
+    "존디어 구형 비교표와 신형 지역 페이지의 210 P-Tier 수치 차이는 합치지 않고 신형 캐나다 자료 선택",
+    "히타치 ZW180-7 유럽 페이지는 요약/상세 중량 차이가 있어 북미 제품 페이지 수치만 반영",
+    "XCMG XE215E 전동기 출력을 내연기관 엔진 출력 필터에 넣지 않음",
+    "지역·세대가 다른 장비는 비교값이 비슷해도 동일 사양을 보장하지 않음"
+  ]
+}

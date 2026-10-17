@@ -9,7 +9,8 @@ const gunzip = promisify(zlib.gunzip);
 const DEFAULT_ROOT = path.resolve(__dirname, '..', 'data', 'specifications');
 const MAX_DETAIL_BYTES = 40 * 1024 * 1024;
 const MAX_CACHE_BYTES = 60 * 1024 * 1024;
-const FACET_KEYS = ['operating_weight_kg','engine_power_kw','rated_payload_kg','bucket_capacity_m3','max_digging_depth_mm','max_reach_mm','travel_speed_kmh'];
+const {rankSimilar}=require('./specification-similarity.cjs');
+const FACET_KEYS = ['operating_weight_kg','engine_power_kw','rated_payload_kg','bucket_capacity_m3','max_digging_depth_mm','max_reach_mm','travel_speed_kmh','overall_length_mm','overall_width_mm','overall_height_mm','ground_clearance_mm','bucket_digging_force_kn','arm_digging_force_kn','rated_operating_capacity_kg','blade_width_mm','drum_width_mm','turning_radius_mm'];
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
 function problem(status, message) { const e = new Error(message); e.status = status; return e; }
 function scalar(v, max = 120) { if (v == null) return ''; if (typeof v !== 'string' || v.length > max) throw problem(400,'검색 조건이 올바르지 않습니다.'); return v.trim(); }
@@ -82,17 +83,19 @@ function createCatalog(root = DEFAULT_ROOT) {
    for(const[key,values]of Object.entries(d.facets||{})){const range=filters.ranges[key];if(!range&&!(key==='engine_power_kw'&&filters.power_type))continue;for(const v of values){if(key==='engine_power_kw'&&filters.power_type&&v.power_type!==filters.power_type)continue;if(range&&((range.min!=null&&v.max<range.min)||(range.max!=null&&v.min>range.max)))continue;ids.add(v.fact_id);}}
    rows=rows.filter(f=>ids.has(f.fact_id));
   }
-  if(q)rows=rows.filter(r=>JSON.stringify(r).toLocaleLowerCase().includes(q));
+  if(q){const {korean}=await import('../src/specification-format.mjs');rows=rows.filter(r=>JSON.stringify(r).toLocaleLowerCase().includes(q)||korean([r.attribute,r.category,r.configuration].filter(Boolean).join(' ')).text.toLocaleLowerCase().includes(q));}
   const pages=Math.max(1,Math.ceil(rows.length/limit)),page=Math.min(pageRequested,pages);
   const {facts,records,facets,...metadata}=d;
   return {snapshot_id:s.index.snapshot_id,model:metadata,section,total:rows.length,page,pages,limit,rows:rows.slice((page-1)*limit,page*limit)};
  }
- return {list,model,catalog};
+ async function similar(id,query={}) { const s=await catalog();if(query.snapshot&&scalar(query.snapshot,80)!==s.index.snapshot_id)throw problem(409,'데이터가 갱신되었습니다. 목록을 새로고침해 주세요.');const base=s.byId.get(id);if(!base)throw problem(404,'모델을 찾을 수 없습니다.');return {snapshot_id:s.index.snapshot_id,items:rankSimilar(base,s.index.models,s.index.facets),method:'같은 장비군·주행 형식에서 공통 제원 2개 이상 비교. 구성별 중앙 대안의 상대 차이와 자료 수를 반영합니다. 점수는 성능 우열이나 작업 적합성 인증이 아닙니다.'}; }
+ return {list,model,similar,catalog};
 }
 function registerSpecifications(app,options={}) {
  const service=createCatalog(options.root);
  const handle=fn=>async(req,res)=>{res.set('Cache-Control','no-store');try{res.json(await fn(req));}catch(e){const status=e.status||503;if(status>=500)console.error('[specifications]',e.code||e.message);res.status(status).json({error:e.status?e.message:'제원 데이터를 읽지 못했습니다. 잠시 후 다시 시도해 주세요.'});}};
  app.get('/api/specifications',handle(req=>service.list(req.query)));
+ app.get('/api/specifications/:id/similar',handle(req=>service.similar(req.params.id,req.query)));
  app.get('/api/specifications/:id',handle(req=>service.model(req.params.id,req.query)));
  return service;
 }
