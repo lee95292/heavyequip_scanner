@@ -3,3 +3,39 @@ crawl/data/parsed/*
 crawl/site/__pycache__/*
 crawl/data/logs/*
 crawl/__pycache__/*
+
+# Local Python environments and generated caches
+/prediction/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# macOS metadata copied alongside source files
+.DS_Store
+._*
+
+# Runtime logs, database export, locks and scheduler state
+/logs/
+/heavyequip_scanner.sql
+/crawl/data/backups/
+/crawl/data/fx_monthly.lock
+/crawl/data/fx_monthly_state.json
+/crawl/data/green_incremental.lock
+/crawl/data/green_service.lock
+/crawl/data/green_service_state.json
+/crawl/data/international_daily.lock
+/crawl/data/international_daily_state.json
+
+# Generated deployment backups, bundles and staging copies (not all work/)
+/work/deploy-backups/
+/work/mail-snapshot-backup-*/
+/work/git-hygiene-audit-*/
+/work/market-release-*/
+/work/prediction-release-*/
+/work/price-statistics-release-*/
+/work/price-statistics-stage-*/
+/work/sources-enable-*/
+/work/sources-release-*/
+/work/year-price-release-*/
