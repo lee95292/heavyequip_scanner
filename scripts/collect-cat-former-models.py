@@ -77,7 +77,11 @@ def extract(pdf,index):
     for c,(attribute,unit) in fields.items():
      raw=cells[c];v=raw
      if 'power' in attribute and re.fullmatch(r'[\d .]+ kW',raw):v=raw.removesuffix(' kW');unit='kW'
-     if n<=388 and c==3:v=raw.split('/')[0]
+     if n<=388 and c==3:
+      parts=raw.split('/')
+      if len(parts)==2 and all(re.fullmatch(r'\d+(?:\.\d+)?',t) for t in parts) and float(parts[0])<float(parts[1]):
+       facts.append({'attribute':attribute,'value':raw,'unit':'hp (원문 표 머리글; 단위 해석 보류)','configuration':context,'source_pdf_page':n,'source_printed_page':f'23-{n-361}','source_cell':raw,'verification':'source_unit_conflict','conflict_ids':['PHB50_AMBIGUOUS_POWER_PAIR']});continue
+      v=parts[0]
      v=re.sub(r'\s+','',v)
      if not re.fullmatch(r'\d+(?:\.\d+)?',v):continue
      value=float(v)

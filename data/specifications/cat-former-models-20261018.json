@@ -57632,8 +57632,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "82",
-        "unit": "hp",
+        "value": "82/110",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D5M XL 4BR 96-02 / (FR)",
         "source_pdf_page": 370,
         "source_printed_page": "23-9",
@@ -57641,6 +57641,10 @@
         "source_row": "D5M XL | 4BR | 96-02 | 82/110 | 12 250 | 1.77 | 3.544 | PS | 22 347 | 12 166 | 6745 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -57704,8 +57708,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "82",
-        "unit": "hp",
+        "value": "82/110",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D5M XL 6GN 96-02 / (FR)",
         "source_pdf_page": 370,
         "source_printed_page": "23-9",
@@ -57713,6 +57717,10 @@
         "source_row": "D5M XL | 6GN | 96-02 | 82/110 | 12 250 | 1.77 | 3.544 | PS | 22 347 | 12 166 | 6745 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -57776,8 +57784,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "82",
-        "unit": "hp",
+        "value": "82/110",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D5M LGP 3DR 96-02 / (FR)",
         "source_pdf_page": 370,
         "source_printed_page": "23-9",
@@ -57785,6 +57793,10 @@
         "source_row": "D5M LGP | 3DR | 96-02 | 82/110 | 13 100 | 2.00 | 3.72 | PS | 22 347 | 12 166 | 6745 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -57848,8 +57860,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "82",
-        "unit": "hp",
+        "value": "82/110",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D5M LGP 3CR 96-02 / (FR)",
         "source_pdf_page": 370,
         "source_printed_page": "23-9",
@@ -57857,6 +57869,10 @@
         "source_row": "D5M LGP | 3CR | 96-02 | 82/110 | 13 100 | 2.00 | 3.72 | PS | 22 347 | 12 166 | 6745 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -59493,8 +59509,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H (DS) 32F 92-96 / (E. Peoria) / 4YF",
         "source_pdf_page": 372,
         "source_printed_page": "23-11",
@@ -59503,6 +59519,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "4YF"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -59604,8 +59624,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H (CB) 4RC 92-96 / (E. Peoria) / 2KD",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -59614,6 +59634,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "2KD"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -59715,8 +59739,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "130",
-        "unit": "hp",
+        "value": "130/175",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H XL (DS) 9KJ 92-96 / (E. Peoria) / 8SK",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -59725,6 +59749,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "8SK"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -59826,8 +59854,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "130",
-        "unit": "hp",
+        "value": "130/175",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H XL (CB) 8ZJ 92-96 / (E. Peoria) / 9RK",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -59836,6 +59864,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "9RK"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -59937,8 +59969,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "130",
-        "unit": "hp",
+        "value": "130/175",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H XR (DS) 6CK 92-96 / (E. Peoria) / 2TL",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -59947,6 +59979,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "2TL"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -60048,8 +60084,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "130",
-        "unit": "hp",
+        "value": "130/175",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H XR (CB) 5KK 92-96 / (E. Peoria) / 7ZK",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -60058,6 +60094,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "7ZK"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -60159,8 +60199,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "134",
-        "unit": "hp",
+        "value": "134/180",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H LGP (DS) 3YG 92-96 / (E. Peoria) / 4GG",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -60169,6 +60209,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "4GG"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -60270,8 +60314,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "134",
-        "unit": "hp",
+        "value": "134/180",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6H LGP (CB) 6FC 92-96 / (E. Peoria) / 1KD",
         "source_pdf_page": 373,
         "source_printed_page": "23-12",
@@ -60280,6 +60324,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "1KD"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -61752,8 +61800,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "104",
-        "unit": "hp",
+        "value": "104/140",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6M XL 9ZM 96-02 / (FR)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -61761,6 +61809,10 @@
         "source_row": "D6M XL | 9ZM | 96-02 | 104/140 | 15 530 | 1.89 | 3.74 | PS | 30 493 | 16 643 | 9211 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -61824,8 +61876,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "104",
-        "unit": "hp",
+        "value": "104/140",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6M XL 3WN 96-02 / (FR)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -61833,6 +61885,10 @@
         "source_row": "D6M XL | 3WN | 96-02 | 104/140 | 15 530 | 1.89 | 3.74 | PS | 30 493 | 16 643 | 9211 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -61896,8 +61952,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "104",
-        "unit": "hp",
+        "value": "104/140",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6M LGP 2RN 96-02 / (FR)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -61905,6 +61961,10 @@
         "source_row": "D6M LGP | 2RN | 96-02 | 104/140 | 16 930 | 2.16 | 4.146 | PS | 30 493 | 16 643 | 9211 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -61968,8 +62028,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "104",
-        "unit": "hp",
+        "value": "104/140",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6M LGP 4JN 96-02 / (FR)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -61977,6 +62037,10 @@
         "source_row": "D6M LGP | 4JN | 96-02 | 104/140 | 16 930 | 2.16 | 4.146 | PS | 30 493 | 16 643 | 9211 |  |  | ",
         "source_continuation": [
           "(FR)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65071,8 +65135,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD AEM 02-05 / CB (FTC) / (US)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -65081,6 +65145,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65182,8 +65250,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD BRJ 02-06 / CB (FTC) / (BRAZIL)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -65192,6 +65260,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(BRAZIL)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65293,8 +65365,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD BLE 01-05 / CB (FTC) / (FRANCE)",
         "source_pdf_page": 377,
         "source_printed_page": "23-16",
@@ -65303,6 +65375,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(FRANCE)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65404,8 +65480,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD BMK 01-06 / CB (FTC) / (JAPAN)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -65414,6 +65490,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65515,8 +65595,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD AFM 01-05 / DS / (US)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -65525,6 +65605,10 @@
         "source_continuation": [
           "DS",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65626,8 +65710,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD BPM 03-06 / DS / (BRAZIL)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -65636,6 +65720,10 @@
         "source_continuation": [
           "DS",
           "(BRAZIL)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65737,8 +65825,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD BLT 02-05 / DS / (FRANCE)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -65747,6 +65835,10 @@
         "source_continuation": [
           "DS",
           "(FRANCE)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65848,8 +65940,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "123",
-        "unit": "hp",
+        "value": "123/165",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII STD BNL 01-06 / DS / (JAPAN)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -65858,6 +65950,10 @@
         "source_continuation": [
           "DS",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -65959,8 +66055,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL AGM 00-05 / CB (FTC) / (US)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -65969,6 +66065,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66070,8 +66170,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL CAD 02-06 / CB (FTC) / (BRAZIL)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -66080,6 +66180,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(BRAZIL)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66181,8 +66285,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL BMJ 02-05 / CB (FTC) / (FRANCE)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -66191,6 +66295,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(FRANCE)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66292,8 +66400,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL BPS 01-06 / CB (FTC) / (JAPAN)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -66302,6 +66410,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66403,8 +66515,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL AAX 00-05 / DS / (US)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -66413,6 +66525,10 @@
         "source_continuation": [
           "DS",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66514,8 +66630,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL FDT 02-06 / DS / (BRAZIL)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -66524,6 +66640,10 @@
         "source_continuation": [
           "DS",
           "(BRAZIL)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66625,8 +66745,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL BMY 01-05 / DS / (FRANCE)",
         "source_pdf_page": 378,
         "source_printed_page": "23-17",
@@ -66635,6 +66755,10 @@
         "source_continuation": [
           "DS",
           "(FRANCE)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66736,8 +66860,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XL BRZ 01-06 / DS / (JAPAN)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -66746,6 +66870,10 @@
         "source_continuation": [
           "DS",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66847,8 +66975,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XW AEP 2001 / DS / (US)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -66857,6 +66985,10 @@
         "source_continuation": [
           "DS",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -66958,8 +67090,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XW DAE 02-05 / DS / (FRANCE)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -66968,6 +67100,10 @@
         "source_continuation": [
           "DS",
           "(FRANCE)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67069,8 +67205,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII XW BRE 01-06 / DS / (JAPAN)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67079,6 +67215,10 @@
         "source_continuation": [
           "DS",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67180,8 +67320,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII LGP ACJ 01-05 / CB (FTC) / (US)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67190,6 +67330,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67291,8 +67435,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII LGP BPP 01-06 / CB (FTC) / (JAPAN)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67301,6 +67445,10 @@
         "source_continuation": [
           "CB (FTC)",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67402,8 +67550,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII LGP ADE 00-05 / DS / (US)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67412,6 +67560,10 @@
         "source_continuation": [
           "DS",
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67513,8 +67665,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII LGP BNC 01-05 / DS / (FRANCE)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67523,6 +67675,10 @@
         "source_continuation": [
           "DS",
           "(FRANCE)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67624,8 +67780,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SII LGP BPZ 01-06 / DS / (JAPAN)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67634,6 +67790,10 @@
         "source_continuation": [
           "DS",
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67723,8 +67883,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII   / (US) HCD 05-07 / (BRAZIL) GMT 06-07 / (FRANCE) TBC 06-07",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67734,6 +67894,10 @@
           "(US) HCD 05-07",
           "(BRAZIL) GMT 06-07",
           "(FRANCE) TBC 06-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67803,8 +67967,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "138",
-        "unit": "hp",
+        "value": "138/185",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII JEK 06-10 / (JAPAN)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67812,6 +67976,10 @@
         "source_row": "D6R SIII | JEK | 06-10 | 138/185 | 18 326 | 1.88 | 2.67 | PS | 3.8 | 6.6 | 11.4 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67864,8 +68032,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII XL   / (US) GJB 05-07 / (BRAZIL) JDL 05-07",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67874,6 +68042,10 @@
         "source_continuation": [
           "(US) GJB 05-07",
           "(BRAZIL) JDL 05-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -67974,8 +68146,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII XL EXL 06-12 / (JAPAN)",
         "source_pdf_page": 379,
         "source_printed_page": "23-18",
@@ -67983,6 +68155,10 @@
         "source_row": "D6R SIII XL | EXL | 06-12 | 149/200 | 20 081 | 1.88 | 2.87 | PS | 3.8 | 6.6 | 11.4 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68035,8 +68211,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII XL   / PAT (US) HKE 05-07 / (FRANCE) RFC 06-07",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68045,6 +68221,10 @@
         "source_continuation": [
           "PAT (US) HKE 05-07",
           "(FRANCE) RFC 06-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68134,8 +68314,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII XW   / (US) MRT 05-07 / (BRAZIL) DPS 06-07",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68144,6 +68324,10 @@
         "source_continuation": [
           "(US) MRT 05-07",
           "(BRAZIL) DPS 06-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68233,8 +68417,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII XW   / PAT (US) HDC 05-07 / (FRANCE) MTJ 05-07",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68243,6 +68427,10 @@
         "source_continuation": [
           "PAT (US) HDC 05-07",
           "(FRANCE) MTJ 05-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68343,8 +68531,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII XW EXW 07-09 / (JAPAN)",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68352,6 +68540,10 @@
         "source_row": "D6R SIII XW | EXW | 07-09 | 149/200 | 20 672 | 2.03 | 2.87 | PS | 3.8 | 6.6 | 11.4 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68404,8 +68596,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII LGP   / (US) WRG 05-07 / (FRANCE) DMK 06-07",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68414,6 +68606,10 @@
         "source_continuation": [
           "(US) WRG 05-07",
           "(FRANCE) DMK 06-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68514,8 +68710,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII LGP LGP 06-12 / (JAPAN)",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68523,6 +68719,10 @@
         "source_row": "D6R SIII LGP | LGP | 06-12 | 149/200 | 21 716 | 2.29 | 3.28 | PS | 3.8 | 6.6 | 11.4 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -68575,8 +68775,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D6R SIII LGP   / PAT (US) WCB 05-07 / (FRANCE) DLM 05-07",
         "source_pdf_page": 380,
         "source_printed_page": "23-19",
@@ -68585,6 +68785,10 @@
         "source_continuation": [
           "PAT (US) WCB 05-07",
           "(FRANCE) DLM 05-07"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -70528,8 +70732,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7G 65V 75-07 / (JAPAN)",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -70537,6 +70741,10 @@
         "source_row": "D7G | 65V | 75-07 | 149/200 | 20 580 | 1.98 | 2.72 | PS | 3.7 | 6.4 | 10.0 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -70600,8 +70808,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7G 7MB 83-07 / (INDONESIA)",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -70609,6 +70817,10 @@
         "source_row": "D7G | 7MB | 83-07 | 149/200 | 20 580 | 1.98 | 2.72 | PS | 3.7 | 6.4 | 10.0 |  |  | ",
         "source_continuation": [
           "(INDONESIA)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -70766,8 +70978,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7G SII 7MB 08-12 / (INDONESIA)",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -70775,6 +70987,10 @@
         "source_row": "D7G SII | 7MB | 08-12 | 149/200 | 20 580 | 1.98 | 2.72 | PS | 3.7 | 6.4 | 10.0 |  |  | ",
         "source_continuation": [
           "(INDONESIA)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -70838,8 +71054,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "149",
-        "unit": "hp",
+        "value": "149/200",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7G SII C7G 06-11 / (CHINA)",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -70847,6 +71063,10 @@
         "source_row": "D7G SII | C7G | 06-11 | 149/200 | 20 580 | 1.98 | 2.72 | PS | 3.7 | 6.4 | 10.0 |  |  | ",
         "source_continuation": [
           "(CHINA)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -70925,8 +71145,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "171",
-        "unit": "hp",
+        "value": "171/230",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7H (CB) 79Z 92-96 / (E. Peoria) / 4AB",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -70935,6 +71155,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "4AB"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -71036,8 +71260,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "171",
-        "unit": "hp",
+        "value": "171/230",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7H (DS) 5BF 92-96 / (E. Peoria) / 2RG",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -71046,6 +71270,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "2RG"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -71147,8 +71375,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "171",
-        "unit": "hp",
+        "value": "171/230",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7H LGP 80Z 92-96 / (CB) (E. Peoria) / 5WB",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -71157,6 +71385,10 @@
         "source_continuation": [
           "(CB) (E. Peoria)",
           "5WB"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -71258,8 +71490,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "171",
-        "unit": "hp",
+        "value": "171/230",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7H LGP 4FG 92-96 / (DS) (E. Peoria) / 3XG",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -71268,6 +71500,10 @@
         "source_continuation": [
           "(DS) (E. Peoria)",
           "3XG"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -71369,8 +71605,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "171",
-        "unit": "hp",
+        "value": "171/230",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7H XR (CB) 79Z 92-96 / (E. Peoria) / 4AB",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -71379,6 +71615,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "4AB"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -71480,8 +71720,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "171",
-        "unit": "hp",
+        "value": "171/230",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7H XR (DS) 5BF 92-96 / (E. Peoria) / 2RG",
         "source_pdf_page": 382,
         "source_printed_page": "23-21",
@@ -71490,6 +71730,10 @@
         "source_continuation": [
           "(E. Peoria)",
           "2RG"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -72932,8 +73176,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "179",
-        "unit": "hp",
+        "value": "179/240",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7R SII STD BRM 02-12 / (JAPAN)",
         "source_pdf_page": 383,
         "source_printed_page": "23-22",
@@ -72941,6 +73185,10 @@
         "source_row": "D7R SII STD | BRM | 02-12 | 179/240 | 25 455 | 1.98 | 2.87 | PS | 3.52 | 6.10 | 10.54 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -72998,8 +73246,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "179",
-        "unit": "hp",
+        "value": "179/240",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7R SII STD AEC 00-10 / (US)",
         "source_pdf_page": 383,
         "source_printed_page": "23-22",
@@ -73007,6 +73255,10 @@
         "source_row": "D7R SII STD | AEC | 00-10 | 179/240 | 25 455 | 1.98 | 2.87 | PS | 3.52 | 6.10 | 10.54 |  |  | ",
         "source_continuation": [
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -73198,8 +73450,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "179",
-        "unit": "hp",
+        "value": "179/240",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7R SII XR BPT 03-12 / (JAPAN)",
         "source_pdf_page": 383,
         "source_printed_page": "23-22",
@@ -73207,6 +73459,10 @@
         "source_row": "D7R SII XR | BPT | 03-12 | 179/240 | 27 002 | 1.98 | 3.05 | PS | 3.52 | 6.10 | 10.54 |  |  | ",
         "source_continuation": [
           "(JAPAN)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -73264,8 +73520,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "179",
-        "unit": "hp",
+        "value": "179/240",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7R SII XR AGN 00-10 / (US)",
         "source_pdf_page": 383,
         "source_printed_page": "23-22",
@@ -73273,6 +73529,10 @@
         "source_row": "D7R SII XR | AGN | 00-10 | 179/240 | 27 002 | 1.98 | 3.05 | PS | 3.52 | 6.10 | 10.54 |  |  | ",
         "source_continuation": [
           "(US)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -73536,8 +73796,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "179",
-        "unit": "hp",
+        "value": "179/240",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7R SII BNX 01-12 / LGP",
         "source_pdf_page": 384,
         "source_printed_page": "23-23",
@@ -73545,6 +73805,10 @@
         "source_row": "D7R SII | BNX | 01-12 | 179/240 | 27 626 | 2.24 | 3.16 | PS | 3.52 | 6.10 | 10.54 |  |  |  | ",
         "source_continuation": [
           "LGP"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -73602,8 +73866,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "179",
-        "unit": "hp",
+        "value": "179/240",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D7R SII ABJ 00-10 / LGP",
         "source_pdf_page": 384,
         "source_printed_page": "23-23",
@@ -73611,6 +73875,10 @@
         "source_row": "D7R SII | ABJ | 00-10 | 179/240 | 27 626 | 2.24 | 3.16 | PS | 3.52 | 6.10 | 10.54 |  |  |  | ",
         "source_continuation": [
           "LGP"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {
@@ -74561,8 +74829,8 @@
       },
       {
         "attribute": "Net engine power (flywheel)",
-        "value": "231",
-        "unit": "hp",
+        "value": "231/310",
+        "unit": "hp (원문 표 머리글; 단위 해석 보류)",
         "configuration": "구형 / Track-Type Tractors / 원문 모델·일련번호·연도: D8R Series II AKA 2000 / (BRAZIL)",
         "source_pdf_page": 385,
         "source_printed_page": "23-24",
@@ -74570,6 +74838,10 @@
         "source_row": "D8R Series II | AKA | 2000 | 231/310 | 37 830 | 2.08 | 6.91 | PS |  |  |  |  |  |  | ",
         "source_continuation": [
           "(BRAZIL)"
+        ],
+        "verification": "source_unit_conflict",
+        "conflict_ids": [
+          "PHB50_AMBIGUOUS_POWER_PAIR"
         ]
       },
       {

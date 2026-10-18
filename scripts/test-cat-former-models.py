@@ -9,6 +9,8 @@ class LegacyCatalogTest(unittest.TestCase):
  def test_target_models_and_source_facts(self):
   for name,power in [('D6H','165'),('D9N','370'),('D8N','285')]:
    m=self.models[(name,'도저')];self.assertTrue(any(f['attribute']=='Net engine power (flywheel)' and f['value']==power for f in m['facts']));self.assertTrue(all(f.get('source_pdf_page') and f.get('configuration') for f in m['facts']))
+ def test_ambiguous_dozer_power_pairs_are_held(self):
+  fs=self.models[('D6H','도저')]['facts'];f=next(f for f in fs if f.get('source_cell')=='123/165');self.assertEqual(f['value'],'123/165');self.assertIsNone(b.numeric_facet(f));self.assertEqual(f['verification'],'source_unit_conflict')
  def test_unique_identities_and_nonempty_evidence(self):
   self.assertEqual(len(self.rows),len(self.models))
   for m in self.rows:

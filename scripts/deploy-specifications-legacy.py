@@ -5,15 +5,15 @@ root=pathlib.Path(__file__).resolve().parents[1]
 def run(*cmd,**kwargs):
  print('RUN',*cmd[:4],flush=True);return subprocess.run(cmd,cwd=root,check=True,**kwargs)
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-version='20261018-cat-legacy-v6';catalog=root/'dashboard/data/specifications';original='20261018-catalog-v4'
+version='20261018-cat-legacy-v7';catalog=root/'dashboard/data/specifications';original='20261018-catalog-v4'
 config=root/'crawl/config.json';config_hash=sha(config);old_pointer=(catalog/'current.json').read_bytes()
-assert json.loads(old_pointer)['snapshot_id']==original,'Unexpected current catalog: review before deployment'
+assert json.loads(old_pointer)['snapshot_id']=='20261018-cat-legacy-v6','Unexpected current catalog: review before deployment'
 backup=root/'work/deploy-backups'/('specifications-legacy-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ'));backup.mkdir(parents=True)
 (backup/'current-before.json').write_bytes(old_pointer)
 run('git','status','--short',stdout=(backup/'status-before.txt').open('w'))
 run('git','diff','--binary',stdout=(backup/'changes-before.patch').open('w'))
 run('git','rev-parse','HEAD',stdout=(backup/'head.txt').open('w'))
-stage=backup/'catalog-stage';stage.mkdir();shutil.copytree(catalog/original,stage/original);(stage/'current.json').write_bytes(old_pointer)
+stage=backup/'catalog-stage';stage.mkdir();shutil.copytree(catalog/original,stage/original);(stage/'current.json').write_text(json.dumps({'snapshot_id':original,'manifest_sha256':sha(catalog/original/'manifest.json')}))
 run('python3','scripts/extend-specifications.py',str(stage),version,'data/specifications/cat-former-models-20261018.json')
 run('python3','scripts/install-specifications.py',str(stage),version)
 run('python3','scripts/test-specifications-import.py')
