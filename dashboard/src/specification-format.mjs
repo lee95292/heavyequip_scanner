@@ -1,6 +1,21 @@
 // Original source text is always retained; terminology translation never alters numbers.
 export const MAKERS={Caterpillar:'캐터필러',Komatsu:'고마쓰',Volvo_CE:'볼보건설기계',DEVELON:'디벨론',Kobelco:'코벨코',Bobcat:'밥캣',XCMG:'쉬저우공정기계',John_Deere:'존디어',Liebherr:'립헬',SANY:'싼이',Hitachi:'히타치'};
-const pairs=`rated lifting capacity|정격 인양 능력
+const pairs=`years built (source notation)|제작 연도 (원문 표기)
+approximate machine weight|기계 중량 (근삿값)
+net engine power (flywheel)|엔진 순출력 (플라이휠)
+tractor length|트랙터 길이
+tractor weight|트랙터 중량
+length to coupler|커플러까지 길이
+material handlers|머티리얼 핸들러
+wheel tractor-scrapers|자주식 스크레이퍼
+tractor-towed scrapers|견인식 스크레이퍼
+integrated toolcarriers|다목적 로더
+vibratory compactors|진동 다짐 장비
+logging and forest product machines|벌목·임업 장비
+hydraulic excavators (track)|궤도식 유압 굴착기
+hydraulic excavators (wheel)|휠식 유압 굴착기
+track-type tractors|궤도식 도저
+rated lifting capacity|정격 인양 능력
 maximum lift-point radius|최대 인양점 반경
 maximum lift point radius|최대 인양점 반경
 maximum material density|최대 재료 밀도

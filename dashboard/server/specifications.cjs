@@ -10,6 +10,7 @@ const DEFAULT_ROOT = path.resolve(__dirname, '..', 'data', 'specifications');
 const MAX_DETAIL_BYTES = 40 * 1024 * 1024;
 const MAX_CACHE_BYTES = 60 * 1024 * 1024;
 const {rankSimilar}=require('./specification-similarity.cjs');
+const {displayModelName,modelSearchText}=require('./specification-model-name.cjs');
 const FACET_KEYS = ['operating_weight_kg','engine_power_kw','rated_payload_kg','bucket_capacity_m3','max_digging_depth_mm','max_reach_mm','travel_speed_kmh','overall_length_mm','overall_width_mm','overall_height_mm','ground_clearance_mm','bucket_digging_force_kn','arm_digging_force_kn','rated_operating_capacity_kg','blade_width_mm','drum_width_mm','turning_radius_mm'];
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
 function problem(status, message) { const e = new Error(message); e.status = status; return e; }
@@ -19,7 +20,7 @@ function bound(v) { if (v == null || v === '') return null; if (typeof v !== 'st
 function publicModel(m, query) {
  const facets=Object.fromEntries(Object.entries(m.facets).map(([k,values])=>[k,[{min:Math.min(...values.map(v=>v.min)),max:Math.max(...values.map(v=>v.max)),alternatives:values.length}]]));
  const matched_facets={};for(const [key,{min,max}] of Object.entries(query.ranges)){const vals=(m.facets[key]||[]).filter(v=>(key!=='engine_power_kw'||!query.power_type||v.power_type===query.power_type)&&(min==null||v.max>=min)&&(max==null||v.min<=max));matched_facets[key]={count:vals.length,values:vals.slice(0,3)};}
- return {...m,facets,matched_facets};
+ return {...m,display_model_name:displayModelName(m),facets,matched_facets};
 }
 function parseQuery(q) {
  const filters = { q: scalar(q.q).toLocaleLowerCase(), manufacturer: scalar(q.manufacturer), category: scalar(q.category), quality: scalar(q.quality), kind: scalar(q.kind), power_type: scalar(q.power_type), page: integer(q.page,1,100000), limit: integer(q.limit,24,60), ranges: {} };
@@ -29,7 +30,7 @@ function parseQuery(q) {
  return filters;
 }
 function matchModel(m, q) {
- if (q.q && !`${m.manufacturer} ${m.model_name} ${m.base_model || ''}`.toLocaleLowerCase().includes(q.q)) return false;
+ if (q.q && !modelSearchText(m).includes(q.q)) return false;
  if (q.manufacturer && m.manufacturer !== q.manufacturer || q.category && m.category !== q.category || q.quality && m.quality_stage !== q.quality) return false;
  if (q.kind && (q.kind === 'assembly' ? !m.is_assembly : m.is_assembly || m.record_kind !== q.kind)) return false;
  if (q.power_type && !(m.facets.engine_power_kw || []).some(v => v.power_type === q.power_type)) return false;
@@ -86,9 +87,9 @@ function createCatalog(root = DEFAULT_ROOT) {
   if(q){const {korean}=await import('../src/specification-format.mjs');rows=rows.filter(r=>JSON.stringify(r).toLocaleLowerCase().includes(q)||korean([r.attribute,r.category,r.configuration].filter(Boolean).join(' ')).text.toLocaleLowerCase().includes(q));}
   const pages=Math.max(1,Math.ceil(rows.length/limit)),page=Math.min(pageRequested,pages);
   const {facts,records,facets,...metadata}=d;
-  return {snapshot_id:s.index.snapshot_id,model:metadata,section,total:rows.length,page,pages,limit,rows:rows.slice((page-1)*limit,page*limit)};
+  return {snapshot_id:s.index.snapshot_id,model:{...metadata,display_model_name:displayModelName(metadata)},section,total:rows.length,page,pages,limit,rows:rows.slice((page-1)*limit,page*limit)};
  }
- async function similar(id,query={}) { const s=await catalog();if(query.snapshot&&scalar(query.snapshot,80)!==s.index.snapshot_id)throw problem(409,'데이터가 갱신되었습니다. 목록을 새로고침해 주세요.');const base=s.byId.get(id);if(!base)throw problem(404,'모델을 찾을 수 없습니다.');return {snapshot_id:s.index.snapshot_id,items:rankSimilar(base,s.index.models,s.index.facets),method:'같은 장비군·주행 형식에서 공통 제원 2개 이상 비교. 구성별 중앙 대안의 상대 차이와 자료 수를 반영합니다. 점수는 성능 우열이나 작업 적합성 인증이 아닙니다.'}; }
+ async function similar(id,query={}) { const s=await catalog();if(query.snapshot&&scalar(query.snapshot,80)!==s.index.snapshot_id)throw problem(409,'데이터가 갱신되었습니다. 목록을 새로고침해 주세요.');const base=s.byId.get(id);if(!base)throw problem(404,'모델을 찾을 수 없습니다.');return {snapshot_id:s.index.snapshot_id,items:rankSimilar(base,s.index.models,s.index.facets).map(m=>({...m,display_model_name:displayModelName(m)})),method:'같은 장비군·주행 형식에서 공통 제원 2개 이상 비교. 구성별 중앙 대안의 상대 차이와 자료 수를 반영합니다. 점수는 성능 우열이나 작업 적합성 인증이 아닙니다.'}; }
  return {list,model,similar,catalog};
 }
 function registerSpecifications(app,options={}) {

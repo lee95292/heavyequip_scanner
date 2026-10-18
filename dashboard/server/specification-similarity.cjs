@@ -1,7 +1,7 @@
 'use strict';
 // Similarity is descriptive only: published ranges may represent different configurations.
 const WEIGHTS={operating_weight_kg:3,engine_power_kw:2,bucket_capacity_m3:2,rated_payload_kg:3,rated_operating_capacity_kg:3,max_digging_depth_mm:2,max_reach_mm:1,overall_width_mm:1,overall_height_mm:1,overall_length_mm:1,bucket_digging_force_kn:1,blade_width_mm:2,drum_width_mm:2,travel_speed_kmh:0.5};
-function family(m){const s=`${m.model_name} ${m.original_category}`.toLowerCase();if(m.category==='굴착기')return /wheel|\b[a-z]*w[-\s]?\d|zx\d+w/.test(s)?'wheeled':/long.?reach|demolition|frontless|shovel|dragline/.test(s)?'special':'crawler';if(m.category==='스키드·컴팩트 트랙 로더')return /compact track|track loader/.test(s)?'track':/skid.?steer/.test(s)?'skid':'unknown';return m.category;}
+function family(m){const s=`${m.model_name} ${m.original_category}`.toLowerCase();if(m.category==='도저')return /wheel/.test(s)?'wheel-dozer':'crawler-dozer';if(m.category==='굴착기')return /wheel|\b[a-z]*w[-\s]?\d|zx\d+w/.test(s)?'wheeled':/long.?reach|demolition|frontless|shovel|dragline/.test(s)?'special':'crawler';if(m.category==='스키드·컴팩트 트랙 로더')return /compact track|track loader/.test(s)?'track':/skid.?steer/.test(s)?'skid':'unknown';return m.category;}
 function comparable(values,key){return (values||[]).filter(v=>Number.isFinite(v.min)&&Number.isFinite(v.max)&&v.min>0&&v.max>=v.min&&v.max/v.min<=2).map(v=>({...v,mid:(v.min+v.max)/2}));}
 function rankSimilar(base,models,facets,limit=6){
  if(base.is_assembly||base.record_kind!=='individual_model'||/기타|구성품/.test(base.category))return [];
