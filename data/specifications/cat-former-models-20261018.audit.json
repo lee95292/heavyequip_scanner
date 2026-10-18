@@ -1965,10 +1965,6 @@
   ],
   "source_scope": "PHB50 Former Models, supported numeric table layouts; model base names grouped with source configurations retained; other tables and unresolved cells held, not inferred",
   "unprocessed_pages": [
-    389,
-    390,
-    391,
-    392,
     393,
     394,
     395,
@@ -2001,5 +1997,11 @@
     "트랙 로더": 32,
     "텔레핸들러": 15,
     "아스팔트 포장·절삭 장비": 78
-  }
+  },
+  "partial_foreign_dozer_pages": [
+    389,
+    390,
+    391,
+    392
+  ]
 }
